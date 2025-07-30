@@ -93,7 +93,7 @@ pip install numpy pillow scipy
 Update and run the training block:
 
 ```python
-from cnn import CNN
+from cnnfs.model import CNN
 
 model = CNN()
 model.init(
