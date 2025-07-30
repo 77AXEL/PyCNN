@@ -1,7 +1,8 @@
 from cnn import CNN
 
 CNN = CNN()
-CNN.init(
+#Initialize the model:
+#CNN.init(
     image_size = 64, 
     batch_size = 32, 
     h1 = 128, 
@@ -12,6 +13,17 @@ CNN.init(
     max_image=200
 )
 
-CNN.load_model("model.bin")
+#Load the dataset folder for training:
+#CNN.load_dataset()
 
-CNN.predict("exemple.jpg")
+#Train the model:
+#CNN.train_model()
+
+#Save the trainined model:
+#CNN.save_model()
+
+#Use a pretrained model:
+#CNN.load_model("model.bin")
+
+#Use the model:
+#CNN.predict("exemple.jpg")
