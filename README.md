@@ -20,25 +20,6 @@ This project is a simple **Convolutional Neural Network (CNN)** implemented **en
 
 ---
 
-## 📁 Project Structure
-
-```bash
-.
-├── cnn.py           # Main training and prediction script
-├── main.py           # You script
-├── model.bin         # Saved model (generated after training)
-├── data/             # Folder containing class subfolders with images (setup your custom database for more images) 
-│   ├── cat/
-│   │   ├── cat1.png
-│   │   ├── ...
-│   └── dog/
-│       ├── dog1.png
-│       ├── ...
-│       ...
-```
-
----
-
 ## 🖼 Dataset Structure
 
 Make sure your dataset folder is structured like this:
