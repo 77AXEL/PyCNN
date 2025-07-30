@@ -54,7 +54,7 @@ data/
 ```
 
 Each subfolder represents a class (e.g., `cat`, `dog`), and contains sample images.
-
+> To help you get started, we’ve included a [starter `data` folder](https://github.com/77AXEL/CNN-FS/tree/main/data) with example class directories.
 ---
 
 ## 🧪 How It Works
