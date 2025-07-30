@@ -188,5 +188,3 @@ PRs are welcome! You can help:
 * Parallelize dataset loading
 
 ---
-
-Let me know if you'd like a `requirements.txt` or `.ipynb` version.
