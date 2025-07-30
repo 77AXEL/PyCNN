@@ -26,4 +26,4 @@ CNN = CNN()
 #CNN.load_model("model.bin")
 
 #Use the model:
-#CNN.predict("exemple.jpg")
+#print(CNN.predict("exemple.jpg"))
