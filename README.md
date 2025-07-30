@@ -83,7 +83,7 @@ Each subfolder represents a class (e.g., `cat`, `dog`), and contains sample imag
 ## 🛠 Setup
 
 ```bash
-pip install numpy pillow scipy
+pip install git+https://github.com/77AXEL/CNN-FS.git
 ```
 
 ---
