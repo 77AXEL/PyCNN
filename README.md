@@ -165,7 +165,7 @@ print("Predicted class:", prediction)
 ## 📦 Dependencies
 
 * [NumPy](https://numpy.org)
-* [Pillow](https://python-pillow.org)
+* [Pillow](https://pypi.org/project/pillow/)
 * [SciPy](https://scipy.org)
 
 ---
