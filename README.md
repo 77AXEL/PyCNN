@@ -1,13 +1,9 @@
-Here's a modern and well-detailed `README.md` for your CNN-from-scratch project, which aligns with the code and diagram you provided:
-
----
-
 # 🧠 CNN from Scratch (NumPy + PIL + SciPy)
 
 This project is a simple **Convolutional Neural Network (CNN)** implemented **entirely from scratch** using only low-level libraries like NumPy, PIL, and SciPy—**no deep learning frameworks** (e.g., TensorFlow or PyTorch) are used. It includes image preprocessing, convolution and pooling operations, ReLU and softmax activations, forward/backward propagation, and a fully connected classifier.
 
 <p align="center">
-  <img src="Untitled.png" alt="CNN Architecture" width="600"/>
+  <img src="https://github.com/77AXEL/CNN-FS/blob/main/visualized.png" alt="CNN Architecture" width="600"/>
 </p>
 
 ---
@@ -28,16 +24,17 @@ This project is a simple **Convolutional Neural Network (CNN)** implemented **en
 
 ```bash
 .
-├── main.py           # Main training and prediction script
+├── cnn.py           # Main training and prediction script
+├── main.py           # You script
 ├── model.bin         # Saved model (generated after training)
-├── data/             # Folder containing class subfolders with images
+├── data/             # Folder containing class subfolders with images (setup your custom database for more images) 
 │   ├── cat/
 │   │   ├── cat1.png
 │   │   ├── ...
 │   └── dog/
 │       ├── dog1.png
 │       ├── ...
-├── Untitled.png      # Architecture diagram
+│       ...
 ```
 
 ---
@@ -110,7 +107,7 @@ model.init(
     max_image=4000  # per class
 )
 model.load_dataset()
-model.learning_loop()
+model.train_model()
 model.save_model()
 ```
 
@@ -188,3 +185,5 @@ PRs are welcome! You can help:
 * Parallelize dataset loading
 
 ---
+<img src="https://img.shields.io/badge/Author-A.X.E.L-red?style=flat-square;"></img>
+<img src="https://img.shields.io/badge/Open Source-Yes-red?style=flat-square;"></img>
