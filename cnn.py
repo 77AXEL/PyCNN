@@ -88,7 +88,7 @@ class CNN:
                 except:
                     pass
         
-    def learning_loop(self):
+    def train_model(self):
         print()
         self.data = array(self.data)
         self.labels = array(self.labels)
