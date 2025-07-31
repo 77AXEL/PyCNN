@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="cnnfs",
-    version="0.1",
+    version="0.1.0",
     description="A from-scratch CNN built with NumPy, SciPy, and Pillow",
     author="77AXEL",
     packages=find_packages(),
