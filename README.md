@@ -32,6 +32,9 @@ data/
 ├── class2/
 │   ├── image1.png
 │   ├── image2.png
+├── class../
+│   ├── ..
+..
 ```
 
 Each subfolder represents a class (e.g., `cat`, `dog`), and contains sample images.
@@ -78,18 +81,23 @@ from cnnfs.model import CNN
 
 model = CNN()
 model.init(
-    image_size=32,
+    image_size=64,
     batch_size=32,
     h1=128,
     h2=64,
-    learning_rate=0.01,
-    epochs=10,
-    dataset_path="data",
-    max_image=4000  # per class
+    learning_rate=0.001,
+    epochs=400,
+    dataset_path="data", # Your dataset folder path
+    max_image=200, # If not specified, the model will load all images for each class
+    filters=[
+        [[0, -1, 0], [-1, 5, -1], [0, -1, 0]],
+        [[1, 0, -1], [1, 0, -1], [1, 0, -1]],
+        [[-1, -1, -1], [-1, 8, -1], [-1, -1, -1]]
+    ] # If not specified, the model will use its own default filters
 )
-model.load_dataset()
-model.train_model()
-model.save_model()
+model.load_dataset() # Processes all images for each class to prepare them for later use in training
+model.train_model() # Starts model training based on the classes in your dataset
+model.save_model() # Stores the trained model's weights and biases in a model.bin file
 ```
 
 ---
@@ -97,8 +105,8 @@ model.save_model()
 ## 🔍 Predicting New Images
 
 ```python
-model.load_model("model.bin")
-prediction = model.predict("test_images/mycat.png")
+model.load_model("model.bin") # Load the trained model
+prediction = model.predict("test_images/mycat.png") # Applies the trained model to classify the input image
 print("Predicted class:", prediction)
 ```
 
