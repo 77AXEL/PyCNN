@@ -1,4 +1,7 @@
-# 🧠 CNN from Scratch
+# 🧠 CNN from Scratch 
+<p align="left">
+  <img src="https://github.com/77AXEL/CNN-FS/blob/main/logo.png" alt="CNN Architecture" width="100"/>
+</p>
 
 This project is a simple **Convolutional Neural Network (CNN)** implemented **entirely from scratch** using only low-level libraries like NumPy, PIL, and SciPy—**no deep learning frameworks** (e.g., TensorFlow or PyTorch) are used. It includes image preprocessing, convolution and pooling operations, ReLU and softmax activations, forward/backward propagation, and a fully connected classifier.
 
