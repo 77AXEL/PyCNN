@@ -49,7 +49,7 @@ class CNN:
             [[-1, -1, -1], [-1, 8, -1], [-1, -1, -1]]
         ]
 
-    def init(self, image_size, batch_size, h1, h2, learning_rate, epochs, dataset_path, max_image=None):
+    def init(self, image_size, batch_size, h1, h2, learning_rate, epochs, dataset_path, max_image=None, filters=None):
         self.image_size = image_size
         self.batch_size = batch_size
         self.h1 = h1
@@ -58,7 +58,9 @@ class CNN:
         self.epochs = epochs
         self.dataset_path = dataset_path
         self.max_image = max_image
-        self.input_size = ((image_size-2)//2)**2*3
+        if filters != None:
+            self.filters = filters
+        self.input_size = ((image_size-2)//2)**2*len(self.filters)
         self.classes = listdir(self.dataset_path)
         self.weights_1 = random.randn(h1, self.input_size) * (2 / self.input_size) ** 0.5
         self.weights_2 = random.randn(h2, h1) * (2 / h1) ** 0.5
