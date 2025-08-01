@@ -14,7 +14,7 @@ We currently support the following version(s) of CNN-FS with security updates:
 
 If you discover a security vulnerability in CNN-FS, please report it **privately and responsibly**.
 
-📧 **Email:** [galaxysea777@gmail.com](mailto:galaxysea777@gmail.com)
+📧 **Email:** [a.x.e.l777444000@gmail.com](mailto:a.x.e.l777444000@gmail.com)
 
 ### 🔄 What to Expect:
 - You will receive a confirmation within **48 hours** of your report.
