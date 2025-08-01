@@ -160,7 +160,10 @@ class CNN:
                 "wo": self.weights_out,
                 "b1": self.biases_1,
                 "b2": self.biases_2,
-                "bo": self.biases_out
+                "bo": self.biases_out,
+                "filters": self.filters,
+                "image_size": self.image_size,
+                "classes": self.classes
             }, model_file)
         print("Model saved to model.bin")
     
@@ -173,6 +176,9 @@ class CNN:
             self.biases_1 = model_data["b1"]
             self.biases_2 = model_data["b2"]
             self.biases_out = model_data["bo"]
+            self.filters = model_data["filters"]
+            self.image_size = model_data["image_size"]
+            self.classes = model_data["classes"]
 
     def predict(self, img_path):
         test_img = preprocess_image(img_path, self.image_size, self.filters)
