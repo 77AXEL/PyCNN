@@ -73,7 +73,7 @@ class CNN:
     
     def load_dataset(self):
         for idx, cls in enumerate(self.classes):
-            folder = f"data/{cls}"
+            folder = f"{self.dataset_path}/{cls}"
             x = 0
             for img_file in listdir(folder):
                 x += 1
