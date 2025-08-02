@@ -175,5 +175,5 @@ PRs are welcome! You can help:
 * Parallelize dataset loading
 
 ---
-<img src="https://img.shields.io/badge/Author-A.X.E.L-red?style=flat-square;"></img>
-<img src="https://img.shields.io/badge/Open Source-Yes-red?style=flat-square;"></img>
+<img src="https://img.shields.io/badge/Author-A.X.E.L-red?style=flat-square;">
+<img src="https://img.shields.io/badge/Open Source-Yes-red?style=flat-square;">
