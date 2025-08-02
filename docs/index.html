@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>🧠 CNN from Scratch | CNN-FS</title>
+    <meta name="generator" content="Jekyll v3.10.0" />
+    <meta property="og:title" content="🧠 CNN from Scratch" />
+    <meta property="og:locale" content="en_US" />
+    <meta name="description" content="A convolutional neural network framework implemented in python" />
+    <meta property="og:description" content="A convolutional neural network framework implemented in python" />
+    <link rel="canonical" href="https://77axel.github.io/CNN-FS/" />
+    <link rel="stylesheet" href="styles.css" />
+    <meta property="og:url" content="https://77axel.github.io/CNN-FS/" />
+    <meta property="og:site_name" content="CNN-FS" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary" />
+    <meta property="twitter:title" content="🧠 CNN from Scratch" />
+  </head>
+  <body>
+    <div class="container-lg px-3 my-5 markdown-body">
+      <h1><a href="https://77axel.github.io/CNN-FS/">CNN-FS</a></h1>
+      <h1 id="-cnn-from-scratch">🧠 CNN from Scratch</h1>
+      <p>
+        This project is a simple <strong>Convolutional Neural Network (CNN)</strong> implemented
+        <strong>entirely from scratch</strong> using only low-level libraries like NumPy, PIL, and SciPy—
+        <strong>no deep learning frameworks</strong> (e.g., TensorFlow or PyTorch) are used. It includes image
+        preprocessing, convolution and pooling operations, ReLU and softmax activations, forward/backward propagation,
+        and a fully connected classifier.
+      </p>
+
+      <p align="center">
+        <img src="https://github.com/77AXEL/CNN-FS/raw/main/visualized.png" alt="CNN Architecture" width="600" />
+      </p>
+
+      <header>
+        <h1>📦 Releases</h1>
+      </header>
+
+      <main>
+        <section>
+          <table border="1">
+            <tr>
+              <th>Version</th>
+              <th>Stable</th>
+              <th>Test a trained model</th>
+            </tr>
+            <tr>
+              <td><div class="tdd">0.1.0</div></td>
+              <td><div class="tdd">✅</div></td>
+              <td>
+                <div class="tdd">
+                  <a href="https://cnnfsmodel.pythonanywhere.com/cnnfs/v0.1.0/predict">Test</a>
+                </div>
+              </td>
+            </tr>
+          </table>
+        </section>
+      </main>
+
+      <hr />
+
+      <h2 id="-features">🚀 Features</h2>
+      <ul>
+        <li>Manual image preprocessing (RGB separation, resizing, normalization)</li>
+        <li>Handcrafted convolution and max-pooling operations</li>
+        <li>Fully connected layers (L1, L2, and output)</li>
+        <li>Softmax + Cross-Entropy Loss</li>
+        <li>Mini-batch gradient descent with backpropagation</li>
+        <li>Model saving/loading using <code>pickle</code></li>
+        <li>Class prediction on new images</li>
+      </ul>
+
+      <hr />
+
+      <h2 id="-dataset-structure">🖼 Dataset Structure</h2>
+      <p>Make sure your dataset folder is structured like this:</p>
+
+      <pre><code>data/
+├── class1/
+│   ├── image1.png
+│   ├── image2.png
+├── class2/
+│   ├── image1.png
+│   ├── image2.png
+├── class../
+│   ├── ..
+..</code></pre>
+
+      <p>Each subfolder represents a class (e.g., <code>cat</code>, <code>dog</code>), and contains sample images.</p>
+
+      <blockquote>
+        <h2>
+          To help you get started, we’ve included a
+          <a href="https://github.com/77AXEL/CNN-FS/tree/main/data">starter <code>data</code> folder</a>
+          with example class directories.
+        </h2>
+      </blockquote>
+
+      <h2 id="-how-it-works">🧪 How It Works</h2>
+      <ol>
+        <li>
+          <p><strong>Image Preprocessing</strong>:</p>
+          <ul>
+            <li>Each image is resized to a fixed size and normalized.</li>
+            <li>Filters (e.g., sharpening, edge detection) are applied using 2D convolution.</li>
+            <li>ReLU activation and 2×2 max-pooling reduce spatial dimensions.</li>
+          </ul>
+        </li>
+        <li>
+          <p><strong>Feature Vector</strong>:</p>
+          <ul>
+            <li>Flattened pooled feature maps are fed into fully connected layers.</li>
+          </ul>
+        </li>
+        <li>
+          <p><strong>Feedforward + Softmax</strong>:</p>
+          <ul>
+            <li>Dense layers compute activations followed by a softmax for classification.</li>
+          </ul>
+        </li>
+        <li>
+          <p><strong>Backpropagation</strong>:</p>
+          <ul>
+            <li>Gradients are computed layer-by-layer.</li>
+            <li>Weights and biases are updated using basic gradient descent.</li>
+          </ul>
+        </li>
+      </ol>
+
+      <hr />
+
+      <h2 id="-setup">🛠 Setup</h2>
+      <pre><code>pip install git+https://github.com/77AXEL/CNN-FS.git</code></pre>
+
+      <hr />
+
+      <h2 id="-training">✅ Training</h2>
+      <pre><code>from cnnfs.model import CNN
+
+model = CNN()
+model.init(
+    image_size=64,
+    batch_size=32,
+    h1=128,
+    h2=64,
+    learning_rate=0.001,
+    epochs=400,
+    dataset_path="data",
+    max_image=200,
+    filters=[
+        [[0, -1, 0], [-1, 5, -1], [0, -1, 0]],
+        [[1, 0, -1], [1, 0, -1], [1, 0, -1]],
+        [[-1, -1, -1], [-1, 8, -1], [-1, -1, -1]]
+    ]
+)
+model.load_dataset()
+model.train_model()
+model.save_model()</code></pre>
+
+      <hr />
+
+      <h2 id="-predicting-new-images">🔍 Predicting New Images</h2>
+      <pre><code>model.load_model("model.bin")
+prediction = model.predict("test_images/mycat.png")
+print("Predicted class:", prediction)</code></pre>
+
+      <hr />
+
+      <h2 id="-example-filters-used">💡 Example Filters Used</h2>
+      <pre><code>[ [0, -1,  0],   Sharpen
+  [-1, 5, -1],
+  [0, -1,  0] ]
+
+[ [1,  0, -1],   Edge detection
+  [1,  0, -1],
+  [1,  0, -1] ]
+
+[[-1, -1, -1],   Laplacian
+ [-1,  8, -1],
+ [-1, -1, -1] ]</code></pre>
+
+      <hr />
+
+      <h2 id="-performance">📊 Performance</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Metric</th>
+            <th>Value (example)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Accuracy</td>
+            <td>~90% (binary class)</td>
+          </tr>
+          <tr>
+            <td>Epochs</td>
+            <td>10–50</td>
+          </tr>
+          <tr>
+            <td>Dataset</td>
+            <td>Custom / ~8000 imgs</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2>Note that a larger dataset and more training epochs typically lead to higher accuracy.</h2>
+
+      <h2 id="-concepts-demonstrated">🧠 Concepts Demonstrated</h2>
+      <ul>
+        <li>CNNs without frameworks</li>
+        <li>Data vectorization</li>
+        <li>Forward and backward propagation</li>
+        <li>Optimization from scratch</li>
+        <li>One-hot encoding for multi-class classification</li>
+      </ul>
+
+      <hr />
+
+      <h2 id="-dependencies">📦 Dependencies</h2>
+      <ul>
+        <li><a href="https://numpy.org">NumPy</a></li>
+        <li><a href="https://pypi.org/project/pillow/">Pillow</a></li>
+        <li><a href="https://scipy.org">SciPy</a></li>
+      </ul>
+
+      <hr />
+
+      <h2 id="-license">📜 License</h2>
+      <p>MIT License — feel free to use, modify, and share.</p>
+
+      <hr />
+
+      <h2 id="-contributing">🤝 Contributing</h2>
+      <p>PRs are welcome! You can help:</p>
+      <ul>
+        <li>Add evaluation functions</li>
+        <li>Improve filter design</li>
+        <li>Extend to grayscale or multi-channel separately</li>
+        <li>Parallelize dataset loading</li>
+      </ul>
+
+      <hr />
+      <p>
+        <img src="https://img.shields.io/badge/Author-A.X.E.L-red?style=flat-square;" />
+        <img src="https://img.shields.io/badge/Open Source-Yes-red?style=flat-square;" />
+      </p>
+
+      <div class="footer border-top border-gray-light mt-5 pt-3 text-right text-gray">
+        This site is open source.
+        <a href="https://github.com/77AXEL/CNN-FS/edit/main/README.md">Improve this page</a>.
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.0/anchor.min.js"
+            integrity="sha256-lZaRhKri35AyJSypXXs4o6OPFTbTmUoltBbDCbdzegg=" crossorigin="anonymous"></script>
+    <script>anchors.add();</script>
+  </body>
+</html>
