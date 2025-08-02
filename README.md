@@ -6,6 +6,12 @@ This project is a simple **Convolutional Neural Network (CNN)** implemented **en
   <img src="https://github.com/77AXEL/CNN-FS/blob/main/visualized.png" alt="CNN Architecture" width="600"/>
 </p>
 
+## 📦 Releases
+
+| Version | Stable | Test a trained model |
+| ------- | ------ | -------------------- |
+|  0.1.0  |   ✅  | <a href="https://cnnfsmodel.pythonanywhere.com/cnnfs/v0.1.0/predict">Test</a>         |
+
 ---
 
 ## 🚀 Features
