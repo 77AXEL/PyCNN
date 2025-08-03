@@ -181,5 +181,6 @@ PRs are welcome! You can help:
 * Parallelize dataset loading
 
 ---
-<img src="https://img.shields.io/badge/Author-A.X.E.L-red?style=flat-square;">
-<img src="https://img.shields.io/badge/Open Source-Yes-red?style=flat-square;">
+. Github page: [https://77axel.github.io/CNN-FS](https://77axel.github.io/CNN-FS)
+
+<img src="https://img.shields.io/badge/Author-A.X.E.L-red?style=flat-square;">  <img src="https://img.shields.io/badge/Open Source-Yes-red?style=flat-square;">
