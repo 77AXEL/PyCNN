@@ -24,7 +24,7 @@ This project is a simple **Convolutional Neural Network (CNN)** implemented **en
 * Mini-batch gradient descent with backpropagation
 * Model saving/loading using `pickle`
 * Class prediction on new images
-
+* Realtime training visualization using `matplotlib`
 ---
 
 ## 🖼 Dataset Structure
