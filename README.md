@@ -8,9 +8,10 @@ This project is a simple **Convolutional Neural Network (CNN)** implemented **en
 
 ## 📦 Releases
 
-| Version | Stable | Test a trained model |
-| ------- | ------ | -------------------- |
-|  0.1.0  |   ✅  | <a href="https://cnnfsmodel.pythonanywhere.com/cnnfs/v0.1.0/predict">Test</a>         |
+| Version | Latest | Stable | Test a trained model |
+| ------- | ------ | ------ | -------------------- |
+|  0.1.1  |   ✅  | ✅ | <a href="https://cnnfsmodel.pythonanywhere.com/cnnfs/v0.1.0/predict">Test</a>         |
+|  0.1.0  |   ❌  | ✅ | <a href="https://cnnfsmodel.pythonanywhere.com/cnnfs/v0.1.0/predict">Test</a>         |
 
 ---
 
@@ -102,7 +103,7 @@ model.init(
     ] # If not specified, the model will use its own default filters
 )
 model.load_dataset() # Processes all images for each class to prepare them for later use in training
-model.train_model() # Starts model training based on the classes in your dataset
+model.train_model(visualize=True) # Starts model training based on the classes in your dataset with optional visualization support
 model.save_model() # Stores the trained model's weights and biases in a model.bin file
 ```
 
