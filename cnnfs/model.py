@@ -3,6 +3,8 @@ from numpy import zeros, maximum, dot, random, array, exp, log
 from scipy.signal import convolve2d
 from os import listdir
 from pickle import load, dump
+import matplotlib.pyplot as plt
+import time
 
 def softmax_batch(x):
     x = x - x.max(axis=1, keepdims=True)
@@ -90,16 +92,37 @@ class CNN:
                 except:
                     pass
         
-    def train_model(self):
+    def train_model(self, visualize=False):
         print()
         self.data = array(self.data)
         self.labels = array(self.labels)
         num_samples = len(self.data)
 
+        if visualize:
+            plt.ion()
+            fig, ax = plt.subplots()
+            fig.patch.set_facecolor("#111")
+            ax.set_facecolor("#111")
+            loss_line, = ax.plot([], [], label="loss", linewidth=2)
+            acc_line, = ax.plot([], [], label="accuracy", linewidth=2)
+            ax.set_xlabel("Epoch", color="#f0f0f0")
+            ax.set_ylabel("Value", color="#f0f0f0")
+            ax.set_xlim(1, max(1, self.epochs))
+            ax.set_ylim(0, 1)
+            ax.set_title("Training: loss & accuracy per epoch", color="#f0f0f0")
+            ax.tick_params(colors="#f0f0f0")
+            for spine in ax.spines.values():
+                spine.set_color("#f0f0f0")
+            ax.grid(True, color="#444", linestyle="--", linewidth=0.5)
+            ax.legend(facecolor="#111", edgecolor="#f0f0f0", labelcolor="#f0f0f0")
+            epoch_nums = []
+            losses = []
+            accs = []
+
         for epoch in range(self.epochs):
             perm = random.permutation(num_samples)
             correct = 0
-            total_loss = 0
+            total_loss = 0.0
             for start in range(0, num_samples, self.batch_size):
                 end = min(start + self.batch_size, num_samples)
                 batch_idx = perm[start:end]
@@ -148,9 +171,30 @@ class CNN:
                 self.weights_1 -= self.learning_rate * dL_dw1
                 self.biases_1 -= self.learning_rate * dL_db1
 
-            print(f"\rTraining model: epoch={epoch + 1}/{self.epochs}  correct={correct} loss={total_loss}   ", end="")
+            epoch_loss = total_loss / max(1, num_samples)
+            epoch_acc = correct / max(1, num_samples)
+
+            print(f"\rTraining model: epoch={epoch + 1}/{self.epochs}  correct={int(correct)}/{num_samples}  acc={epoch_acc:.4f}  loss={epoch_loss:.6f}   ", end="")
+
+            if visualize:
+                epoch_nums.append(epoch + 1)
+                losses.append(epoch_loss)
+                accs.append(epoch_acc)
+
+                loss_line.set_data(epoch_nums, losses)
+                acc_line.set_data(epoch_nums, accs)
+
+                ax.relim()
+                ax.autoscale_view()
+
+                ax.set_xlim(1, max(self.epochs, len(epoch_nums)))
+                fig.canvas.draw()
+                fig.canvas.flush_events()
 
         print()
+        if visualize:
+            plt.ioff()
+            plt.show()
 
     def save_model(self):
         with open("model.bin", "wb") as model_file:
