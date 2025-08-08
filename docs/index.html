@@ -44,11 +44,31 @@
           <table border="1">
             <tr>
               <th>Version</th>
+              <th>Latest</th>
               <th>Stable</th>
               <th>Test a trained model</th>
             </tr>
             <tr>
-              <td><div class="tdd">0.1.0</div></td>
+              <td>
+                <div class="tdd">
+                  <a href="https://github.com/77AXEL/CNN-FS/releases/tag/v0.1.1">0.1.1</a>
+                </div>
+              </td>
+              <td><div class="tdd">✅</div></td>
+              <td><div class="tdd">✅</div></td>
+              <td>
+                <div class="tdd">
+                  <a href="https://cnnfsmodel.pythonanywhere.com/cnnfs/v0.1.0/predict">Test</a>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div class="tdd">
+                  <a href="https://github.com/77AXEL/CNN-FS/releases/tag/v0.1.0">0.1.0</a>
+                </div>
+              </td>
+              <td><div class="tdd">❌</div></td>
               <td><div class="tdd">✅</div></td>
               <td>
                 <div class="tdd">
@@ -71,6 +91,7 @@
         <li>Mini-batch gradient descent with backpropagation</li>
         <li>Model saving/loading using <code>pickle</code></li>
         <li>Class prediction on new images</li>
+        <li>Realtime training visualization using <code>matplotlib</code></li>
       </ul>
 
       <hr />
@@ -157,7 +178,7 @@ model.init(
     ]
 )
 model.load_dataset()
-model.train_model()
+model.train_model(visualize=True) # Optional training visualization support
 model.save_model()</code></pre>
 
       <hr />
@@ -261,5 +282,3 @@ print("Predicted class:", prediction)</code></pre>
     <script>anchors.add();</script>
   </body>
 </html>
-
-
