@@ -4,7 +4,6 @@ from scipy.signal import convolve2d
 from os import listdir
 from pickle import load, dump
 import matplotlib.pyplot as plt
-import time
 
 def softmax_batch(x):
     x = x - x.max(axis=1, keepdims=True)
@@ -230,4 +229,5 @@ class CNN:
         l2 = maximum(dot(self.weights_2, l1) + self.biases_2, 0)
         out = softmax_batch((dot(self.weights_out, l2) + self.biases_out).reshape(1, -1))[0]
         predicted_label = self.classes[out.argmax()]
+
         return predicted_label
