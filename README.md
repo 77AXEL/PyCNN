@@ -25,7 +25,7 @@ This project is a simple **Convolutional Neural Network (CNN)** implemented **en
 * Model saving/loading using `pickle`
 * Class prediction on new images
 * Realtime training visualization using `matplotlib`
-* 
+
 ---
 
 ## 🖼 Dataset Structure
