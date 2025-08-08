@@ -10,8 +10,8 @@ This project is a simple **Convolutional Neural Network (CNN)** implemented **en
 
 | Version | Latest | Stable | Test a trained model |
 | ------- | ------ | ------ | -------------------- |
-|  0.1.1  |   ✅  | ✅ | <a href="https://cnnfsmodel.pythonanywhere.com/cnnfs/v0.1.0/predict">Test</a>         |
-|  0.1.0  |   ❌  | ✅ | <a href="https://cnnfsmodel.pythonanywhere.com/cnnfs/v0.1.0/predict">Test</a>         |
+|  [0.1.1](https://github.com/77AXEL/CNN-FS/releases/tag/v0.1.1)  |   ✅  | ✅ | <a href="https://cnnfsmodel.pythonanywhere.com/cnnfs/v0.1.0/predict">Test</a>         |
+|  [0.1.0](https://github.com/77AXEL/CNN-FS/releases/tag/v0.1.0)  |   ❌  | ✅ | <a href="https://cnnfsmodel.pythonanywhere.com/cnnfs/v0.1.0/predict">Test</a>         |
 
 ---
 
