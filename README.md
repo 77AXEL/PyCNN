@@ -175,12 +175,7 @@ MIT License — feel free to use, modify, and share.
 
 ## 🤝 Contributing
 
-PRs are welcome! You can help:
-
-* Add evaluation functions
-* Improve filter design
-* Extend to grayscale or multi-channel separately
-* Parallelize dataset loading
+PRs are welcome! You can help
 
 ---
 . Github page: [https://77axel.github.io/CNN-FS](https://77axel.github.io/CNN-FS)
