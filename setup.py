@@ -3,16 +3,18 @@ from setuptools import setup, find_packages
 setup(
     name="cnnfs",
     version="0.1.1",
-    description="A from-scratch CNN built with NumPy, SciPy, and Pillow",
+    description="A Python from-scratch CNN framework",
     author="77AXEL",
     packages=find_packages(),
     install_requires=[
         "numpy",
         "pillow",
         "scipy",
-        "matplotlib"
+        "matplotlib",
+        "cupy"
     ],
     python_requires=">=3.6",
     include_package_data=True,
 )
+
 
