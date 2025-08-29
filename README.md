@@ -1,6 +1,6 @@
 # 🧠 CNN from Scratch 
 
-This project is a simple **Convolutional Neural Network (CNN)** implemented **entirely from scratch** using only low-level libraries like NumPy, PIL, and SciPy—**no deep learning frameworks** (e.g., TensorFlow or PyTorch) are used. It includes image preprocessing, convolution and pooling operations, ReLU and softmax activations, forward/backward propagation, and a fully connected classifier.
+This project is a simple **Convolutional Neural Network (CNN)** implemented **entirely from scratch** using only low-level libraries like NumPy, PIL, and SciPy—**no deep learning frameworks** (e.g., TensorFlow or PyTorch) are used. It includes image preprocessing, convolution and pooling operations, ReLU and softmax activations, forward/backward propagation, cuda support allowing accelerated training and inference and a fully connected classifier.
 
 <p align="center">
   <img src="https://github.com/77AXEL/CNN-FS/blob/main/visualized.png" alt="CNN Architecture" width="600"/>
@@ -10,21 +10,24 @@ This project is a simple **Convolutional Neural Network (CNN)** implemented **en
 
 | Version | Latest | Stable | Test a trained model |
 | ------- | ------ | ------ | -------------------- |
-|  [0.1.1](https://github.com/77AXEL/CNN-FS/releases/tag/v0.1.1)  |   ✅  | ✅ | <a href="https://cnnfsmodel.pythonanywhere.com/cnnfs/v0.1.0/predict">Test</a>         |
-|  [0.1.0](https://github.com/77AXEL/CNN-FS/releases/tag/v0.1.0)  |   ❌  | ✅ | <a href="https://cnnfsmodel.pythonanywhere.com/cnnfs/v0.1.0/predict">Test</a>         |
+|  [0.1.2](https://github.com/77AXEL/CNN-FS/releases/tag/v0.1.2)  |   ✅  | ✅ | <a href="https://cnnfsmodel.pythonanywhere.com/cnnfs/v0.1.0/predict">Test</a>         |
+|  [0.1.1](https://github.com/77AXEL/CNN-FS/releases/tag/v0.1.1)  |   ❌  | ✅ |    ❌     |
+|  [0.1.0](https://github.com/77AXEL/CNN-FS/releases/tag/v0.1.0)  |   ❌  | ✅ |    ❌     |
 
 ---
 
 ## 🚀 Features
 
-* Manual image preprocessing (RGB separation, resizing, normalization)
-* Handcrafted convolution and max-pooling operations
-* Fully connected layers (L1, L2, and output)
-* Softmax + Cross-Entropy Loss
-* Mini-batch gradient descent with backpropagation
-* Model saving/loading using `pickle`
-* Class prediction on new images
-* Realtime training visualization using `matplotlib`
+* ✅ Fully functional CNN implementation from scratch
+* 🧠 Manual convolution, max pooling, and ReLU activations
+* 🔁 Forward and backward propagation with mini-batch gradient descent
+* 🏷 Multi-class classification via softmax and cross-entropy loss
+* 💾 Model save/load using `pickle`
+* 🖼 RGB image preprocessing with customizable filters
+* 🔍 Predict function to classify new unseen images
+* 📊 Real-time training visualization (accuracy & loss per epoch)
+* ⚡ **New:** Optional CUDA acceleration for faster training and inference
+* 🔄 Automatic backend conversion when loading models trained on a different backend
 
 ---
 
@@ -88,6 +91,7 @@ Update and run the training block:
 from cnnfs.model import CNN
 
 model = CNN()
+model.cuda(True) # or False if you don't want to use cuda
 model.init(
     image_size=64,
     batch_size=32,
@@ -146,16 +150,17 @@ print("Predicted class:", prediction)
 | Epochs   | 10–50                |
 | Dataset  | Custom / \~8000 imgs |
 
-* Note that a larger dataset and more training epochs typically lead to higher accuracy.
+* A larger dataset and more training epochs typically lead to higher accuracy.
 ---
 
 ## 🧠 Concepts Demonstrated
 
-* CNNs without frameworks
+* CNN framework build from scratch
 * Data vectorization
 * Forward and backward propagation
 * Optimization from scratch
 * One-hot encoding for multi-class classification
+* Cuda support added for handling larger dataset more efficiently
 
 ---
 
@@ -164,6 +169,8 @@ print("Predicted class:", prediction)
 * [NumPy](https://numpy.org)
 * [Pillow](https://pypi.org/project/pillow/)
 * [SciPy](https://scipy.org)
+* [Matplotlib](https://matplotlib.org)
+* [CuPy](https://cupy.dev)
 
 ---
 
