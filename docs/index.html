@@ -4,35 +4,34 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>🧠 CNN from Scratch | CNN-FS</title>
+    <title>🧠PyCNN</title>
     <meta name="generator" content="Jekyll v3.10.0" />
-    <meta property="og:title" content="🧠 CNN from Scratch" />
+    <meta property="og:title" content="🧠PyCNN" />
     <meta property="og:locale" content="en_US" />
     <meta name="description" content="A convolutional neural network framework implemented in python" />
     <meta property="og:description" content="A convolutional neural network framework implemented in python" />
-    <link rel="canonical" href="https://77axel.github.io/CNN-FS/" />
+    <link rel="canonical" href="https://77axel.github.io/PyCNN/" />
     <link rel="stylesheet" href="styles.css" />
-    <meta property="og:url" content="https://77axel.github.io/CNN-FS/" />
-    <meta property="og:site_name" content="CNN-FS" />
+    <meta property="og:url" content="https://77axel.github.io/PyCNN/" />
+    <meta property="og:site_name" content="PyCNN" />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary" />
-    <meta property="twitter:title" content="🧠 CNN from Scratch" />
+    <meta property="twitter:title" content="🧠PyCNN" />
     <meta name="google-site-verification" content="gRY7d4ZgKR6xJQPwkE826Dvaqu0_uMeBhly0pGtdPxg" />
   </head>
   <body>
     <div class="container-lg px-3 my-5 markdown-body">
-      <h1><a href="https://77axel.github.io/CNN-FS/">CNN-FS</a></h1>
-      <h1 id="-cnn-from-scratch">🧠 CNN from Scratch</h1>
+      <h1><a href="https://77axel.github.io/PyCNN/">PyCNN</a></h1>
+      <h1 id="-cnn-from-scratch">🧠PyCNN</h1>
       <p>
-        This project is a simple <strong>Convolutional Neural Network (CNN)</strong> implemented
+        This project is a simple <strong>Convolutional Neural Network (CNN) framework</strong> implemented
         <strong>entirely from scratch</strong> using only low-level libraries like NumPy, PIL, and SciPy—
         <strong>no deep learning frameworks</strong> (e.g., TensorFlow or PyTorch) are used. It includes image
-        preprocessing, convolution and pooling operations, ReLU and softmax activations, forward/backward propagation,
-        and a fully connected classifier.
+        preprocessing, convolution and pooling operations, ReLU and softmax activations, forward/backward propagation, cuda support allowing accelerated training and inference and a fully connected classifier.
       </p>
 
       <p align="center">
-        <img src="https://github.com/77AXEL/CNN-FS/raw/main/visualized.png" alt="CNN Architecture" width="600" />
+        <img src="https://github.com/77AXEL/PyCNN/raw/main/visualized.png" alt="CNN Architecture" width="600" />
       </p>
 
       <header>
@@ -51,28 +50,42 @@
             <tr>
               <td>
                 <div class="tdd">
-                  <a href="https://github.com/77AXEL/CNN-FS/releases/tag/v0.1.1">0.1.1</a>
+                  <a href="https://github.com/77AXEL/PyCNN/releases/tag/v0.1.1">0.1.2</a>
                 </div>
               </td>
               <td><div class="tdd">✅</div></td>
               <td><div class="tdd">✅</div></td>
               <td>
                 <div class="tdd">
-                  <a href="https://cnnfsmodel.pythonanywhere.com/cnnfs/v0.1.0/predict">Test</a>
+                  <a href="https://cnnfsmodel.pythonanywhere.com/pycnn-pretrained-model">Test</a>
                 </div>
               </td>
             </tr>
             <tr>
               <td>
                 <div class="tdd">
-                  <a href="https://github.com/77AXEL/CNN-FS/releases/tag/v0.1.0">0.1.0</a>
+                  <a href="https://github.com/77AXEL/PyCNN/releases/tag/v0.1.1">0.1.1</a>
                 </div>
               </td>
               <td><div class="tdd">❌</div></td>
               <td><div class="tdd">✅</div></td>
               <td>
                 <div class="tdd">
-                  <a href="https://cnnfsmodel.pythonanywhere.com/cnnfs/v0.1.0/predict">Test</a>
+                  ❌
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <div class="tdd">
+                  <a href="https://github.com/77AXEL/PyCNN/releases/tag/v0.1.0">0.1.0</a>
+                </div>
+              </td>
+              <td><div class="tdd">❌</div></td>
+              <td><div class="tdd">✅</div></td>
+              <td>
+                <div class="tdd">
+                  ❌
                 </div>
               </td>
             </tr>
@@ -92,6 +105,8 @@
         <li>Model saving/loading using <code>pickle</code></li>
         <li>Class prediction on new images</li>
         <li>Realtime training visualization using <code>matplotlib</code></li>
+        <li>Optional CUDA acceleration for faster training and inference</li>
+        <li>Automatic backend conversion when loading models trained on a different backend</li>
       </ul>
 
       <hr />
@@ -115,7 +130,7 @@
       <blockquote>
         <h2>
           To help you get started, we’ve included a
-          <a href="https://github.com/77AXEL/CNN-FS/tree/main/data">starter <code>data</code> folder</a>
+          <a href="https://github.com/77AXEL/PyCNN/tree/main/data">starter <code>data</code> folder</a>
           with example class directories.
         </h2>
       </blockquote>
@@ -154,7 +169,7 @@
       <hr />
 
       <h2 id="-setup">🛠 Setup</h2>
-      <pre><code>pip install git+https://github.com/77AXEL/CNN-FS.git</code></pre>
+      <pre><code>pip install git+https://github.com/77AXEL/PyCNN.git</code></pre>
 
       <hr />
 
@@ -273,7 +288,7 @@ print("Predicted class:", prediction)</code></pre>
 
       <div class="footer border-top border-gray-light mt-5 pt-3 text-right text-gray">
         This site is open source.
-        <a href="https://github.com/77AXEL/CNN-FS/edit/main/README.md">Improve this page</a>.
+        <a href="https://github.com/77AXEL/PyCNN/edit/main/README.md">Improve this page</a>.
       </div>
     </div>
 
