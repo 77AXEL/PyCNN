@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="cnnfs",
+    name="pycnn",
     version="0.1.2",
     description="A Python from-scratch CNN framework",
     author="77AXEL",
@@ -15,6 +15,7 @@ setup(
     python_requires=">=3.6",
     include_package_data=True,
 )
+
 
 
 
