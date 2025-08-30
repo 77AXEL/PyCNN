@@ -176,15 +176,24 @@ print("Predicted class:", prediction)
 
 ## 📜 License
 
-MIT License — feel free to use, modify, and share.
+Released under the <a href="https://github.com/77AXEL/PyCNN/blob/b7becb4bef3b0156dad9397b1d95d6465e98fc3c/LICENSE">MIT License</a> — feel free to use, modify, and share.
 
 ---
 
 ## 🤝 Contributing
 
-PRs are welcome! You can help
+We welcome issues, suggestions, and contributions!
+Check the [Discussions tab](https://github.com/77AXEL/PyCNN/discussions) or see [CONTRIBUTING.md](https://chatgpt.com/c/CONTRIBUTING.md)
 
 ---
+
+### 🛡 Security
+
+Found a security issue? Please report privately to:
+📧 [a.x.e.l777444000@gmail.com](mailto:a.x.e.l777444000@gmail.com)
+
+---
+
 . Github page: [https://77axel.github.io/PyCNN](https://77axel.github.io/PyCNN)
 
 <img src="https://img.shields.io/badge/Author-A.X.E.L-red?style=flat-square;">  <img src="https://img.shields.io/badge/Open Source-Yes-red?style=flat-square;">
