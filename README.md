@@ -1,18 +1,18 @@
-# 🧠 CNN from Scratch 
+# 🧠 PyCNN
 
-This project is a simple **Convolutional Neural Network (CNN)** implemented **entirely from scratch** using only low-level libraries like NumPy, PIL, and SciPy—**no deep learning frameworks** (e.g., TensorFlow or PyTorch) are used. It includes image preprocessing, convolution and pooling operations, ReLU and softmax activations, forward/backward propagation, cuda support allowing accelerated training and inference and a fully connected classifier.
+This framework project is a simple **Convolutional Neural Network (CNN)** implemented **entirely from scratch** using only low-level libraries like NumPy, PIL, and SciPy—**no deep learning frameworks** (e.g., TensorFlow or PyTorch) are used. It includes image preprocessing, convolution and pooling operations, ReLU and softmax activations, forward/backward propagation, cuda support allowing accelerated training and inference and a fully connected classifier.
 
 <p align="center">
-  <img src="https://github.com/77AXEL/CNN-FS/blob/main/visualized.png" alt="CNN Architecture" width="600"/>
+  <img src="https://github.com/77AXEL/PyCNN/blob/main/visualized.png" alt="CNN Architecture" width="600"/>
 </p>
 
 ## 📦 Releases
 
 | Version | Latest | Stable | Test a trained model |
 | ------- | ------ | ------ | -------------------- |
-|  [0.1.2](https://github.com/77AXEL/CNN-FS/releases/tag/v0.1.2)  |   ✅  | ✅ | <a href="https://cnnfsmodel.pythonanywhere.com/cnnfs/v0.1.0/predict">Test</a>         |
-|  [0.1.1](https://github.com/77AXEL/CNN-FS/releases/tag/v0.1.1)  |   ❌  | ✅ |    ❌     |
-|  [0.1.0](https://github.com/77AXEL/CNN-FS/releases/tag/v0.1.0)  |   ❌  | ✅ |    ❌     |
+|  [0.1.2](https://github.com/77AXEL/PyCNN/releases/tag/v0.1.2)  |   ✅  | ✅ | <a href="https://cnnfsmodel.pythonanywhere.com/pycnn-pretrained-model">Test</a>         |
+|  [0.1.1](https://github.com/77AXEL/PyCNN/releases/tag/v0.1.1)  |   ❌  | ✅ |    ❌     |
+|  [0.1.0](https://github.com/77AXEL/PyCNN/releases/tag/v0.1.0)  |   ❌  | ✅ |    ❌     |
 
 ---
 
@@ -49,7 +49,7 @@ data/
 ```
 
 Each subfolder represents a class (e.g., `cat`, `dog`), and contains sample images.
-> To help you get started, we’ve included a [starter `data` folder](https://github.com/77AXEL/CNN-FS/tree/main/data) with example class directories.
+> To help you get started, we’ve included a [starter `data` folder](https://github.com/77AXEL/PyCNN/tree/main/data) with example class directories.
 ---
 
 ## 🧪 How It Works
@@ -78,7 +78,7 @@ Each subfolder represents a class (e.g., `cat`, `dog`), and contains sample imag
 ## 🛠 Setup
 
 ```bash
-pip install git+https://github.com/77AXEL/CNN-FS.git
+pip install git+https://github.com/77AXEL/PyCNN.git
 ```
 
 ---
@@ -88,7 +88,7 @@ pip install git+https://github.com/77AXEL/CNN-FS.git
 Update and run the training block:
 
 ```python
-from cnnfs.model import CNN
+from pycnn.model import CNN
 
 model = CNN()
 model.cuda(True) # or False if you don't want to use cuda
@@ -185,6 +185,6 @@ MIT License — feel free to use, modify, and share.
 PRs are welcome! You can help
 
 ---
-. Github page: [https://77axel.github.io/CNN-FS](https://77axel.github.io/CNN-FS)
+. Github page: [https://77axel.github.io/PyCNN](https://77axel.github.io/PyCNN)
 
 <img src="https://img.shields.io/badge/Author-A.X.E.L-red?style=flat-square;">  <img src="https://img.shields.io/badge/Open Source-Yes-red?style=flat-square;">
