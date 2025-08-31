@@ -2,8 +2,8 @@ from setuptools import setup, find_packages
 
 setup(
     name="pycnn",
-    version="0.1.2",
-    description="A Python from-scratch CNN framework",
+    version="2.0",
+    description="A Python CNN framework",
     author="77AXEL",
     packages=find_packages(),
     install_requires=[
@@ -15,6 +15,7 @@ setup(
     python_requires=">=3.6",
     include_package_data=True,
 )
+
 
 
 
