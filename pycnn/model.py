@@ -2,9 +2,11 @@ from PIL import Image
 from os import listdir
 from pickle import load, dump
 import matplotlib.pyplot as plt
+from pycnn.pooling import max_pooling as cython_max_pooling
 
 class CNN:
     def __init__(self):
+        self.optimizer = "sgd"
         self.filters = [
             [[0, -1, 0], [-1, 5, -1], [0, -1, 0]],
             [[1, 0, -1], [1, 0, -1], [1, 0, -1]],
@@ -34,6 +36,7 @@ class CNN:
                 self.sum = cp.sum
                 self.max = cp.max
                 self.permutation = cp.random.permutation
+                self.sqrt = cp.sqrt
                 print("CUDA backend initialized successfully")
             except ImportError:
                 print("Warning: CuPy not installed. Falling back to CPU.")
@@ -61,6 +64,7 @@ class CNN:
         self.sum = np.sum
         self.max = np.max
         self.permutation = np.random.permutation
+        self.sqrt = np.sqrt
 
     def _to_cpu(self, x):
         """Convert array to CPU (numpy) format"""
@@ -84,23 +88,37 @@ class CNN:
         if use_cuda != self.use_cuda:
             self._setup_backend(use_cuda)
             
-            if hasattr(self, 'weights_1'):
-                self.weights_1 = self._to_backend(self._to_cpu(self.weights_1))
-                self.weights_2 = self._to_backend(self._to_cpu(self.weights_2))
-                self.weights_out = self._to_backend(self._to_cpu(self.weights_out))
-                self.biases_1 = self._to_backend(self._to_cpu(self.biases_1))
-                self.biases_2 = self._to_backend(self._to_cpu(self.biases_2))
-                self.biases_out = self._to_backend(self._to_cpu(self.biases_out))
+            if hasattr(self, 'weights'):
+                for key in self.weights:
+                    self.weights[key] = self._to_backend(self._to_cpu(self.weights[key]))
+                for key in self.biases:
+                    self.biases[key] = self._to_backend(self._to_cpu(self.biases[key]))
                 
             if hasattr(self, 'data') and len(self.data) > 0:
                 self.data = self._to_backend(self._to_cpu(self.data))
                 self.labels = self._to_backend(self._to_cpu(self.labels))
 
-    def init(self, image_size, batch_size, h1, h2, learning_rate, epochs, dataset_path, max_image=None, filters=None):
+    def adam(self, beta1=0.9, beta2=0.999, eps=1e-8):
+        self.optimizer = "adam"
+        self.beta1 = beta1
+        self.beta2 = beta2
+        self.eps = eps
+        self.t = 0
+        self.m = {}
+        self.v = {}
+        
+        for key in self.weights:
+            self.m[key] = self.zeros(self.weights[key].shape, dtype=float)
+            self.v[key] = self.zeros(self.weights[key].shape, dtype=float)
+        for key in self.biases:
+            self.m[key] = self.zeros(self.biases[key].shape, dtype=float)
+            self.v[key] = self.zeros(self.biases[key].shape, dtype=float)
+            
+        print("Adam optimizer enabled.")
+
+    def init(self, image_size, batch_size, layers, learning_rate, epochs, dataset_path, max_image=None, filters=None):
         self.image_size = image_size
         self.batch_size = batch_size
-        self.h1 = h1
-        self.h2 = h2
         self.learning_rate = learning_rate
         self.epochs = epochs
         self.dataset_path = dataset_path
@@ -112,15 +130,26 @@ class CNN:
         self.input_size = ((image_size-2)//2)**2*len(self.filters)
         self.classes = listdir(self.dataset_path)
         self.random.seed(42)
+        self.layers = layers
+        self.weights = {}
+        self.biases = {}
         
-        self.weights_1 = self.random.randn(h1, self.input_size) * (2 / self.input_size) ** 0.5
-        self.weights_2 = self.random.randn(h2, h1) * (2 / h1) ** 0.5
-        self.weights_out = self.random.randn(len(self.classes), h2) * (2 / h2) ** 0.5
-        self.biases_1 = self.random.randn(h1) * 0.01
-        self.biases_2 = self.random.randn(h2) * 0.01
-        self.biases_out = self.random.randn(len(self.classes)) * 0.01
+        previous_layer = self.input_size
+        for i, layer_size in enumerate(layers):
+            weight_key = f"w{i+1}"
+            bias_key = f"b{i+1}"
+            
+            self.weights[weight_key] = self.random.randn(layer_size, previous_layer) * (2 / previous_layer) ** 0.5
+            self.biases[bias_key] = self.random.randn(layer_size) * 0.01
+            previous_layer = layer_size
+
+        self.weights["wo"] = self.random.randn(len(self.classes), previous_layer) * (2 / previous_layer) ** 0.5
+        self.biases["bo"] = self.random.randn(len(self.classes)) * 0.01
+        
         self.data = []
         self.labels = []
+        
+        print(f"Network initialized with {len(layers)} hidden layers: {layers}")
     
     def _softmax_batch(self, x):
         x_max = self.max(x, axis=1, keepdims=True) if hasattr(x, 'ndim') and x.ndim > 1 else self.max(x)
@@ -137,15 +166,18 @@ class CNN:
 
     def _cross_entropy_batch(self, preds, labels):
         return -(labels * self.log(preds + 1e-9)).sum(axis=1)
-
+    
     def _max_pooling(self, feature_map):
-        stride = size = 2
-        h, w = feature_map.shape
-        pooled = self.zeros(((h - size) // stride + 1, (w - size) // stride + 1), dtype=float)
-        for i in range(0, h - size + 1, stride):
-            for j in range(0, w - size + 1, stride):
-                pooled[i // stride][j // stride] = self.max(feature_map[i:i+2, j:j+2])
-        return pooled
+        if self.use_cuda:
+            stride = size = 2
+            h, w = feature_map.shape
+            pooled = self.zeros(((h - size) // stride + 1, (w - size) // stride + 1), dtype=float)
+            for i in range(0, h - size + 1, stride):
+                for j in range(0, w - size + 1, stride):
+                    pooled[i // stride][j // stride] = self.max(feature_map[i:i+2, j:j+2])
+            return pooled
+        else:
+            return cython_max_pooling(feature_map)
 
     def _preprocess_image(self, path, image_size, filters):
         img = Image.open(path).convert("RGB").resize((image_size, image_size), Image.Resampling.LANCZOS).load()
@@ -187,14 +219,18 @@ class CNN:
                     self.labels.append(self.array(one_hot))
                 except:
                     pass
-        
-    def train_model(self, visualize=False):
+
+    def train_model(self, visualize=False, early_stop=0):
         print()
+        self.visualize = visualize
         self.data = self.array(self.data)
         self.labels = self.array(self.labels)
         num_samples = len(self.data)
+        best_loss = float('inf')
+        stop_counter = 0
+        patience = early_stop
 
-        if visualize:
+        if self.visualize:
             plt.ion()
             fig, ax = plt.subplots()
             fig.patch.set_facecolor("#111")
@@ -226,14 +262,23 @@ class CNN:
                 batch_x = self.data[batch_idx]
                 batch_y = self.labels[batch_idx]
 
-                z1 = batch_x @ self.weights_1.T + self.biases_1
-                l1 = self.maximum(z1, 0)
+                activations = [batch_x]
+                z_values = []
+                
+                current_input = batch_x
+                for i in range(len(self.layers)):
+                    weight_key = f"w{i+1}"
+                    bias_key = f"b{i+1}"
+                    
+                    z = current_input @ self.weights[weight_key].T + self.biases[bias_key]
+                    z_values.append(z)
+                    activation = self.maximum(z, 0)
+                    activations.append(activation)
+                    current_input = activation
 
-                z2 = l1 @ self.weights_2.T + self.biases_2
-                l2 = self.maximum(z2, 0)
-
-                z3 = l2 @ self.weights_out.T + self.biases_out
-                out = self._softmax_batch(z3)
+                z_out = current_input @ self.weights["wo"].T + self.biases["bo"]
+                z_values.append(z_out)
+                out = self._softmax_batch(z_out)
 
                 loss = self._cross_entropy_batch(out, batch_y).sum()
                 total_loss += loss
@@ -242,31 +287,55 @@ class CNN:
                 true = self.argmax(batch_y, axis=1)
                 correct += self.sum(pred == true)
 
-                dL_dz3 = out - batch_y
+                gradients_w = {}
+                gradients_b = {}
+                
+                dL_dz_out = out - batch_y
+                gradients_w["wo"] = dL_dz_out.T @ activations[-1]
+                gradients_b["bo"] = self.sum(dL_dz_out, axis=0)
+                
+                dL_da = dL_dz_out @ self.weights["wo"]
+                
+                for i in reversed(range(len(self.layers))):
+                    weight_key = f"w{i+1}"
+                    bias_key = f"b{i+1}"
+                    
+                    dL_dz = dL_da * (z_values[i] > 0)
+                    
+                    gradients_w[weight_key] = dL_dz.T @ activations[i]
+                    gradients_b[bias_key] = self.sum(dL_dz, axis=0)
+                    
+                    if i > 0:
+                        dL_da = dL_dz @ self.weights[weight_key]
 
-                dL_dw_out = dL_dz3.T @ l2
-                dL_db_out = self.sum(dL_dz3, axis=0)
+                if self.optimizer == "sgd":
+                    for key in gradients_w:
+                        self.weights[key] -= self.learning_rate * gradients_w[key]
+                    for key in gradients_b:
+                        self.biases[key] -= self.learning_rate * gradients_b[key]
 
-                dL_dl2 = dL_dz3 @ self.weights_out
-                dL_dz2 = dL_dl2 * (z2 > 0)
-
-                dL_dw2 = dL_dz2.T @ l1
-                dL_db2 = self.sum(dL_dz2, axis=0)
-
-                dL_dl1 = dL_dz2 @ self.weights_2
-                dL_dz1 = dL_dl1 * (z1 > 0)
-
-                dL_dw1 = dL_dz1.T @ batch_x
-                dL_db1 = self.sum(dL_dz1, axis=0)
-
-                self.weights_out -= self.learning_rate * dL_dw_out
-                self.biases_out -= self.learning_rate * dL_db_out
-
-                self.weights_2 -= self.learning_rate * dL_dw2
-                self.biases_2 -= self.learning_rate * dL_db2
-
-                self.weights_1 -= self.learning_rate * dL_dw1
-                self.biases_1 -= self.learning_rate * dL_db1
+                elif self.optimizer == "adam":
+                    self.t += 1
+                    
+                    for key, grad in gradients_w.items():
+                        self.m[key] = self.beta1 * self.m[key] + (1 - self.beta1) * grad
+                        self.v[key] = self.beta2 * self.v[key] + (1 - self.beta2) * (grad * grad)
+                        
+                        m_hat = self.m[key] / (1 - self.beta1 ** self.t)
+                        v_hat = self.v[key] / (1 - self.beta2 ** self.t)
+                        
+                        update = self.learning_rate * m_hat / (self.sqrt(v_hat) + self.eps)
+                        self.weights[key] -= update
+                    
+                    for key, grad in gradients_b.items():
+                        self.m[key] = self.beta1 * self.m[key] + (1 - self.beta1) * grad
+                        self.v[key] = self.beta2 * self.v[key] + (1 - self.beta2) * (grad * grad)
+                        
+                        m_hat = self.m[key] / (1 - self.beta1 ** self.t)
+                        v_hat = self.v[key] / (1 - self.beta2 ** self.t)
+                        
+                        update = self.learning_rate * m_hat / (self.sqrt(v_hat) + self.eps)
+                        self.biases[key] -= update
 
             epoch_loss = total_loss / max(1, num_samples)
             epoch_acc = correct / max(1, num_samples)
@@ -274,9 +343,19 @@ class CNN:
             epoch_loss = self._to_cpu(epoch_loss)
             epoch_acc = self._to_cpu(epoch_acc)
 
+            if early_stop:
+                if epoch_loss < best_loss - 1e-8:
+                    best_loss = epoch_loss
+                    stop_counter = 0
+                else:
+                    stop_counter += 1
+                    if stop_counter >= patience:
+                        print(f"\nEarly stopping at epoch {epoch+1}")
+                        break
+
             print(f"\rTraining model: epoch={epoch + 1}/{self.epochs}  correct={int(self._to_cpu(correct))}/{num_samples}  acc={epoch_acc:.4f}  loss={epoch_loss:.6f}   ", end="")
 
-            if visualize:
+            if self.visualize:
                 epoch_nums.append(epoch + 1)
                 losses.append(float(epoch_loss))
                 accs.append(float(epoch_acc))
@@ -292,22 +371,19 @@ class CNN:
                 fig.canvas.flush_events()
 
         print()
-        if visualize:
+        if self.visualize:
             plt.ioff()
             plt.show()
 
     def save_model(self, path="model.bin"):
         """Save model with automatic CPU conversion for cross-platform compatibility"""
         model_data = {
-            "w1": self._to_cpu(self.weights_1),
-            "w2": self._to_cpu(self.weights_2),
-            "wo": self._to_cpu(self.weights_out),
-            "b1": self._to_cpu(self.biases_1),
-            "b2": self._to_cpu(self.biases_2),
-            "bo": self._to_cpu(self.biases_out),
+            "weights": {key: self._to_cpu(val) for key, val in self.weights.items()},
+            "biases": {key: self._to_cpu(val) for key, val in self.biases.items()},
             "filters": self._to_cpu(self.filters),
             "image_size": int(self._to_cpu(self.image_size)),
             "classes": list(self.classes),
+            "layers": self.layers,
             "trained_with_cuda": self.use_cuda
         }
         
@@ -320,16 +396,18 @@ class CNN:
         """Load model with automatic backend conversion"""
         with open(model_path, "rb") as model_file:
             model_data = load(model_file)
+        
+        self.weights = {}
+        self.biases = {}
+        for key, val in model_data["weights"].items():
+            self.weights[key] = self._to_backend(val)
+        for key, val in model_data["biases"].items():
+            self.biases[key] = self._to_backend(val)
             
-        self.weights_1 = self._to_backend(model_data["w1"])
-        self.weights_2 = self._to_backend(model_data["w2"])  
-        self.weights_out = self._to_backend(model_data["wo"])
-        self.biases_1 = self._to_backend(model_data["b1"])
-        self.biases_2 = self._to_backend(model_data["b2"])
-        self.biases_out = self._to_backend(model_data["bo"])
         self.filters = model_data["filters"]
         self.image_size = model_data["image_size"]
         self.classes = model_data["classes"]
+        self.layers = model_data.get("layers", [])
         
         trained_with_cuda = model_data.get("trained_with_cuda", False)
         current_backend = "CUDA" if self.use_cuda else "CPU"
@@ -338,16 +416,24 @@ class CNN:
         print(f"Model loaded successfully!")
         print(f"Training backend: {training_backend}")
         print(f"Current backend: {current_backend}")
+        print(f"Network architecture: {len(self.layers)} hidden layers: {self.layers}")
         if trained_with_cuda != self.use_cuda:
             print("Backend conversion completed automatically.")
 
     def predict(self, img_path):
         """Make prediction on a single image"""
         test_img = self._preprocess_image(img_path, self.image_size, self.filters)
-        l1 = self.maximum(self.dot(self.weights_1, test_img) + self.biases_1, 0)
-        l2 = self.maximum(self.dot(self.weights_2, l1) + self.biases_2, 0)
         
-        logits = self.dot(self.weights_out, l2) + self.biases_out
+        current_input = test_img
+        for i in range(len(self.layers)):
+            weight_key = f"w{i+1}"
+            bias_key = f"b{i+1}"
+            
+            z = self.dot(self.weights[weight_key], current_input) + self.biases[bias_key]
+            current_input = self.maximum(z, 0)
+        
+        logits = self.dot(self.weights["wo"], current_input) + self.biases["bo"]
+        
         if hasattr(logits, 'ndim') and logits.ndim == 1:
             out = self._softmax_batch(logits.reshape(1, -1))[0]
         else:
