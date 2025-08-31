@@ -1,6 +1,6 @@
-# 🧠 PyCNN
+# 🧠 PYCNN
 
-This framework project is a simple **Convolutional Neural Network (CNN)** implemented **entirely from scratch** using only low-level libraries like NumPy, PIL, and SciPy—**no deep learning frameworks** (e.g., TensorFlow or PyTorch) are used. It includes image preprocessing, convolution and pooling operations, ReLU and softmax activations, forward/backward propagation, cuda support allowing accelerated training and inference and a fully connected classifier.
+This framework project is a simple Convolutional Neural Network (CNN) implemented entirely from scratch using only low-level libraries like NumPy, PIL, and SciPy—no deep learning frameworks (e.g., TensorFlow or PyTorch) are used. It includes image preprocessing, convolution and pooling operations, ReLU and softmax activations, forward/backward propagation, cuda support allowing accelerated training and inference and a fully connected classifier.
 
 <p align="center">
   <img src="https://github.com/77AXEL/PyCNN/blob/main/visualized.png" alt="CNN Architecture" width="600"/>
@@ -10,13 +10,14 @@ This framework project is a simple **Convolutional Neural Network (CNN)** implem
 
 | Version | Latest | Stable | Test a trained model |
 | ------- | ------ | ------ | -------------------- |
-|  [0.1.2](https://github.com/77AXEL/PyCNN/releases/tag/v0.1.2)  |   ✅  | ✅ | <a href="https://cnnfsmodel.pythonanywhere.com/pycnn-pretrained-model">Test</a>         |
+|  [2.0](https://github.com/77AXEL/PyCNN/releases/tag/v2.0)  |   ✅  | ✅ | <a href="https://cnnfsmodel.pythonanywhere.com/pycnn-pretrained-model">Test</a>         |
+|  [0.1.2](https://github.com/77AXEL/PyCNN/releases/tag/v0.1.2)  |   ❌  | ✅ |    ❌     |
 |  [0.1.1](https://github.com/77AXEL/PyCNN/releases/tag/v0.1.1)  |   ❌  | ✅ |    ❌     |
 |  [0.1.0](https://github.com/77AXEL/PyCNN/releases/tag/v0.1.0)  |   ❌  | ✅ |    ❌     |
 
 ---
 
-## 🚀 Features
+### 🚀 Key Features
 
 * ✅ Fully functional CNN implementation from scratch
 * 🧠 Manual convolution, max pooling, and ReLU activations
@@ -26,8 +27,11 @@ This framework project is a simple **Convolutional Neural Network (CNN)** implem
 * 🖼 RGB image preprocessing with customizable filters
 * 🔍 Predict function to classify new unseen images
 * 📊 Real-time training visualization (accuracy & loss per epoch)
-* ⚡ **New:** Optional CUDA acceleration for faster training and inference
-* 🔄 Automatic backend conversion when loading models trained on a different backend
+* ⚡ **Optional CUDA acceleration** for faster training and inference
+* 🆕 **Adam optimizer support** for improved training performance
+* 🛠 **Dynamic user-defined layers** for fully customizable architectures
+* 🚀 **Performance optimizations** for faster computation and memory efficiency
+* 🔄 **Automatic backend conversion** when loading models trained on a different backend
 
 ---
 
@@ -50,6 +54,7 @@ data/
 
 Each subfolder represents a class (e.g., `cat`, `dog`), and contains sample images.
 > To help you get started, we’ve included a [starter `data` folder](https://github.com/77AXEL/PyCNN/tree/main/data) with example class directories.
+
 ---
 
 ## 🧪 How It Works
@@ -59,6 +64,7 @@ Each subfolder represents a class (e.g., `cat`, `dog`), and contains sample imag
    * Each image is resized to a fixed size and normalized.
    * Filters (e.g., sharpening, edge detection) are applied using 2D convolution.
    * ReLU activation and 2×2 max-pooling reduce spatial dimensions.
+   * GPU acceleration via **CUDA** allows these operations to run in parallel on the graphics card, significantly speeding up large datasets.
 
 2. **Feature Vector**:
 
@@ -67,78 +73,102 @@ Each subfolder represents a class (e.g., `cat`, `dog`), and contains sample imag
 3. **Feedforward + Softmax**:
 
    * Dense layers compute activations followed by a softmax for classification.
+   * All dense computations can be performed on the GPU for faster matrix multiplications.
 
 4. **Backpropagation**:
 
    * Gradients are computed layer-by-layer.
-   * Weights and biases are updated using basic gradient descent.
+   * Weights and biases are updated using the **Adam or SGD optimizer**, which adapts learning rates for each parameter for faster and more stable convergence compared to basic gradient descent.
+   * CUDA can also accelerate gradient computations and weight updates.
 
 ---
 
-## 🛠 Setup
+### 🖥️ PyCNN Usage
 
-```bash
-pip install git+https://github.com/77AXEL/PyCNN.git
-```
-
----
-
-## ✅ Training
-
-Update and run the training block:
-
+#### Training model
 ```python
 from pycnn.model import CNN
 
 model = CNN()
-model.cuda(True) # or False if you don't want to use cuda
+model.cuda(True)  # Enable CUDA
 model.init(
     image_size=64,
     batch_size=32,
-    h1=128,
-    h2=64,
-    learning_rate=0.001,
-    epochs=400,
-    dataset_path="data", # Your dataset folder path
-    max_image=200, # If not specified, the model will load all images for each class
-    filters=[
-        [[0, -1, 0], [-1, 5, -1], [0, -1, 0]],
-        [[1, 0, -1], [1, 0, -1], [1, 0, -1]],
-        [[-1, -1, -1], [-1, 8, -1], [-1, -1, -1]]
-    ] # If not specified, the model will use its own default filters
+    layers=[256, 128, 64, 32, 16, 8, 4], # Allows you to define any type of dense layer.
+    learning_rate=0.0001,
+    epochs=1000,
+    dataset_path="data",
+    max_image=1000, # If unspecified, the framework will use all images from each class.
+    filters = [
+        [# Custom filter 1],
+        [# Custom filter 2],
+        [# Custom filter 3],
+        [# Custom filter ...],
+    ] # If unspecified, the framework will use the default filters
 )
-model.load_dataset() # Processes all images for each class to prepare them for later use in training
-model.train_model(visualize=True) # Starts model training based on the classes in your dataset with optional visualization support
-model.save_model() # Stores the trained model's weights and biases in a model.bin file
+
+model.adam() # If specified, the framework will use the adam optimizer
+model.load_dataset()
+model.train_model(visualize=True, early_stop=2) 
+#visualize: Displays a real-time graph of accuracy and loss per epoch when enabled. Set to False or leave unspecified to disable this feature.
+#early_stop: Stops training when overfitting begins and the number of epochs exceeds early_stop. Set to 0 or leave unspecified to disable this feature.
 ```
 
----
-
-## 🔍 Predicting New Images
+#### Saving/Loading model
 
 ```python
-model.load_model("model.bin") # Load the trained model
-prediction = model.predict("test_images/mycat.png") # Applies the trained model to classify the input image
-print("Predicted class:", prediction)
+model.save(path=your_save_path) # if your your_save_path is unspecified the framework will save it in "./model.bin"
+model.save(path=your_model_path)
 ```
 
----
+#### Prediction
 
-## 💡 Example Filters Used
-
-```text
-[ [0, -1,  0],   Sharpen
-  [-1, 5, -1],
-  [0, -1,  0] ]
-
-[ [1,  0, -1],   Edge detection
-  [1,  0, -1],
-  [1,  0, -1] ]
-
-[[-1, -1, -1],   Laplacian
- [-1,  8, -1],
- [-1, -1, -1] ]
+```python
+result = model.predict(your_image_path)
+print(result)
 ```
+> The model will automatically convert weights, biases, and datasets to the selected backend. Models trained on GPU can still be loaded on CPU and vice versa.
+
+#### Usage exemple
+
+```python
+from pycnn.model import CNN
+from os import listdir
+
+model = CNN()
+model.init(
+    image_size=64,
+    batch_size=32,
+    layers=[256, 128, 64, 32, 16, 8, 4],
+    learning_rate=0.0001,
+    epochs=1000,
+    dataset_path="data",
+    max_image=100,
+)
+model.adam()
+model.load_dataset()
+model.train_model(early_stop=2)
+
+x = 0
+for path in listdir("data/cat"):
+    if model.predict(f"data/cat/{path}") == "cat":
+        x += 1
+    if x == 10:
+        break
+
+print(f"cat: {x}/10")
+
+x = 0
+for path in listdir("data/dog"):
+    if model.predict(f"data/dog/{path}") == "dog":
+        x += 1
+    if x == 10:
+        break
+
+print(f"dog: {x}/10")
+```
+> Output:
+<img src="https://github.com/77AXEL/PyCNN/blob/main/v2.0-output.png">
 
 ---
 
@@ -146,41 +176,28 @@ print("Predicted class:", prediction)
 
 | Metric   | Value (example)      |
 | -------- | -------------------- |
-| Accuracy | \~90% (binary class) |
-| Epochs   | 10–50                |
-| Dataset  | Custom / \~8000 imgs |
-
-* A larger dataset and more training epochs typically lead to higher accuracy.
----
-
-## 🧠 Concepts Demonstrated
-
-* CNN framework build from scratch
-* Data vectorization
-* Forward and backward propagation
-* Optimization from scratch
-* One-hot encoding for multi-class classification
-* Cuda support added for handling larger dataset more efficiently
+| Accuracy | ~90% (binary class) |
+| Epochs   |  100–500                |
+| Dataset  | ~300 image for each class |
 
 ---
 
-## 📦 Dependencies
+### 📌 Installation
 
-* [NumPy](https://numpy.org)
-* [Pillow](https://pypi.org/project/pillow/)
-* [SciPy](https://scipy.org)
-* [Matplotlib](https://matplotlib.org)
-* [CuPy](https://cupy.dev)
+```bash
+pip install git+https://github.com/77AXEL/PyCNN.git
+```
+
+> Optional: Install CuPy for CUDA support:
+
+```bash
+pip install cupy-cuda118  # Match your CUDA version
+```
+* See the <a href="https://nvidia.github.io/cuda-python/latest/">CUDA Documentation</a> for more information on how to set it up
 
 ---
 
-## 📜 License
-
-Released under the <a href="https://github.com/77AXEL/PyCNN/blob/b7becb4bef3b0156dad9397b1d95d6465e98fc3c/LICENSE">MIT License</a> — feel free to use, modify, and share.
-
----
-
-## 🤝 Contributing
+### 💬 Feedback & Contributions
 
 We welcome issues, suggestions, and contributions!
 Check the [Discussions tab](https://github.com/77AXEL/PyCNN/discussions) or see [CONTRIBUTING.md](https://chatgpt.com/c/CONTRIBUTING.md)
@@ -191,6 +208,12 @@ Check the [Discussions tab](https://github.com/77AXEL/PyCNN/discussions) or see 
 
 Found a security issue? Please report privately to:
 📧 [a.x.e.l777444000@gmail.com](mailto:a.x.e.l777444000@gmail.com)
+
+---
+
+### 📜 License
+
+Released under the <a href="https://github.com/77AXEL/PyCNN/blob/b7becb4bef3b0156dad9397b1d95d6465e98fc3c/LICENSE">MIT License</a>
 
 ---
 
