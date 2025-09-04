@@ -1,5 +1,4 @@
 *.py linguist-language=Python
 *.c linguist-language=C
-*.pyx linguist-language=Cython
-*.pxd linguist-language=Cython
-*.pxi linguist-language=Cython
+*.so  linguist-generated=true
+*.pyd linguist-generated=true
