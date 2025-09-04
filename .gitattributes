@@ -1,2 +1,4 @@
-*.py linguist-language=C++
+*.py linguist-language=Python
 *.c linguist-language=C
+*.pyd linguist-language=C
+*.so linguist-language=C
