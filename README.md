@@ -177,9 +177,15 @@ for classname in listdir(testdir):
     x += 1
   print(classname, correct)
 ```
-> Output: 
+> Output:
+
 > <img src="https://github.com/77AXEL/PyCNN/blob/main/output.png">
 
+* Total prediction accuracy: **48.1%**, which is a **strong result** for a model trained on only **500 images per class**.
+
+> Hardware used while training:
+ <img src="https://github.com/77AXEL/PyCNN/blob/main/hardware.png">
+> 
 ---
 
 ## 📊 Performance
