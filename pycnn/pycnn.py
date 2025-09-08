@@ -317,7 +317,7 @@ class PyCNN:
             except Exception as e:
                 raise RuntimeError(f"Failed to load local dataset from {path}: {e}")
 
-        def hf(self, name, max_image=None, split="train", cached=False):
+        def hf(self, name, max_image=None, split="train", cached=True):
             try:
                 from datasets import load_dataset
             except ImportError:
@@ -325,9 +325,9 @@ class PyCNN:
                 
             try:
                 if cached:
-                    dataset = load_dataset(name, split=split, download_mode="force_redownload")
-                else:
                     dataset = load_dataset(name, split=split)
+                else:
+                    dataset = load_dataset(name, split=split, download_mode="force_redownload")
                     
             except Exception as e:
                 raise RuntimeError(f"Failed to load dataset '{name}': {e}")
