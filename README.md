@@ -1,6 +1,6 @@
 # 🧠 PYCNN
 
-This framework project is a simple Convolutional Neural Network (CNN) implemented entirely from scratch using only low-level libraries like NumPy, PIL, and SciPy—no deep learning frameworks (e.g., TensorFlow or PyTorch) are used. It includes image preprocessing, convolution and pooling operations, ReLU and softmax activations, forward/backward propagation, cuda support allowing accelerated training and inference and a fully connected classifier.
+This is a Convolutional Neural Network (CNN) framework project implemented entirely from scratch using only low-level libraries like NumPy, PIL, SciPy and Cython no deep learning frameworks (e.g., TensorFlow or PyTorch) are used. It can train a CNN model on your local dataset folder or an external Hugging Face dataset, save or load models, support CUDA and the Adam optimizer for better performance, and switch the training backend between CPU and GPU
 
 <p align="center">
   <img src="https://github.com/77AXEL/PyCNN/blob/main/visualized.png" alt="CNN Architecture" width="600"/>
@@ -8,12 +8,13 @@ This framework project is a simple Convolutional Neural Network (CNN) implemente
 
 ## 📦 Releases
 
-| Version | Latest | Stable | Test a trained model |
-| ------- | ------ | ------ | -------------------- |
-|  [2.0](https://github.com/77AXEL/PyCNN/releases/tag/v2.0)  |   ✅  | ✅ | <a href="https://cnnfsmodel.pythonanywhere.com/pycnn-pretrained-model">Test</a>         |
-|  [0.1.2](https://github.com/77AXEL/PyCNN/releases/tag/v0.1.2)  |   ❌  | ✅ |    ❌     |
-|  [0.1.1](https://github.com/77AXEL/PyCNN/releases/tag/v0.1.1)  |   ❌  | ✅ |    ❌     |
-|  [0.1.0](https://github.com/77AXEL/PyCNN/releases/tag/v0.1.0)  |   ❌  | ✅ |    ❌     |
+| Version | Latest | Stable |
+| ------- | ------ | ------ |
+|  [2.1](https://github.com/77AXEL/PyCNN/releases/tag/v2.1)      |   ✅  | ✅ |
+|  [2.0](https://github.com/77AXEL/PyCNN/releases/tag/v2.0)      |   ❌  | ✅ |
+|  [0.1.2](https://github.com/77AXEL/PyCNN/releases/tag/v0.1.2)  |   ❌  | ✅ |
+|  [0.1.1](https://github.com/77AXEL/PyCNN/releases/tag/v0.1.1)  |   ❌  | ✅ |
+|  [0.1.0](https://github.com/77AXEL/PyCNN/releases/tag/v0.1.0)  |   ❌  | ✅ |
 
 ---
 
@@ -32,10 +33,13 @@ This framework project is a simple Convolutional Neural Network (CNN) implemente
 * 🛠 **Dynamic user-defined layers** for fully customizable architectures
 * 🚀 **Performance optimizations** for faster computation and memory efficiency
 * 🔄 **Automatic backend conversion** when loading models trained on a different backend
-
+* 🚀 ** More CPU based performance optimizations** for faster computation and memory efficiency
+* 🔄 **Automatic backend conversion** when loading models trained on a different backend
+* 🛢️ **Hugging Face** CNN datasets support
+* 
 ---
 
-## 🖼 Dataset Structure
+## 🖼 Dataset Structure (local)
 
 Make sure your dataset folder is structured like this:
 
@@ -87,88 +91,94 @@ Each subfolder represents a class (e.g., `cat`, `dog`), and contains sample imag
 
 #### Training model
 ```python
-from pycnn.model import CNN
+from pycnn.pycnn import PyCNN
 
-model = CNN()
-model.cuda(True)  # Enable CUDA
-model.init(
-    image_size=64,
-    batch_size=32,
-    layers=[256, 128, 64, 32, 16, 8, 4], # Allows you to define any type of dense layer.
-    learning_rate=0.0001,
-    epochs=1000,
-    dataset_path="data",
-    max_image=1000, # If unspecified, the framework will use all images from each class.
+pycnn= CNN()
+pycnn.cuda(True)  # Enable CUDA
+pycnn.init(
+    image_size=64, # If unspecified the default is 64
+    batch_size=32, # If unspecified the default is 32
+    layers=[256, 128, 64, 32, 16, 8, 4], # Allows you to define any type of dense layer,  If unspecified the default is [128, 64]
+    learning_rate=0.0001, # If unspecified the default is 0.0001
+    epochs=1000, # If unspecified the default is 50
     filters = [
         [# Custom filter 1],
         [# Custom filter 2],
         [# Custom filter 3],
         [# Custom filter ...],
-    ] # If unspecified, the framework will use the default filters
+    ] # If unspecified, the framework will use the default filters.
 )
 
-model.adam() # If specified, the framework will use the adam optimizer
-model.load_dataset()
-model.train_model(visualize=True, early_stop=2) 
-#visualize: Displays a real-time graph of accuracy and loss per epoch when enabled. Set to False or leave unspecified to disable this feature.
-#early_stop: Stops training when overfitting begins and the number of epochs exceeds early_stop. Set to 0 or leave unspecified to disable this feature.
+pycnn.adam() # If specified, the framework will use the adam optimizer.
+
+pycnn.dataset.local(
+    path_to_you_dataset_folder, 
+    max_image=1000 # If unspecified, the framework will use all images from each class.
+) # Use this method if you want to load your local dataset folder.
+
+pycnn.dataset.hf(
+    huggingface_dataset_name, 
+    max_image=1000, # If unspecified, the framework will use all images from each class.
+    cached=True # Using the cached database helps you bypass downloading the dataset each time it is loaded (the default behavior when cached=True).
+    split="train" # Specify which split of the dataset to use for training the model (the default is the train split).
+
+) # Use this method if you want to load a HuggingFace dataset folder.
+
+pycnn.train_model(
+    visualize=True, # Displays a real-time graph of accuracy and loss per epoch when enabled. Set to False or leave unspecified to disable this feature.
+    early_stop=2 # Stops training when overfitting begins and the number of epochs exceeds early_stop. Set to 0 or leave unspecified to disable this feature.
+) 
 ```
 
 #### Saving/Loading model
 
 ```python
-model.save(path=your_save_path) # if your your_save_path is unspecified the framework will save it in "./model.bin"
-model.save(path=your_model_path)
+pycnn.save_model(path=your_save_path) # if your your_save_path is unspecified the framework will save it in "./model.bin" bu default
+pycnn.load_model(path=your_model_path)
 ```
 
 #### Prediction
 
 ```python
-result = model.predict(your_image_path)
-print(result)
+result = pycnn.predict(your_image_path) # Returns a tuple of (class name, confidense value)
+print(result) 
 ```
-> The model will automatically convert weights, biases, and datasets to the selected backend. Models trained on GPU can still be loaded on CPU and vice versa.
+> The framework will automatically convert weights, biases, and datasets to the selected backend. Models trained on GPU can still be loaded on CPU and vice versa.
 
 #### Usage exemple
 
 ```python
-from pycnn.model import CNN
+from pycnn.pycnn import PyCNN
 from os import listdir
 
-model = CNN()
-model.init(
-    image_size=64,
-    batch_size=32,
-    layers=[256, 128, 64, 32, 16, 8, 4],
-    learning_rate=0.0001,
-    epochs=1000,
-    dataset_path="data",
-    max_image=100,
+pycnn = PyCNN()
+pycnn.cuda(True)
+
+pycnn.init(
+    layers=[512, 256],
+    epochs=500,
 )
-model.adam()
-model.load_dataset()
-model.train_model(early_stop=2)
 
-x = 0
-for path in listdir("data/cat"):
-    if model.predict(f"data/cat/{path}") == "cat":
-        x += 1
-    if x == 10:
-        break
+pycnn.dataset.hf("cifar10", max_image=500, cached=True)
+pycnn.adam()
+pycnn.train_model(early_stop=15)
+pycnn.save_model("pycnn_cifar10.bin")
 
-print(f"cat: {x}/10")
-
-x = 0
-for path in listdir("data/dog"):
-    if model.predict(f"data/dog/{path}") == "dog":
-        x += 1
-    if x == 10:
-        break
-
-print(f"dog: {x}/10")
+testdir = "cifar10_test"
+_max = 1000
+for classname in listdir(testdir):
+  x = 0
+  correct = 0
+  for filename in listdir(f"{testdir}/{classname}"):
+    if x == _max:
+      break
+    if pycnn.predict(f"{testdir}/{classname}/{filename}")[0] == classname:
+      correct += 1
+    x += 1
+  print(classname, correct)
 ```
-> Output:
-<img src="https://github.com/77AXEL/PyCNN/blob/main/v2.0-output.png">
+> Output: 
+> <img src="https://github.com/77AXEL/PyCNN/blob/main/output.png">
 
 ---
 
@@ -176,9 +186,9 @@ print(f"dog: {x}/10")
 
 | Metric   | Value (example)      |
 | -------- | -------------------- |
-| Accuracy | ~90% (binary class) |
-| Epochs   |  100–500                |
-| Dataset  | ~300 image for each class |
+| Accuracy | ~90% |
+| Epochs   |  1000                |
+| Dataset  | ~500 image for each class |
 
 ---
 
