@@ -1,4 +1,4 @@
-*.py linguist-language=false
+*.py linguist-language=true
 *.pyx linguist-language=Cython
 *.cpp linguist-language=C++
 *.c linguist-language=C
