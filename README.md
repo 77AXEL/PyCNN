@@ -36,7 +36,7 @@ This is a Convolutional Neural Network (CNN) framework project implemented entir
 * 🚀 ** More CPU based performance optimizations** for faster computation and memory efficiency
 * 🔄 **Automatic backend conversion** when loading models trained on a different backend
 * 🛢️ **Hugging Face** CNN datasets support
-* 
+
 ---
 
 ## 🖼 Dataset Structure (local)
