@@ -185,7 +185,7 @@ for classname in listdir(testdir):
 
 > Hardware used while training:
  <img src="https://github.com/77AXEL/PyCNN/blob/main/hardware.png">
-> 
+
 ---
 
 ## 📊 Performance
