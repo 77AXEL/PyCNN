@@ -12,7 +12,7 @@ This is a Convolutional Neural Network (CNN) framework project implemented entir
 
 | Version | Latest | Stable |
 | ------- | ------ | ------ |
-|  [2.1](https://github.com/77AXEL/PyCNN/releases/tag/v2.1)      |   ✅  | ✅ |
+|  [2.2](https://github.com/77AXEL/PyCNN/releases/tag/v2.2)      |   ✅  | ✅ |
 |  [2.0](https://github.com/77AXEL/PyCNN/releases/tag/v2.0)      |   ❌  | ✅ |
 |  [0.1.2](https://github.com/77AXEL/PyCNN/releases/tag/v0.1.2)  |   ❌  | ✅ |
 |  [0.1.1](https://github.com/77AXEL/PyCNN/releases/tag/v0.1.1)  |   ❌  | ✅ |
