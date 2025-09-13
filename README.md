@@ -3,7 +3,7 @@
 </p>
 
 This is a Convolutional Neural Network (CNN) framework project implemented entirely from scratch using only low-level libraries like NumPy, PIL, SciPy and Cython no deep learning frameworks (e.g., TensorFlow or PyTorch) are used. It can train a CNN model on your local dataset folder or an external Hugging Face dataset, save or load models, support CUDA and the Adam optimizer for better performance, and switch the training backend between CPU and GPU
-
+* PyCNN trained model: [pycnn_cifar10](https://huggingface.co/spaces/777axel/pycnn_cifar10)
 <p align="center">
   <img src="https://github.com/77AXEL/PyCNN/blob/main/visualized.png" alt="CNN Architecture" width="600"/>
 </p>
