@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="pycnn",
-    version="2.1",
+    version="2.3",
     description="Python CNNs framework",
     author="77AXEL",
     packages=find_packages(),
@@ -16,6 +16,7 @@ setup(
     python_requires=">=3.6",
     include_package_data=True,
 )
+
 
 
 
