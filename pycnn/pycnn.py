@@ -1,9 +1,67 @@
 import matplotlib.pyplot as plt
+import torch.nn as nn
 from PIL import Image
 from numba import njit
 import numpy as np
 import pickle
+import torch
 import os
+
+class PyCNNTorchModel(nn.Module):
+    def __init__(self, layers, num_classes, filters, image_size):
+        super(PyCNNTorchModel, self).__init__()
+        self.filters = torch.tensor(filters, dtype=torch.float32)
+        self.image_size = image_size
+        
+        conv_output_size = image_size - 2
+        pool_output_size = conv_output_size // 2
+        input_features = pool_output_size * pool_output_size * len(filters)
+        
+        self.layers_list = nn.ModuleList()
+        prev_size = input_features
+        
+        for layer_size in layers:
+            self.layers_list.append(nn.Linear(prev_size, layer_size))
+            self.layers_list.append(nn.ReLU())
+            prev_size = layer_size
+        
+        self.output_layer = nn.Linear(prev_size, num_classes)
+        self.softmax = nn.Softmax(dim=1)
+        
+    def preprocess_image(self, x):
+        """Apply convolution filters and max pooling like PyCNN"""
+        batch_size = x.shape[0]
+        
+        if x.shape[1] == 3:
+            r, g, b = x[:, 0], x[:, 1], x[:, 2]
+        else:
+            r = g = b = x.squeeze(1)
+        
+        feature_maps = []
+        
+        for i, filt in enumerate(self.filters):
+            filt_tensor = filt.unsqueeze(0).unsqueeze(0)
+            
+            conv_r = torch.nn.functional.conv2d(r.unsqueeze(1), filt_tensor, padding=0)
+            conv_g = torch.nn.functional.conv2d(g.unsqueeze(1), filt_tensor, padding=0)
+            conv_b = torch.nn.functional.conv2d(b.unsqueeze(1), filt_tensor, padding=0)
+            
+            conv = conv_r + conv_g + conv_b
+            conv = torch.relu(conv)
+            
+            pooled = torch.nn.functional.max_pool2d(conv, kernel_size=2, stride=2)
+            feature_maps.append(pooled.squeeze(1))
+        
+        flattened = torch.cat([fm.view(batch_size, -1) for fm in feature_maps], dim=1)
+        return flattened
+    
+    def forward(self, x):
+        x = self.preprocess_image(x)
+        for layer in self.layers_list:
+            x = layer(x)
+        
+        x = self.output_layer(x)
+        return self.softmax(x)
 
 @njit()
 def _cpu_softmax_batch(x):
@@ -89,13 +147,13 @@ class PyCNN:
         """Setup CPU backend"""
         import numpy as np
         from scipy.signal import convolve2d
-        from pycnn.cython.pooling import pooling
+        from _pycnn.cython.pooling import pooling
         self.cpu_max_pooling = pooling.max_pooling
-        from pycnn.cython.forward_pass import forward_pass
+        from _pycnn.cython.forward_pass import forward_pass
         self.cpu_forward_pass = forward_pass.forward_pass
-        from pycnn.cython.backward_pass import backward_pass
+        from _pycnn.cython.backward_pass import backward_pass
         self.cpu_backward_pass = backward_pass.backward_pass
-        from pycnn.cython.update_parametres import update_parametres
+        from _pycnn.cython.update_parametres import update_parametres
         self.cpu_update_parameters = update_parametres.update_parameters
             
         self.use_cuda = False
@@ -272,7 +330,9 @@ class PyCNN:
                     self.parent.m[key] = self.parent.zeros(self.parent.biases[key].shape, dtype=float)
                     self.parent.v[key] = self.parent.zeros(self.parent.biases[key].shape, dtype=float)
 
-        def local(self, path, max_image=None, image_size=64):
+        def local(self, path, max_image=None, image_size=64, aug=[]):
+            if len(aug) != 0:
+                print("Warning: Augmentation enabled")
             self.parent.image_size = image_size
             self.dataset_path = path
             try:
@@ -300,11 +360,29 @@ class PyCNN:
                         img_path = f"{folder}/{img_file}"
                         print(f"\r\033[KLoading local dataset: {cls}/{img_file} ({count+1})", end="", flush=True)
                         try:
-                            vec = self.parent._preprocess_image(img_path, image_size, self.parent.filters)
-                            self.parent.data.append(vec)
-                            one_hot = [0] * len(classes)
-                            one_hot[idx] = 1
-                            self.parent.labels.append(self.parent.array(one_hot))
+                            normal = Image.open(img_path).convert("RGB").resize((image_size, image_size), Image.Resampling.LANCZOS)
+                            images = [
+                                normal
+                            ]
+
+                            for aug_num in aug:
+                                if aug_num == 1:
+                                    aug_img = normal.transpose(Image.FLIP_LEFT_RIGHT)
+                                elif aug_num == 2:
+                                    aug_img = normal.transpose(Image.FLIP_TOP_BOTTOM)
+                                elif aug_num == 3:
+                                    aug_img = normal.rotate(90, expand=True).resize((image_size, image_size), Image.Resampling.LANCZOS)
+                                elif aug_num == 4:
+                                    aug_img = normal.rotate(-90, expand=True).resize((image_size, image_size), Image.Resampling.LANCZOS)
+                                images.append(aug_img)
+                                
+                            
+                            for image in images:
+                                vec = self.parent._preprocess_image(image, image_size, self.parent.filters)
+                                self.parent.data.append(vec)
+                                one_hot = [0] * len(classes)
+                                one_hot[idx] = 1
+                                self.parent.labels.append(self.parent.array(one_hot))
                             count += 1
                         except Exception as e:
                             print(f"\nWarning: Failed to process {img_path}: {e}")
@@ -317,7 +395,9 @@ class PyCNN:
             except Exception as e:
                 raise RuntimeError(f"Failed to load local dataset from {path}: {e}")
 
-        def hf(self, name, max_image=None, split="train", cached=True):
+        def hf(self, name, max_image=None, split="train", cached=True, aug=[]):
+            if len(aug) != 0:
+                print("Warning: Augmentation enabled")
             try:
                 from datasets import load_dataset
             except ImportError:
@@ -377,7 +457,7 @@ class PyCNN:
             
             class_counts = {i: 0 for i in range(len(label_names))}
             total_count = 0
-            
+
             for idx, sample in enumerate(dataset):
                 try:
                     img = sample[image_column]
@@ -399,15 +479,32 @@ class PyCNN:
                         else:
                             img = Image.fromarray(np.array(img))
                     
-                    vec = self.parent._preprocess_image(img, image_size, self.parent.filters)
-                    self.parent.data.append(vec)
+                    img = img.convert("RGB").resize((image_size, image_size), Image.Resampling.LANCZOS)
                     
-                    one_hot = [0] * len(label_names)
-                    one_hot[label_idx] = 1
-                    self.parent.labels.append(self.parent.array(one_hot))
+                    images = [img]
+                            
+                    for aug_num in aug:
+                        if aug_num == 1:
+                            aug_img = img.transpose(Image.FLIP_LEFT_RIGHT)
+                        elif aug_num == 2:
+                            aug_img = img.transpose(Image.FLIP_TOP_BOTTOM)
+                        elif aug_num == 3:
+                            aug_img = img.rotate(90, expand=True).resize((image_size, image_size), Image.Resampling.LANCZOS)
+                        elif aug_num == 4:
+                            aug_img = img.rotate(-90, expand=True).resize((image_size, image_size), Image.Resampling.LANCZOS)
+                        else:
+                            continue
+                        images.append(aug_img)
+                    
+                    for image in images:
+                        vec = self.parent._preprocess_image(image, image_size, self.parent.filters)
+                        self.parent.data.append(vec)
+                        one_hot = [0] * len(label_names)
+                        one_hot[label_idx] = 1
+                        self.parent.labels.append(self.parent.array(one_hot))
+                        total_count += 1
                     
                     class_counts[label_idx] += 1
-                    total_count += 1
                     
                     if max_image is not None and all(count >= max_image for count in class_counts.values()):
                         print(f"\nAll classes reached maximum of {max_image} images each.")
@@ -725,3 +822,55 @@ class PyCNN:
         confidence = float(self._to_cpu(out[predicted_idx]))
         
         return predicted_label, confidence
+
+    def torch(self, save_path="model.pth"):
+        """Export trained PyCNN model to PyTorch format"""
+        if not hasattr(self, 'weights') or not hasattr(self, 'biases'):
+            raise ValueError("No trained model to export. Train the model first.")
+        
+        try:
+            import torch
+        except ImportError:
+            raise ImportError("PyTorch is required for model export. Install with: pip install torch")
+        
+        pytorch_model = PyCNNTorchModel(
+            layers=self.layers,
+            num_classes=len(self.classes),
+            filters=self.filters,
+            image_size=self.image_size
+        )
+        
+        state_dict = {}
+        
+        for i in range(len(self.layers)):
+            weight_key = f"w{i+1}"
+            bias_key = f"b{i+1}"
+            
+            pycnn_weight = self._to_cpu(self.weights[weight_key])
+            pycnn_bias = self._to_cpu(self.biases[bias_key])
+            
+            state_dict[f'layers_list.{i*2}.weight'] = torch.tensor(pycnn_weight, dtype=torch.float32)
+            state_dict[f'layers_list.{i*2}.bias'] = torch.tensor(pycnn_bias, dtype=torch.float32)
+        
+        pycnn_output_weight = self._to_cpu(self.weights["wo"])
+        pycnn_output_bias = self._to_cpu(self.biases["bo"])
+        
+        state_dict['output_layer.weight'] = torch.tensor(pycnn_output_weight, dtype=torch.float32)
+        state_dict['output_layer.bias'] = torch.tensor(pycnn_output_bias, dtype=torch.float32)
+        
+        pytorch_model.load_state_dict(state_dict)
+        
+        model_data = {
+            'model_state_dict': pytorch_model.state_dict(),
+            'layers': self.layers,
+            'num_classes': len(self.classes),
+            'classes': self.classes,
+            'filters': self._to_cpu(self.filters),
+            'image_size': self.image_size,
+            'pycnn_version': 'exported'
+        }
+        
+        torch.save(model_data, save_path)
+        
+        print(f"Model exported to PyTorch format: {save_path}")
+        print(f"Size: {round(os.path.getsize(save_path) / (1024 * 1024), 2)}MB")
