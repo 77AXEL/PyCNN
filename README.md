@@ -38,10 +38,12 @@ This is a Convolutional Neural Network (CNN) framework project implemented entir
 * 🚀 ** More CPU based performance optimizations** for faster computation and memory efficiency
 * 🔄 **Automatic backend conversion** when loading models trained on a different backend
 * 🛢️ **Hugging Face** CNN datasets support
+* 🎚️ **Dataset augmentation** support
+* 🔁 **Pytorch exportation** support to export PyCNN trained model to a PyTorch format
 
 ---
 
-## 🖼 Dataset Structure (local)
+## 🖼 Dataset Structure (if using local dataset folder)
 
 Make sure your dataset folder is structured like this:
 
@@ -121,8 +123,14 @@ pycnn.dataset.local(
 pycnn.dataset.hf(
     huggingface_dataset_name, 
     max_image=1000, # If unspecified, the framework will use all images from each class.
-    cached=True # Using the cached database helps you bypass downloading the dataset each time it is loaded (the default behavior when cached=True).
-    split="train" # Specify which split of the dataset to use for training the model (the default is the train split).
+    cached=True, # Using the cached database helps you bypass downloading the dataset each time it is loaded (the default behavior when cached=True).
+    split="train", # Specify which split of the dataset to use for training the model (the default is the train split).
+    aug = [
+      1, # Left-Right Flip
+      2, # Top-Bottom Flip
+      3, # 90 degree rotation
+      4  # -90 degree rotation
+    ] # Unspecify this setting if you don't want a dataset augmentation
 
 ) # Use this method if you want to load a HuggingFace dataset folder.
 
@@ -135,8 +143,10 @@ pycnn.train_model(
 #### Saving/Loading model
 
 ```python
-pycnn.save_model(path=your_save_path) # if your your_save_path is unspecified the framework will save it in "./model.bin" bu default
-pycnn.load_model(path=your_model_path)
+pycnn.save_model(path) # For saving models (if your your_save_path is unspecified the framework will save it in "./model.bin" bu default)
+pycnn.load_model(path) # For loading models
+
+pycnn.torch(path) # For saving PyTorch compatible models (to use them in PyTorch later)
 ```
 
 #### Prediction
@@ -188,6 +198,68 @@ for classname in listdir(testdir):
 > Hardware used while training:
  <img src="https://github.com/77AXEL/PyCNN/blob/main/hardware.png">
 
+## PyCNN with PyTorch
+
+* Create a PyTorch CNN model with PyCNN:
+
+```python
+from pycnn.pycnn import PyCNN
+
+# Initialize PyCNN model
+pycnn = PyCNN()
+pycnn.init(
+    epochs=50,
+    layers=[64, 32],
+    learning_rate=0.0001
+)
+
+# Load dataset from Hugging Face
+pycnn.dataset.hf("cifar10", max_image=50, aug=[])
+
+# Configure Adam optimizer and train
+pycnn.adam()
+pycnn.train_model()
+
+# Save the model in a PyTorch format
+pycnn.torch("model.pth")
+
+```
+
+* Load and use the model.pth in PyTorch:
+
+```python
+from pycnn.pycnn import PyCNNTorchModel
+from PIL import Image
+import numpy as np
+import torch
+
+checkpoint = torch.load('model.pth', map_location='cpu')
+model = PyCNNTorchModel(
+    checkpoint['layers'],
+    checkpoint['num_classes'],
+    checkpoint['filters'],
+    checkpoint['image_size']
+)
+
+model.load_state_dict(checkpoint['model_state_dict'])
+model.eval()
+
+def predict(image_path):
+    img = Image.open(image_path).convert("RGB")
+    img = img.resize((checkpoint['image_size'], checkpoint['image_size']), Image.Resampling.LANCZOS)
+    img_array = np.array(img).astype(np.float32) / 255.0
+    img_tensor = torch.from_numpy(img_array).permute(2, 0, 1).unsqueeze(0)
+    
+    with torch.no_grad():
+        output = model(img_tensor)
+        confidence, predicted_idx = torch.max(output, 1)
+        predicted_class = checkpoint['classes'][predicted_idx.item()]
+    
+    print(f"Prediction: {predicted_class} (Confidence: {confidence.item()*100:.2f}%)")
+
+predict("exemple.png")
+```
+
 ---
 
 ## 📊 Performance
@@ -235,6 +307,6 @@ Released under the <a href="https://github.com/77AXEL/PyCNN/blob/b7becb4bef3b015
 
 ---
 
-. Github page: [https://77axel.github.io/PyCNN](https://77axel.github.io/PyCNN)
+. See the [PyCNN Documentation](https://77axel.github.io/PyCNN) for more informations and guidelines
 
 <img src="https://img.shields.io/badge/Author-A.X.E.L-red?style=flat-square;">  <img src="https://img.shields.io/badge/Open Source-Yes-red?style=flat-square;">

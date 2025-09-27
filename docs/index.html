@@ -556,6 +556,8 @@
                 <li><strong>Custom Architectures:</strong> Flexible layer configuration with customizable hidden layers</li>
                 <li><strong>Advanced Pooling:</strong> Optimized max pooling with configurable stride and window size</li>
                 <li><strong>Activation Functions:</strong> ReLU activation with support for custom functions</li>
+                <li><strong>Dataset Augmentation:</strong> Data augmentation support with a customizable type</li>
+                <li><strong>PyTorch Model Exportation:</strong> Export your PyCNN trained model to a PyTorch format to use it in PyTorch later</li>
             </ul>
 
             <h3>🔧 Developer Experience</h3>
@@ -597,7 +599,7 @@
                 </div>
                 <div class="code-content">
                     <pre><code><span class="function">git clone</span> git+https://github.com/77AXEL/PyCNN.git
-<span class="function">cd</span> PyCNN
+<span class="function">cd</span> pycnn.pycnn
 <span class="function">pip install</span> -e .</code></pre>
                 </div>
             </div>
@@ -609,7 +611,7 @@
                     <button class="copy-btn" onclick="copyCode(this)">Copy</button>
                 </div>
                 <div class="code-content">
-                    <pre><code><span class="keyword">from</span> pycnn <span class="keyword">import</span> PyCNN
+                    <pre><code><span class="keyword">from</span> pycnn.pycnn <span class="keyword">import</span> PyCNN
 
 <span class="comment"># Create instance and check backend</span>
 model = <span class="function">PyCNN</span>()
@@ -628,6 +630,7 @@ model = <span class="function">PyCNN</span>()
                     <button class="example-tab active" onclick="showExample('basic')">Basic Usage</button>
                     <button class="example-tab" onclick="showExample('advanced')">Advanced Configuration</button>
                     <button class="example-tab" onclick="showExample('prediction')">Making Predictions</button>
+                    <button class="example-tab" onclick="showExample('pytorch')">PyTorch Usage</button>
                 </div>
                 
                 <div class="example-content">
@@ -638,7 +641,7 @@ model = <span class="function">PyCNN</span>()
                                 <button class="copy-btn" onclick="copyCode(this)">Copy</button>
                             </div>
                             <div class="code-content">
-                                <pre><code><span class="keyword">from</span> pycnn <span class="keyword">import</span> PyCNN
+                                <pre><code><span class="keyword">from</span> pycnn.pycnn <span class="keyword">import</span> PyCNN
 
 <span class="comment"># Initialize the model</span>
 model = <span class="function">PyCNN</span>()
@@ -670,7 +673,7 @@ model.<span class="function">save_model</span>(<span class="string">"my_model.bi
                                 <button class="copy-btn" onclick="copyCode(this)">Copy</button>
                             </div>
                             <div class="code-content">
-                                <pre><code><span class="keyword">from</span> pycnn <span class="keyword">import</span> PyCNN
+                                <pre><code><span class="keyword">from</span> pycnn.pycnn <span class="keyword">import</span> PyCNN
 
 <span class="comment"># Initialize with CUDA support</span>
 model = <span class="function">PyCNN</span>()
@@ -694,8 +697,15 @@ model.<span class="function">init</span>(
     filters=custom_filters
 )
 
-<span class="comment"># Load from Hugging Face</span>
-model.dataset.<span class="function">hf</span>(<span class="string">"cifar10"</span>, max_image=<span class="number">1000</span>)
+<span class="comment"># Load from Hugging Face with dataset augmentation</span>
+model.dataset.<span class="function">hf</span>(<span class="string">"cifar10"</span>, max_image=<span class="number">1000</span>, aug=<span class="string">
+    [
+        1, <span class="number"># Left-Right Flip</span>
+        2, <span class="number"># Top-Bottom Flip</span>
+        3, <span class="number"># 90 degree rotation</span>
+        4  <span class="number"># -90 degree rotation</span>
+    ]</span>
+)
 
 <span class="comment"># Train with early stopping</span>
 model.<span class="function">train_model</span>(visualize=<span class="keyword">True</span>, early_stop=<span class="number">10</span>)</code></pre>
@@ -710,7 +720,7 @@ model.<span class="function">train_model</span>(visualize=<span class="keyword">
                                 <button class="copy-btn" onclick="copyCode(this)">Copy</button>
                             </div>
                             <div class="code-content">
-                                <pre><code><span class="keyword">from</span> pycnn <span class="keyword">import</span> PyCNN
+                                <pre><code><span class="keyword">from</span> pycnn.pycnn <span class="keyword">import</span> PyCNN
 
 <span class="comment"># Load a pre-trained model</span>
 model = <span class="function">PyCNN</span>()
@@ -730,6 +740,66 @@ test_images = [<span class="string">f"test_{i}.jpg"</span> <span class="keyword"
     <span class="keyword">if</span> os.path.<span class="function">exists</span>(img_path):
         pred_class, conf = model.<span class="function">predict</span>(img_path)
         <span class="function">print</span>(<span class="string">f"</span>{img_path}<span class="string">: </span>{pred_class}<span class="string"> (</span>{conf:<span class="number">.3f</span>}<span class="string">)"</span>)</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="pytorch" class="example-panel">
+                        <div class="code-block">
+                            <div class="code-header">
+                                <span>pycnn_pytorch.py</span>
+                                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                            </div>
+                            <div class="code-content">
+                                <pre><code><span class="keyword">from</span> pycnn.pycnn <span class="keyword">import</span> PyCNN
+<span class="keyword">from</span> pycnn.pycnn <span class="keyword">import</span> PyCNNTorchModel
+<span class="keyword">from</span> PIL <span class="keyword">import</span> Image
+<span class="keyword">import</span> numpy <span class="keyword">as</span> np
+<span class="keyword">import</span> torch
+
+<span class="comment"># Initialize PyCNN model</span>
+pycnn = <span class="function">PyCNN</span>()
+pycnn.<span class="function">init</span>(
+    epochs=<span class="number">50</span>,
+    layers=[<span class="number">64</span>, <span class="number">32</span>],
+    learning_rate=<span class="number">0.0001</span>
+)
+
+<span class="comment"># Load dataset from Hugging Face</span>
+pycnn.dataset.<span class="function">hf</span>(<span class="string">"cifar10"</span>, max_image=<span class="number">50</span>, aug=[])
+
+<span class="comment"># Configure Adam optimizer and train</span>
+pycnn.<span class="function">adam</span>()
+pycnn.<span class="function">train_model</span>()
+pycnn.<span class="function">torch</span>(<span class="string">"model.pth"</span>)
+
+<span class="comment"># Load PyTorch model from checkpoint</span>
+checkpoint = torch.<span class="function">load</span>(<span class="string">'model.pth'</span>, map_location=<span class="string">'cpu'</span>)
+model = <span class="function">PyCNNTorchModel</span>(
+    checkpoint[<span class="string">'layers'</span>],
+    checkpoint[<span class="string">'num_classes'</span>],
+    checkpoint[<span class="string">'filters'</span>],
+    checkpoint[<span class="string">'image_size'</span>]
+)
+
+model.<span class="function">load_state_dict</span>(checkpoint[<span class="string">'model_state_dict'</span>])
+model.<span class="function">eval</span>()
+
+<span class="comment"># Prediction function</span>
+<span class="keyword">def</span> <span class="function">predict</span>(image_path):
+    img = Image.<span class="function">open</span>(image_path).<span class="function">convert</span>(<span class="string">"RGB"</span>)
+    img = img.<span class="function">resize</span>((checkpoint[<span class="string">'image_size'</span>], checkpoint[<span class="string">'image_size'</span>]), Image.Resampling.LANCZOS)
+    img_array = np.<span class="function">array</span>(img).<span class="function">astype</span>(np.float32) / <span class="number">255.0</span>
+    img_tensor = torch.<span class="function">from_numpy</span>(img_array).<span class="function">permute</span>(<span class="number">2</span>, <span class="number">0</span>, <span class="number">1</span>).<span class="function">unsqueeze</span>(<span class="number">0</span>)
+    
+    <span class="keyword">with</span> torch.<span class="function">no_grad</span>():
+        output = <span class="function">model</span>(img_tensor)
+        confidence, predicted_idx = torch.<span class="function">max</span>(output, <span class="number">1</span>)
+        predicted_class = checkpoint[<span class="string">'classes'</span>][predicted_idx.<span class="function">item</span>()]
+        
+        <span class="function">print</span>(<span class="string">f"Prediction: </span>{predicted_class}<span class="string"> (Confidence: </span>{confidence.<span class="function">item</span>()*<span class="number">100</span>:<span class="number">.2f</span>}<span class="string">%)"</span>)
+
+<span class="comment"># Make a prediction</span>
+<span class="function">predict</span>(<span class="string">"cifar10_test/airplane/airplane_3.png"</span>)</code></pre>
                             </div>
                         </div>
                     </div>
@@ -833,6 +903,11 @@ test_images = [<span class="string">f"test_{i}.jpg"</span> <span class="keyword"
                         <td><span class="param-name">model_path</span> <span class="param-type">str</span></td>
                         <td>Load pre-trained model from disk</td>
                     </tr>
+                    <tr>
+                        <td><span class="param-name">torch()</span></td>
+                        <td><span class="param-name">path</span> <span class="param-type">str</span></td>
+                        <td>Save trained model to disk with PyTorch format</td>
+                    </tr>
                 </tbody>
             </table>
 
@@ -916,7 +991,7 @@ test_images = [<span class="string">f"test_{i}.jpg"</span> <span class="keyword"
                 </div>
                 <div class="code-content">
                     <pre><code><span class="keyword">import</span> os
-<span class="keyword">from</span> pycnn <span class="keyword">import</span> PyCNN
+<span class="keyword">from</span> pycnn.pycnn <span class="keyword">import</span> PyCNN
 
 <span class="comment"># Create dataset directory structure</span>
 <span class="comment"># dataset/</span>
@@ -962,7 +1037,7 @@ test_images = [<span class="string">f"test_{i}.jpg"</span> <span class="keyword"
                     <button class="copy-btn" onclick="copyCode(this)">Copy</button>
                 </div>
                 <div class="code-content">
-                    <pre><code><span class="keyword">from</span> pycnn <span class="keyword">import</span> PyCNN
+                    <pre><code><span class="keyword">from</span> pycnn.pycnn <span class="keyword">import</span> PyCNN
 
 <span class="function">def</span> <span class="function">fine_tune_model</span>(base_model_path, new_dataset_path):
     <span class="comment"># Load pre-trained model</span>
@@ -1002,7 +1077,7 @@ fine_tuned_model = <span class="function">fine_tune_model</span>(
                 <div class="code-content">
                     <pre><code><span class="keyword">import</span> os
 <span class="keyword">from</span> collections <span class="keyword">import</span> defaultdict
-<span class="keyword">from</span> pycnn <span class="keyword">import</span> PyCNN
+<span class="keyword">from</span> pycnn.pycnn <span class="keyword">import</span> PyCNN
 
 <span class="function">def</span> <span class="function">evaluate_model</span>(model_path, test_directory):
     model = <span class="function">PyCNN</span>()
@@ -1062,7 +1137,7 @@ results, accuracy = <span class="function">evaluate_model</span>(<span class="st
                     <button class="copy-btn" onclick="copyCode(this)">Copy</button>
                 </div>
                 <div class="code-content">
-                    <pre><code><span class="keyword">from</span> pycnn <span class="keyword">import</span> PyCNN
+                    <pre><code><span class="keyword">from</span> pycnn.pycnn <span class="keyword">import</span> PyCNN
 
 <span class="function">def</span> <span class="function">train_on_cifar10</span>():
     model = <span class="function">PyCNN</span>()
