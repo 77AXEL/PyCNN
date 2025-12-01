@@ -2,7 +2,7 @@
   <img src="https://github.com/77AXEL/PyCNN/blob/main/logo.png" alt="CNN Architecture"/>
 </p>
 
-This is a Convolutional Neural Network (CNN) framework project implemented entirely from scratch using only low-level libraries like NumPy, PIL, SciPy and Cython no deep learning frameworks (e.g., TensorFlow or PyTorch) are used. It can train a CNN model on your local dataset folder or an external Hugging Face dataset, save or load models, support CUDA and the Adam optimizer for better performance, and switch the training backend between CPU and GPU
+This is a Convolutional Neural Network (CNN) library project implemented entirely from scratch using only low-level libraries like NumPy, PIL, SciPy and Cython no deep learning frameworks (e.g., TensorFlow or PyTorch) are used. It can train a CNN model on your local dataset folder or an external Hugging Face dataset, save or load models, support CUDA and the Adam optimizer for better performance, and switch the training backend between CPU and GPU
 * PyCNN trained model: [pycnn_cifar10](https://huggingface.co/spaces/777axel/pycnn_cifar10)
 <p align="center">
   <img src="https://github.com/77AXEL/PyCNN/blob/main/visualized.png" alt="CNN Architecture" width="600"/>
@@ -110,19 +110,19 @@ pycnn.init(
         [# Custom filter 2],
         [# Custom filter 3],
         [# Custom filter ...],
-    ] # If unspecified, the framework will use the default filters.
+    ] # If unspecified, the library will use the default filters.
 )
 
-pycnn.adam() # If specified, the framework will use the adam optimizer.
+pycnn.adam() # If specified, the library will use the adam optimizer.
 
 pycnn.dataset.local(
     path_to_you_dataset_folder, 
-    max_image=1000 # If unspecified, the framework will use all images from each class.
+    max_image=1000 # If unspecified, the library will use all images from each class.
 ) # Use this method if you want to load your local dataset folder.
 
 pycnn.dataset.hf(
     huggingface_dataset_name, 
-    max_image=1000, # If unspecified, the framework will use all images from each class.
+    max_image=1000, # If unspecified, the library will use all images from each class.
     cached=True, # Using the cached database helps you bypass downloading the dataset each time it is loaded (the default behavior when cached=True).
     split="train", # Specify which split of the dataset to use for training the model (the default is the train split).
     aug = [
@@ -143,7 +143,7 @@ pycnn.train_model(
 #### Saving/Loading model
 
 ```python
-pycnn.save_model(path) # For saving models (if your your_save_path is unspecified the framework will save it in "./model.bin" bu default)
+pycnn.save_model(path) # For saving models (if your your_save_path is unspecified the library will save it in "./model.bin" bu default)
 pycnn.load_model(path) # For loading models
 
 pycnn.torch(path) # For saving PyTorch compatible models (to use them in PyTorch later)
@@ -155,7 +155,7 @@ pycnn.torch(path) # For saving PyTorch compatible models (to use them in PyTorch
 result = pycnn.predict(your_image_path) # Returns a tuple of (class name, confidense value)
 print(result) 
 ```
-> The framework will automatically convert weights, biases, and datasets to the selected backend. Models trained on GPU can still be loaded on CPU and vice versa.
+> The library will automatically convert weights, biases, and datasets to the selected backend. Models trained on GPU can still be loaded on CPU and vice versa.
 
 #### Usage exemple
 
@@ -310,3 +310,4 @@ Released under the <a href="https://github.com/77AXEL/PyCNN/blob/b7becb4bef3b015
 . See the [PyCNN Documentation](https://77axel.github.io/PyCNN) for more informations and guidelines
 
 <img src="https://img.shields.io/badge/Author-A.X.E.L-red?style=flat-square;">  <img src="https://img.shields.io/badge/Open Source-Yes-red?style=flat-square;">
+
