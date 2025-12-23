@@ -1,231 +1,211 @@
+# PyCNN
+
 <p align="center">
-  <img src="https://github.com/77AXEL/PyCNN/blob/main/logo.png" alt="CNN Architecture"/>
+  <img src="./assets/logo.png" alt="PyCNN Logo">
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Open_Source-Yes-red?style=flat-square" alt="Open Source">
+  <img src="https://img.shields.io/badge/Platform-Windows%20|%20macOS%20|%20Linux-blue?style=flat-square" alt="Platform Support">
+  <img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" alt="License">
 </p>
 
 This is a Convolutional Neural Network (CNN) library project implemented entirely from scratch using only low-level libraries like NumPy, PIL, SciPy and Cython no deep learning frameworks (e.g., TensorFlow or PyTorch) are used. It can train a CNN model on your local dataset folder or an external Hugging Face dataset, save or load models, support CUDA and the Adam optimizer for better performance, and switch the training backend between CPU and GPU
-* PyCNN trained model: [pycnn_cifar10](https://huggingface.co/spaces/777axel/pycnn_cifar10)
+
+**Live Demo:** [PyCNN CIFAR-10 Model](https://huggingface.co/spaces/777axel/pycnn_cifar10)
+
 <p align="center">
-  <img src="https://github.com/77AXEL/PyCNN/blob/main/visualized.png" alt="CNN Architecture" width="600"/>
+  <img src="./assets/visualized.png" alt="Training Visualization" width="600"/>
 </p>
-
-## 📦 Releases
-
-| Version | Latest | Stable |
-| ------- | ------ | ------ |
-|  [2.2](https://github.com/77AXEL/PyCNN/releases/tag/v2.2)      |   ✅  | ✅ |
-|  [2.0](https://github.com/77AXEL/PyCNN/releases/tag/v2.0)      |   ❌  | ✅ |
-|  [0.1.2](https://github.com/77AXEL/PyCNN/releases/tag/v0.1.2)  |   ❌  | ✅ |
-|  [0.1.1](https://github.com/77AXEL/PyCNN/releases/tag/v0.1.1)  |   ❌  | ✅ |
-|  [0.1.0](https://github.com/77AXEL/PyCNN/releases/tag/v0.1.0)  |   ❌  | ✅ |
 
 ---
 
-### 🚀 Key Features
+## 🚀 Key Features
 
 * ✅ Fully functional CNN implementation from scratch
 * 🧠 Manual convolution, max pooling, and ReLU activations
 * 🔁 Forward and backward propagation with mini-batch gradient descent
 * 🏷 Multi-class classification via softmax and cross-entropy loss
-* 💾 Model save/load using `pickle`
+* 💾 Model save/load functionality
 * 🖼 RGB image preprocessing with customizable filters
-* 🔍 Predict function to classify new unseen images
 * 📊 Real-time training visualization (accuracy & loss per epoch)
-* ⚡ **Optional CUDA acceleration** for faster training and inference
-* 🆕 **Adam optimizer support** for improved training performance
-* 🛠 **Dynamic user-defined layers** for fully customizable architectures
-* 🚀 **Performance optimizations** for faster computation and memory efficiency
-* 🔄 **Automatic backend conversion** when loading models trained on a different backend
-* 🚀 ** More CPU based performance optimizations** for faster computation and memory efficiency
-* 🔄 **Automatic backend conversion** when loading models trained on a different backend
-* 🛢️ **Hugging Face** CNN datasets support
+* ⚡ **CUDA acceleration** for faster training and inference
+* 🆕 **Adam optimizer** for improved convergence
+* 🛠 **Dynamic user-defined layers** for customizable architectures
+* 🔄 **Automatic backend conversion** between CPU and GPU
+* 🛢️ **Hugging Face datasets** support
 * 🎚️ **Dataset augmentation** support
-* 🔁 **Pytorch exportation** support to export PyCNN trained model to a PyTorch format
+* 🔁 **PyTorch export** to convert PyCNN models to PyTorch format
 
 ---
 
-## 🖼 Dataset Structure (if using local dataset folder)
+## 📋 Requirements
 
-Make sure your dataset folder is structured like this:
+### System Requirements
+
+**GCC Compiler Required**: This library uses Cython to compile performance-critical modules into shared libraries optimized for your CPU architecture. You must have a GCC compiler installed before installation.
+
+#### Installing GCC:
+
+**Linux (Ubuntu/Debian):**
+```bash
+sudo apt-get update
+sudo apt-get install build-essential
+```
+
+**Linux (Fedora/RHEL):**
+```bash
+sudo dnf install gcc gcc-c++ make
+```
+
+**macOS:**
+```bash
+xcode-select --install
+```
+
+**Windows:**
+- Install [MinGW-w64](https://www.mingw-w64.org/) or [Microsoft Visual C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/)
+
+### Python Dependencies
+
+- Python 3.7+
+- NumPy
+- Pillow (PIL)
+- SciPy
+- Cython
+- Matplotlib (for visualization)
+
+**Optional:**
+- CuPy (for CUDA support)
+- datasets (for Hugging Face integration)
+- PyTorch (for model export)
+
+---
+
+## 📌 Installation
+
+```bash
+pip install git+https://github.com/77AXEL/PyCNN.git
+```
+
+**Optional - CUDA Support:**
+```bash
+pip install cupy-cuda118
+```
+*See the [CUDA Documentation](https://nvidia.github.io/cuda-python/latest/) for setup details.*
+
+---
+
+## 🖼 Dataset Structure
+
+For local datasets, organize your data as follows:
 
 ```
 data/
-├── class1/
-│   ├── image1.png
-│   ├── image2.png
-├── class2/
-│   ├── image1.png
-│   ├── image2.png
-├── class../
-│   ├── ..
-..
+├── train/
+│   └── class1/
+│       ├── image1.png
+│       ├── image2.png
+│   └── class2/
+│       ├── image1.png
+│       ├── image2.png
+│   └── class.../
+└── test/
+    └── class1/
+        ├── image1.png
+        ├── image2.png
+    └── class2/
+        ├── image1.png
+        ├── image2.png
+    └── class.../
 ```
 
-Each subfolder represents a class (e.g., `cat`, `dog`), and contains sample images.
-> To help you get started, we’ve included a [starter `data` folder](https://github.com/77AXEL/PyCNN/tree/main/data) with example class directories.
+Each subfolder represents a class
 
 ---
 
-## 🧪 How It Works
+## 🖥️ Usage
 
-1. **Image Preprocessing**:
-
-   * Each image is resized to a fixed size and normalized.
-   * Filters (e.g., sharpening, edge detection) are applied using 2D convolution.
-   * ReLU activation and 2×2 max-pooling reduce spatial dimensions.
-   * GPU acceleration via **CUDA** allows these operations to run in parallel on the graphics card, significantly speeding up large datasets.
-
-2. **Feature Vector**:
-
-   * Flattened pooled feature maps are fed into fully connected layers.
-
-3. **Feedforward + Softmax**:
-
-   * Dense layers compute activations followed by a softmax for classification.
-   * All dense computations can be performed on the GPU for faster matrix multiplications.
-
-4. **Backpropagation**:
-
-   * Gradients are computed layer-by-layer.
-   * Weights and biases are updated using the **Adam or SGD optimizer**, which adapts learning rates for each parameter for faster and more stable convergence compared to basic gradient descent.
-   * CUDA can also accelerate gradient computations and weight updates.
-
----
-
-### 🖥️ PyCNN Usage
-
-#### Training model
-```python
-from pycnn.pycnn import PyCNN
-
-pycnn= CNN()
-pycnn.cuda(True)  # Enable CUDA
-pycnn.init(
-    image_size=64, # If unspecified the default is 64
-    batch_size=32, # If unspecified the default is 32
-    layers=[256, 128, 64, 32, 16, 8, 4], # Allows you to define any type of dense layer,  If unspecified the default is [128, 64]
-    learning_rate=0.0001, # If unspecified the default is 0.0001
-    epochs=1000, # If unspecified the default is 50
-    filters = [
-        [# Custom filter 1],
-        [# Custom filter 2],
-        [# Custom filter 3],
-        [# Custom filter ...],
-    ] # If unspecified, the library will use the default filters.
-)
-
-pycnn.adam() # If specified, the library will use the adam optimizer.
-
-pycnn.dataset.local(
-    path_to_you_dataset_folder, 
-    max_image=1000 # If unspecified, the library will use all images from each class.
-) # Use this method if you want to load your local dataset folder.
-
-pycnn.dataset.hf(
-    huggingface_dataset_name, 
-    max_image=1000, # If unspecified, the library will use all images from each class.
-    cached=True, # Using the cached database helps you bypass downloading the dataset each time it is loaded (the default behavior when cached=True).
-    split="train", # Specify which split of the dataset to use for training the model (the default is the train split).
-    aug = [
-      1, # Left-Right Flip
-      2, # Top-Bottom Flip
-      3, # 90 degree rotation
-      4  # -90 degree rotation
-    ] # Unspecify this setting if you don't want a dataset augmentation
-
-) # Use this method if you want to load a HuggingFace dataset folder.
-
-pycnn.train_model(
-    visualize=True, # Displays a real-time graph of accuracy and loss per epoch when enabled. Set to False or leave unspecified to disable this feature.
-    early_stop=2 # Stops training when overfitting begins and the number of epochs exceeds early_stop. Set to 0 or leave unspecified to disable this feature.
-) 
-```
-
-#### Saving/Loading model
+### Training a Model
 
 ```python
-pycnn.save_model(path) # For saving models (if your your_save_path is unspecified the library will save it in "./model.bin" bu default)
-pycnn.load_model(path) # For loading models
+from pycnn.pycnn import PyCNN, Evaluate
 
-pycnn.torch(path) # For saving PyTorch compatible models (to use them in PyTorch later)
-```
-
-#### Prediction
-
-```python
-result = pycnn.predict(your_image_path) # Returns a tuple of (class name, confidense value)
-print(result) 
-```
-> The library will automatically convert weights, biases, and datasets to the selected backend. Models trained on GPU can still be loaded on CPU and vice versa.
-
-#### Usage exemple
-
-```python
-from pycnn.pycnn import PyCNN
-from os import listdir
-
+# Initialize model
 pycnn = PyCNN()
-pycnn.cuda(True)
+pycnn.cuda(True)  # Enable CUDA (requires CuPy)
 
+# Configure network architecture
 pycnn.init(
-    layers=[512, 256],
-    epochs=500,
+    batch_size=32,
+    layers=[256, 128, 64],
+    learning_rate=0.0001,
+    epochs=100
 )
 
-pycnn.dataset.hf("cifar10", max_image=500, cached=True)
+# Use Adam optimizer
 pycnn.adam()
-pycnn.train_model(early_stop=15)
-pycnn.save_model("pycnn_cifar10.bin")
-
-testdir = "cifar10_test"
-_max = 1000
-for classname in listdir(testdir):
-  x = 0
-  correct = 0
-  for filename in listdir(f"{testdir}/{classname}"):
-    if x == _max:
-      break
-    if pycnn.predict(f"{testdir}/{classname}/{filename}")[0] == classname:
-      correct += 1
-    x += 1
-  print(classname, correct)
-```
-> Output:
-
-> <img src="https://github.com/77AXEL/PyCNN/blob/main/output.png">
-
-* Total prediction accuracy: **48.1%**, which is a **strong result** for a model trained on only **500 images per class**.
-
-> Hardware used while training:
- <img src="https://github.com/77AXEL/PyCNN/blob/main/hardware.png">
-
-## PyCNN with PyTorch
-
-* Create a PyTorch CNN model with PyCNN:
-
-```python
-from pycnn.pycnn import PyCNN
-
-# Initialize PyCNN model
-pycnn = PyCNN()
-pycnn.init(
-    epochs=50,
-    layers=[64, 32],
-    learning_rate=0.0001
-)
 
 # Load dataset from Hugging Face
-pycnn.dataset.hf("cifar10", max_image=50, aug=[])
+pycnn.dataset.hf(
+    "cifar10",
+    max_image=1000,
+    split="train",
+    cached=True
+)
 
-# Configure Adam optimizer and train
+# Or load local dataset
+# pycnn.dataset.local("path/to/dataset", max_image=1000)
+
+# Train with visualization and early stopping
+pycnn.train_model(visualize=True, early_stop=10)
+
+# Evaluate model
+eval = Evaluate(pycnn)
+eval.hf(dataset_name="cifar10", max_image=10)
+```
+
+### Saving and Loading Models
+
+```python
+# Save model
+pycnn.save_model("model.bin")
+
+# Load model
+pycnn.load_model("model.bin")
+
+# Export to PyTorch format
+pycnn.torch("model.pth")
+```
+
+### Making Predictions
+
+```python
+# Predict on a new image
+class_name, confidence = pycnn.predict("test_image.png")
+print(f"Prediction: {class_name} ({confidence*100:.2f}%)")
+```
+
+---
+
+## 🔄 PyTorch Integration
+
+### Export PyCNN Model to PyTorch
+
+```python
+from pycnn.pycnn import PyCNN
+
+pycnn = PyCNN()
+pycnn.init(epochs=50, layers=[64, 32])
+pycnn.dataset.hf("cifar10", max_image=50)
 pycnn.adam()
 pycnn.train_model()
 
-# Save the model in a PyTorch format
+# Export to PyTorch
 pycnn.torch("model.pth")
-
 ```
 
-* Load and use the model.pth in PyTorch:
+### Use Exported Model in PyTorch
 
 ```python
 from pycnn.pycnn import PyCNNTorchModel
@@ -233,6 +213,7 @@ from PIL import Image
 import numpy as np
 import torch
 
+# Load checkpoint
 checkpoint = torch.load('model.pth', map_location='cpu')
 model = PyCNNTorchModel(
     checkpoint['layers'],
@@ -244,9 +225,10 @@ model = PyCNNTorchModel(
 model.load_state_dict(checkpoint['model_state_dict'])
 model.eval()
 
+# Predict
 def predict(image_path):
     img = Image.open(image_path).convert("RGB")
-    img = img.resize((checkpoint['image_size'], checkpoint['image_size']), Image.Resampling.LANCZOS)
+    img = img.resize((checkpoint['image_size'], checkpoint['image_size']))
     img_array = np.array(img).astype(np.float32) / 255.0
     img_tensor = torch.from_numpy(img_array).permute(2, 0, 1).unsqueeze(0)
     
@@ -255,59 +237,63 @@ def predict(image_path):
         confidence, predicted_idx = torch.max(output, 1)
         predicted_class = checkpoint['classes'][predicted_idx.item()]
     
-    print(f"Prediction: {predicted_class} (Confidence: {confidence.item()*100:.2f}%)")
+    print(f"Prediction: {predicted_class} ({confidence.item()*100:.2f}%)")
 
-predict("exemple.png")
+predict("example.png")
 ```
 
 ---
 
-## 📊 Performance
+## 🧪 How It Works
 
-| Metric   | Value (example)      |
-| -------- | -------------------- |
-| Accuracy | ~90% |
-| Epochs   |  1000                |
-| Dataset  | ~500 image for each class |
+1. **Image Preprocessing**: Images are resized, normalized, and processed through custom convolution filters with ReLU activation and max-pooling
+2. **Feature Extraction**: Flattened feature maps are fed into fully connected layers
+3. **Classification**: Dense layers compute activations followed by softmax for multi-class classification
+4. **Backpropagation**: Gradients are computed and weights updated using Adam or SGD optimizer
+5. **GPU Acceleration**: CUDA support enables parallel processing for faster training
 
 ---
 
-### 📌 Installation
+## 📊 Example Output
 
-```bash
-pip install git+https://github.com/77AXEL/PyCNN.git
+```python
+from pycnn.pycnn import PyCNN, Evaluate
+
+pycnn = PyCNN()
+pycnn.cuda(False)
+pycnn.init(layers=[512, 256], epochs=100)
+pycnn.dataset.hf("cifar10", max_image=50, cached=True)
+pycnn.adam()
+pycnn.train_model(early_stop=15)
+
+eval = Evaluate(pycnn)
+eval.hf(dataset_name="cifar10", max_image=10)
 ```
 
-> Optional: Install CuPy for CUDA support:
-
-```bash
-pip install cupy-cuda118  # Match your CUDA version
-```
-* See the <a href="https://nvidia.github.io/cuda-python/latest/">CUDA Documentation</a> for more information on how to set it up
+<img src="./assets/output.png" alt="Training Output">
 
 ---
 
-### 💬 Feedback & Contributions
+## 💬 Contributing
 
-We welcome issues, suggestions, and contributions!
-Check the [Discussions tab](https://github.com/77AXEL/PyCNN/discussions) or see [CONTRIBUTING.md](https://chatgpt.com/c/CONTRIBUTING.md)
-
----
-
-### 🛡 Security
-
-Found a security issue? Please report privately to:
-📧 [a.x.e.l777444000@gmail.com](mailto:a.x.e.l777444000@gmail.com)
+We welcome contributions, issues, and suggestions! Check the [Discussions tab](https://github.com/77AXEL/PyCNN/discussions) or see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ---
 
-### 📜 License
+## 🛡 Security
 
-Released under the <a href="https://github.com/77AXEL/PyCNN/blob/b7becb4bef3b0156dad9397b1d95d6465e98fc3c/LICENSE">MIT License</a>
+Found a security issue? Please report it in [issues](https://github.com/77AXEL/PyCNN/issues)
 
 ---
 
-. See the [PyCNN Documentation](https://77axel.github.io/PyCNN) for more informations and guidelines
+## 📜 License
 
-<img src="https://img.shields.io/badge/Author-A.X.E.L-red?style=flat-square;">  <img src="https://img.shields.io/badge/Open Source-Yes-red?style=flat-square;">
+Released under the [MIT License](./LICENSE)
 
+---
+
+## 📖 Documentation
+
+See the [PyCNN Documentation](https://77axel.github.io/PyCNN) for detailed guides and API reference.
+
+---
