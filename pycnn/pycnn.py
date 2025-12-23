@@ -15,7 +15,9 @@ elif system == "Darwin":
 else:
     ext = ".so"
 
-lib_path = os.path.abspath(f"./pycnn/lib/optimized{ext}")
+base_dir = os.path.dirname(os.path.abspath(__file__))
+lib_path = os.path.join(base_dir, "lib", f"optimized{ext}")
+
 try:
     optimized_lib = ctypes.CDLL(lib_path)
 except OSError as e:
