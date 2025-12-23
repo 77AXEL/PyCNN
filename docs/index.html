@@ -1,1745 +1,635 @@
 <!DOCTYPE html>
-<html lang="en">
+<html class="light" lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="google-site-verification" content="gRY7d4ZgKR6xJQPwkE826Dvaqu0_uMeBhly0pGtdPxg" />
-    <title>PyCNN - Python CNN Library</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>PyCNN - Deep Learning From Scratch</title>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&family=Noto+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#dc2626",
+                        "background-light": "#fafafa",
+                        "background-dark": "#0c0a09",
+                    },
+                    fontFamily: {
+                        "display": ["Newsreader", "serif"],
+                        "sans": ["Noto Sans", "sans-serif"],
+                        "mono": ["JetBrains Mono", "monospace"],
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
         }
-
-        :root {
-            --primary: #6366f1;
-            --primary-dark: #4f46e5;
-            --secondary: #8b5cf6;
-            --accent: #06b6d4;
-            --bg-dark: #0f0f23;
-            --bg-darker: #050512;
-            --bg-card: #1a1a35;
-            --text-primary: #e2e8f0;
-            --text-secondary: #94a3b8;
-            --text-accent: #60a5fa;
-            --border: #334155;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --error: #ef4444;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-            background: linear-gradient(135deg, var(--bg-darker) 0%, var(--bg-dark) 100%);
-            color: var(--text-primary);
-            line-height: 1.6;
-            min-height: 100vh;
-        }
-
-        /* Navigation */
-        .navbar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            background: rgba(15, 15, 35, 0.9);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border);
-            padding: 1rem 0;
-            transition: all 0.3s ease;
-        }
-
-        .nav-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
-            display: flex;
-            align-items: center;
-            justify-content: between;
-        }
-
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 0rem;
-            margin-left: auto;
-        }
-
-        .nav-link {
-            color: var(--text-secondary);
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-        }
-
-        .nav-link:hover {
-            color: var(--primary);
-        }
-
-        .nav-link.active {
-            color: var(--primary);
-            background: rgba(99, 102, 241, 0.1);
-        }
-
-        /* Hero Section */
-        .hero {
-            padding: 8rem 2rem 6rem;
-            text-align: center;
-            background: radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.1) 0%, transparent 50%);
-        }
-
-        .hero-content {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .hero h1 {
-            font-size: 3.5rem;
-            font-weight: 800;
-            margin-bottom: 1.5rem;
-            background: linear-gradient(135deg, var(--text-primary) 0%, var(--primary) 50%, var(--secondary) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .hero p {
-            font-size: 1.25rem;
-            color: var(--text-secondary);
-            margin-bottom: 2rem;
-        }
-
-        .hero-buttons {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            padding: 0.75rem 2rem;
-            border: none;
-            border-radius: 0.75rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            color: white;
-            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
-        }
-
-        .btn-outline {
-            background: transparent;
-            color: var(--text-primary);
-            border: 2px solid var(--border);
-        }
-
-        .btn-outline:hover {
-            border-color: var(--primary);
-            color: var(--primary);
-            transform: translateY(-2px);
-        }
-
-        /* Main Content */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
-        }
-
-        .section {
-            padding: 4rem 0;
-            border-bottom: 1px solid rgba(51, 65, 85, 0.3);
-        }
-
-        .section:last-child {
-            border-bottom: none;
-        }
-
-        .section h2 {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-            color: var(--text-primary);
-        }
-
-        .section h3 {
-            font-size: 1.75rem;
-            font-weight: 600;
-            margin: 2rem 0 1rem;
-            color: var(--primary);
-        }
-
-        .section h4 {
-            font-size: 1.25rem;
-            font-weight: 600;
-            margin: 1.5rem 0 0.75rem;
-            color: var(--text-accent);
-        }
-
-        .section p {
-            color: var(--text-secondary);
-            margin-bottom: 1rem;
-        }
-
-        /* Feature Grid */
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-
-        .feature-card {
-            background: var(--bg-card);
-            padding: 2rem;
-            border-radius: 1rem;
-            border: 1px solid var(--border);
-            transition: all 0.3s ease;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-5px);
-            border-color: var(--primary);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-        }
-
-        .feature-icon {
-            width: 3rem;
-            height: 3rem;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            border-radius: 0.75rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 1rem;
-            font-size: 1.5rem;
-        }
-
-        .feature-card h3 {
-            margin: 0 0 1rem;
-            color: var(--text-primary);
-        }
-
-        /* Code Blocks */
-        .code-block {
-            background: var(--bg-darker);
-            border: 1px solid var(--border);
-            border-radius: 0.75rem;
-            margin: 1.5rem 0;
-            overflow: hidden;
-        }
-
-        .code-header {
-            background: var(--bg-card);
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-        }
-
-        .code-content {
-            padding: 1.5rem;
-            overflow-x: auto;
-        }
-
-        .code-content pre {
-            margin: 0;
-            font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
-            font-size: 0.875rem;
-            line-height: 1.5;
-            color: var(--text-primary);
-        }
-
-        .copy-btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 0.25rem 0.75rem;
-            border-radius: 0.375rem;
-            font-size: 0.75rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .copy-btn:hover {
-            background: var(--primary-dark);
-        }
-
-        /* Syntax Highlighting */
-        .keyword { color: #c792ea; }
-        .string { color: #c3e88d; }
-        .comment { color: #546e7a; font-style: italic; }
-        .function { color: #82aaff; }
-        .number { color: #f78c6c; }
-        .operator { color: #89ddff; }
-
-        /* API Documentation Table */
-        .api-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 2rem 0;
-            background: var(--bg-card);
-            border-radius: 0.75rem;
-            overflow: hidden;
-        }
-
-        .api-table th,
-        .api-table td {
-            padding: 1rem 1.5rem;
-            text-align: left;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .api-table th {
-            background: var(--bg-darker);
-            color: var(--primary);
-            font-weight: 600;
-        }
-
-        .api-table tr:last-child td {
-            border-bottom: none;
-        }
-
-        .param-name {
-            font-family: 'Fira Code', monospace;
-            color: var(--accent);
-            font-weight: 500;
-        }
-
-        .param-type {
-            font-family: 'Fira Code', monospace;
-            color: var(--secondary);
-            font-size: 0.875rem;
-        }
-
-        /* Performance Chart */
-        .performance-chart {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 1rem;
-            padding: 2rem;
-            margin: 2rem 0;
-        }
-
-        .chart-bars {
-            display: flex;
-            align-items: end;
-            height: 200px;
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .chart-bar {
-            flex: 1;
-            background: linear-gradient(to top, var(--primary), var(--secondary));
-            border-radius: 0.25rem 0.25rem 0 0;
-            position: relative;
-            transition: all 0.3s ease;
-        }
-
-        .chart-bar:hover {
-            opacity: 0.8;
-        }
-
-        .bar-label {
-            position: absolute;
-            bottom: -2rem;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            text-align: center;
-        }
-
-        .bar-value {
-            position: absolute;
-            top: -1.5rem;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 0.75rem;
-            color: var(--text-primary);
-            font-weight: 600;
-        }
-
-        /* Interactive Examples */
-        .example-container {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 1rem;
-            margin: 2rem 0;
-            overflow: hidden;
-        }
-
-        .example-tabs {
-            display: flex;
-            background: var(--bg-darker);
-            border-bottom: 1px solid var(--border);
-        }
-
-        .example-tab {
-            padding: 1rem 1.5rem;
-            background: none;
-            border: none;
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border-bottom: 2px solid transparent;
-        }
-
-        .example-tab.active {
-            color: var(--primary);
-            border-bottom-color: var(--primary);
-        }
-
-        .example-content {
-            padding: 2rem;
-        }
-
-        .example-panel {
-            display: none;
-        }
-
-        .example-panel.active {
-            display: block;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 2.5rem;
-            }
-            
-            .hero p {
-                font-size: 1.1rem;
-            }
-            
-            .nav-links {
-                display: none;
-            }
-            
-            .hero-buttons {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .features-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: var(--bg-darker);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--primary);
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--primary-dark);
-        }
-    </style>
-</head>
-<body>
-    <!-- Navigation -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="logo">PyCNN</div>
-            <div class="nav-links">
-                <a href="#overview" class="nav-link active">Overview</a>
-                <a href="#features" class="nav-link">Features</a>
-                <a href="#installation" class="nav-link">Installation</a>
-                <a href="#quickstart" class="nav-link">Quick Start</a>
-                <a href="#api" class="nav-link">API</a>
-                <a href="#examples" class="nav-link">Examples</a>
-                <a href="#performance" class="nav-link">Performance</a>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="hero-content">
-            <h1>PyCNN Library</h1>
-            <p>Python Convolutional Neural Network library optimized for both CPU and GPU computing with advanced Cython acceleration</p>
-            <div class="hero-buttons">
-                <a href="#quickstart" class="btn btn-primary">Get Started →</a>
-                <a href="#examples" class="btn btn-outline">View Examples</a>
-            </div>
-        </div>
-    </section>
-
-    <main class="container">
-        <!-- Overview Section -->
-        <section id="overview" class="section">
-            <h2>Overview</h2>
-            <p>PyCNN is a specialized deep learning library designed for Convolutional Neural Networks with a focus on performance and ease of use. Built on top of NumPy, CuPy, SciPy, and Pillow, it leverages C/C++ optimizations and Cython acceleration for exceptional performance on both CPU and GPU platforms.</p>
-            <p>You can try out a trained CNN model built with PYCNN on the CIFAR-10 dataset using this Hugging Face Space: <a href="https://huggingface.co/spaces/777axel/pycnn_cifar10" style="text-decoration: none;color:#4f46e5"> pycnn_cifar10⤴</a></p>
-
-
-            
-            <h3>Core Architecture</h3>
-            <p>The library features a dual-backend system that automatically switches between CPU and CUDA implementations, providing optimal performance regardless of your hardware setup. The CPU backend utilizes highly optimized Cython, C, and C++ code for maximum efficiency.</p>
-
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">⚡</div>
-                    <h3>Performance Optimized</h3>
-                    <p>Cython, C, and C++ acceleration for CPU operations with automatic CUDA support for GPU computing.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🔧</div>
-                    <h3>Flexible Architecture</h3>
-                    <p>Modular design supporting custom filters, multiple optimizers, and various dataset formats.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">📊</div>
-                    <h3>Built-in Visualization</h3>
-                    <p>Real-time training visualization and comprehensive performance monitoring tools.</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Features Section -->
-        <section id="features" class="section">
-            <h2>Key Features</h2>
-            
-            <h3>🚀 High Performance Computing</h3>
-            <ul style="color: var(--text-secondary); margin-left: 2rem; margin-bottom: 2rem;">
-                <li><strong>Dual Backend System:</strong> Automatic switching between optimized CPU and CUDA implementations</li>
-                <li><strong>Cython Acceleration:</strong> Critical operations implemented in Cython for maximum CPU performance</li>
-                <li><strong>C/C++ Integration:</strong> Low-level optimizations for computational bottlenecks</li>
-                <li><strong>Memory Efficient:</strong> Smart memory management and batch processing</li>
-            </ul>
-
-            <h3>🧠 Advanced CNN Capabilities</h3>
-            <ul style="color: var(--text-secondary); margin-left: 2rem; margin-bottom: 2rem;">
-                <li><strong>19 Built-in Filters:</strong> Comprehensive collection of edge detection, enhancement, and feature extraction filters</li>
-                <li><strong>Custom Architectures:</strong> Flexible layer configuration with customizable hidden layers</li>
-                <li><strong>Advanced Pooling:</strong> Optimized max pooling with configurable stride and window size</li>
-                <li><strong>Activation Functions:</strong> ReLU activation with support for custom functions</li>
-                <li><strong>Dataset Augmentation:</strong> Data augmentation support with a customizable type</li>
-                <li><strong>PyTorch Model Exportation:</strong> Export your PyCNN trained model to a PyTorch format to use it in PyTorch later</li>
-            </ul>
-
-            <h3>🔧 Developer Experience</h3>
-            <ul style="color: var(--text-secondary); margin-left: 2rem;">
-                <li><strong>Simple API:</strong> Intuitive interface for rapid prototyping and development</li>
-                <li><strong>Multiple Data Sources:</strong> Support for local datasets and Hugging Face integration</li>
-                <li><strong>Model Persistence:</strong> Save and load trained models with cross-platform compatibility</li>
-                <li><strong>Real-time Monitoring:</strong> Built-in training visualization and progress tracking</li>
-            </ul>
-        </section>
-
-        <!-- Installation Section -->
-        <section id="installation" class="section">
-            <h2>Installation</h2>
-            <p>PyCNN requires Python version between 3.6 and 3.11 and can be installed with the following dependencies:</p>
-
-            <div class="code-block">
-                <div class="code-header">
-                    <span>Requirements</span>
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                </div>
-                <div class="code-content">
-                    <pre><code><span class="comment"># Core library</span>
-<span class="keyword">pip install</span> git+https://github.com/77AXEL/PyCNN.git
-
-<span class="comment"># Optional: For CUDA support</span>
-<span class="keyword">pip install</span> cupy-cuda11x  <span class="comment"># or cupy-cuda12x for CUDA 12</span>
-
-<span class="comment"># Optional: For Hugging Face datasets</span>
-<span class="keyword">pip install</span> datasets</code></pre>
-                </div>
-            </div>
-
-            <h3>From Source</h3>
-            <div class="code-block">
-                <div class="code-header">
-                    <span>Git Installation</span>
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                </div>
-                <div class="code-content">
-                    <pre><code><span class="function">git clone</span> git+https://github.com/77AXEL/PyCNN.git
-<span class="function">cd</span> pycnn.pycnn
-<span class="function">pip install</span> -e .</code></pre>
-                </div>
-            </div>
-
-            <h3>Verify Installation</h3>
-            <div class="code-block">
-                <div class="code-header">
-                    <span>Python Test</span>
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                </div>
-                <div class="code-content">
-                    <pre><code><span class="keyword">from</span> pycnn.pycnn <span class="keyword">import</span> PyCNN
-
-<span class="comment"># Create instance and check backend</span>
-model = <span class="function">PyCNN</span>()
-<span class="function">print</span>(<span class="string">f"Backend: {'CUDA' if model.use_cuda else 'CPU'}"</span>)</code></pre>
-                </div>
-            </div>
-        </section>
-
-        <!-- Quick Start Section -->
-        <section id="quickstart" class="section">
-            <h2>Quick Start Guide</h2>
-            <p>Get started with PyCNN in just a few lines of code. This example shows how to create, train, and use a CNN for image classification.</p>
-
-            <div class="example-container">
-                <div class="example-tabs">
-                    <button class="example-tab active" onclick="showExample('basic')">Basic Usage</button>
-                    <button class="example-tab" onclick="showExample('advanced')">Advanced Configuration</button>
-                    <button class="example-tab" onclick="showExample('prediction')">Making Predictions</button>
-                    <button class="example-tab" onclick="showExample('pytorch')">PyTorch Usage</button>
-                </div>
-                
-                <div class="example-content">
-                    <div id="basic" class="example-panel active">
-                        <div class="code-block">
-                            <div class="code-header">
-                                <span>basic_example.py</span>
-                                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                            </div>
-                            <div class="code-content">
-                                <pre><code><span class="keyword">from</span> pycnn.pycnn <span class="keyword">import</span> PyCNN
-
-<span class="comment"># Initialize the model</span>
-model = <span class="function">PyCNN</span>()
-
-<span class="comment"># Configure network architecture</span>
-model.<span class="function">init</span>(
-    batch_size=<span class="number">32</span>,
-    layers=[<span class="number">128</span>, <span class="number">64</span>],
-    learning_rate=<span class="number">0.001</span>,
-    epochs=<span class="number">50</span>
-)
-
-<span class="comment"># Load dataset from local directory</span>
-model.dataset.<span class="function">local</span>(<span class="string">"./dataset"</span>, max_image=<span class="number">100</span>, image_size=<span class="number">64</span>)
-
-<span class="comment"># Train the model</span>
-model.<span class="function">train_model</span>(visualize=<span class="keyword">True</span>)
-
-<span class="comment"># Save the trained model</span>
-model.<span class="function">save_model</span>(<span class="string">"my_model.bin"</span>)</code></pre>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="advanced" class="example-panel">
-                        <div class="code-block">
-                            <div class="code-header">
-                                <span>advanced_config.py</span>
-                                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                            </div>
-                            <div class="code-content">
-                                <pre><code><span class="keyword">from</span> pycnn.pycnn <span class="keyword">import</span> PyCNN
-
-<span class="comment"># Initialize with CUDA support</span>
-model = <span class="function">PyCNN</span>()
-model.<span class="function">cuda</span>(<span class="keyword">True</span>)  <span class="comment"># Enable CUDA if available</span>
-
-<span class="comment"># Configure Adam optimizer</span>
-model.<span class="function">adam</span>(beta1=<span class="number">0.9</span>, beta2=<span class="number">0.999</span>, eps=<span class="number">1e-8</span>)
-
-<span class="comment"># Custom filter configuration</span>
-custom_filters = [
-    [[<span class="number">-1</span>, <span class="number">0</span>, <span class="number">1</span>], [<span class="number">-2</span>, <span class="number">0</span>, <span class="number">2</span>], [<span class="number">-1</span>, <span class="number">0</span>, <span class="number">1</span>]],  <span class="comment"># Sobel X</span>
-    [[<span class="number">-1</span>, <span class="number">-2</span>, <span class="number">-1</span>], [<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>], [<span class="number">1</span>, <span class="number">2</span>, <span class="number">1</span>]]   <span class="comment"># Sobel Y</span>
-]
-
-<span class="comment"># Initialize with custom parameters</span>
-model.<span class="function">init</span>(
-    batch_size=<span class="number">64</span>,
-    layers=[<span class="number">256</span>, <span class="number">128</span>, <span class="number">64</span>],
-    learning_rate=<span class="number">0.001</span>,
-    epochs=<span class="number">100</span>,
-    filters=custom_filters
-)
-
-<span class="comment"># Load from Hugging Face with dataset augmentation</span>
-model.dataset.<span class="function">hf</span>(<span class="string">"cifar10"</span>, max_image=<span class="number">1000</span>, aug=<span class="string">
-    [
-        1, <span class="number"># Left-Right Flip</span>
-        2, <span class="number"># Top-Bottom Flip</span>
-        3, <span class="number"># 90 degree rotation</span>
-        4  <span class="number"># -90 degree rotation</span>
-    ]</span>
-)
-
-<span class="comment"># Train with early stopping</span>
-model.<span class="function">train_model</span>(visualize=<span class="keyword">True</span>, early_stop=<span class="number">10</span>)</code></pre>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="prediction" class="example-panel">
-                        <div class="code-block">
-                            <div class="code-header">
-                                <span>prediction_example.py</span>
-                                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                            </div>
-                            <div class="code-content">
-                                <pre><code><span class="keyword">from</span> pycnn.pycnn <span class="keyword">import</span> PyCNN
-
-<span class="comment"># Load a pre-trained model</span>
-model = <span class="function">PyCNN</span>()
-model.<span class="function">load_model</span>(<span class="string">"my_model.bin"</span>)
-
-<span class="comment"># Make predictions on new images</span>
-predicted_class, confidence = model.<span class="function">predict</span>(<span class="string">"test_image.jpg"</span>)
-
-<span class="function">print</span>(<span class="string">f"Predicted class: </span>{predicted_class}<span class="string">"</span>)
-<span class="function">print</span>(<span class="string">f"Confidence: </span>{confidence:<span class="number">.4f</span>}<span class="string">"</span>)
-
-<span class="comment"># Batch prediction example</span>
-<span class="keyword">import</span> os
-test_images = [<span class="string">f"test_{i}.jpg"</span> <span class="keyword">for</span> i <span class="keyword">in</span> <span class="function">range</span>(<span class="number">5</span>)]
-
-<span class="keyword">for</span> img_path <span class="keyword">in</span> test_images:
-    <span class="keyword">if</span> os.path.<span class="function">exists</span>(img_path):
-        pred_class, conf = model.<span class="function">predict</span>(img_path)
-        <span class="function">print</span>(<span class="string">f"</span>{img_path}<span class="string">: </span>{pred_class}<span class="string"> (</span>{conf:<span class="number">.3f</span>}<span class="string">)"</span>)</code></pre>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="pytorch" class="example-panel">
-                        <div class="code-block">
-                            <div class="code-header">
-                                <span>pycnn_pytorch.py</span>
-                                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                            </div>
-                            <div class="code-content">
-                                <pre><code><span class="keyword">from</span> pycnn.pycnn <span class="keyword">import</span> PyCNN
-<span class="keyword">from</span> pycnn.pycnn <span class="keyword">import</span> PyCNNTorchModel
-<span class="keyword">from</span> PIL <span class="keyword">import</span> Image
-<span class="keyword">import</span> numpy <span class="keyword">as</span> np
-<span class="keyword">import</span> torch
-
-<span class="comment"># Initialize PyCNN model</span>
-pycnn = <span class="function">PyCNN</span>()
-pycnn.<span class="function">init</span>(
-    epochs=<span class="number">50</span>,
-    layers=[<span class="number">64</span>, <span class="number">32</span>],
-    learning_rate=<span class="number">0.0001</span>
-)
-
-<span class="comment"># Load dataset from Hugging Face</span>
-pycnn.dataset.<span class="function">hf</span>(<span class="string">"cifar10"</span>, max_image=<span class="number">50</span>, aug=[])
-
-<span class="comment"># Configure Adam optimizer and train</span>
-pycnn.<span class="function">adam</span>()
-pycnn.<span class="function">train_model</span>()
-pycnn.<span class="function">torch</span>(<span class="string">"model.pth"</span>)
-
-<span class="comment"># Load PyTorch model from checkpoint</span>
-checkpoint = torch.<span class="function">load</span>(<span class="string">'model.pth'</span>, map_location=<span class="string">'cpu'</span>)
-model = <span class="function">PyCNNTorchModel</span>(
-    checkpoint[<span class="string">'layers'</span>],
-    checkpoint[<span class="string">'num_classes'</span>],
-    checkpoint[<span class="string">'filters'</span>],
-    checkpoint[<span class="string">'image_size'</span>]
-)
-
-model.<span class="function">load_state_dict</span>(checkpoint[<span class="string">'model_state_dict'</span>])
-model.<span class="function">eval</span>()
-
-<span class="comment"># Prediction function</span>
-<span class="keyword">def</span> <span class="function">predict</span>(image_path):
-    img = Image.<span class="function">open</span>(image_path).<span class="function">convert</span>(<span class="string">"RGB"</span>)
-    img = img.<span class="function">resize</span>((checkpoint[<span class="string">'image_size'</span>], checkpoint[<span class="string">'image_size'</span>]), Image.Resampling.LANCZOS)
-    img_array = np.<span class="function">array</span>(img).<span class="function">astype</span>(np.float32) / <span class="number">255.0</span>
-    img_tensor = torch.<span class="function">from_numpy</span>(img_array).<span class="function">permute</span>(<span class="number">2</span>, <span class="number">0</span>, <span class="number">1</span>).<span class="function">unsqueeze</span>(<span class="number">0</span>)
-    
-    <span class="keyword">with</span> torch.<span class="function">no_grad</span>():
-        output = <span class="function">model</span>(img_tensor)
-        confidence, predicted_idx = torch.<span class="function">max</span>(output, <span class="number">1</span>)
-        predicted_class = checkpoint[<span class="string">'classes'</span>][predicted_idx.<span class="function">item</span>()]
-        
-        <span class="function">print</span>(<span class="string">f"Prediction: </span>{predicted_class}<span class="string"> (Confidence: </span>{confidence.<span class="function">item</span>()*<span class="number">100</span>:<span class="number">.2f</span>}<span class="string">%)"</span>)
-
-<span class="comment"># Make a prediction</span>
-<span class="function">predict</span>(<span class="string">"cifar10_test/airplane/airplane_3.png"</span>)</code></pre>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- API Documentation Section -->
-        <section id="api" class="section">
-            <h2>API Reference</h2>
-            
-            <h3>PyCNN Class</h3>
-            <p>The main class for creating and managing CNN models.</p>
-
-            <h4>Initialization Methods</h4>
-            <table class="api-table">
-                <thead>
-                    <tr>
-                        <th>Method</th>
-                        <th>Parameters</th>
-                        <th>Description</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><span class="param-name">__init__()</span></td>
-                        <td>None</td>
-                        <td>Initialize PyCNN instance with default CPU backend</td>
-                    </tr>
-                    <tr>
-                        <td><span class="param-name">init()</span></td>
-                        <td>
-                            <span class="param-name">batch_size</span> <span class="param-type">int</span><br>
-                            <span class="param-name">layers</span> <span class="param-type">list</span><br>
-                            <span class="param-name">learning_rate</span> <span class="param-type">float</span><br>
-                            <span class="param-name">epochs</span> <span class="param-type">int</span><br>
-                            <span class="param-name">filters</span> <span class="param-type">list</span>
-                        </td>
-                        <td>Configure network architecture and training parameters</td>
-                    </tr>
-                    <tr>
-                        <td><span class="param-name">cuda()</span></td>
-                        <td><span class="param-name">use_cuda</span> <span class="param-type">bool</span></td>
-                        <td>Enable or disable CUDA acceleration</td>
-                    </tr>
-                    <tr>
-                        <td><span class="param-name">adam()</span></td>
-                        <td>
-                            <span class="param-name">beta1</span> <span class="param-type">float</span><br>
-                            <span class="param-name">beta2</span> <span class="param-type">float</span><br>
-                            <span class="param-name">eps</span> <span class="param-type">float</span>
-                        </td>
-                        <td>Configure Adam optimizer with momentum parameters</td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <h4>Training Methods</h4>
-            <table class="api-table">
-                <thead>
-                    <tr>
-                        <th>Method</th>
-                        <th>Parameters</th>
-                        <th>Description</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><span class="param-name">train_model()</span></td>
-                        <td>
-                            <span class="param-name">visualize</span> <span class="param-type">bool</span><br>
-                            <span class="param-name">early_stop</span> <span class="param-type">int</span>
-                        </td>
-                        <td>Train the model with optional visualization and early stopping</td>
-                    </tr>
-                    <tr>
-                        <td><span class="param-name">predict()</span></td>
-                        <td><span class="param-name">img_path</span> <span class="param-type">str</span></td>
-                        <td>Make prediction on a single image, returns (class, confidence)</td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <h4>Model Persistence</h4>
-            <table class="api-table">
-                <thead>
-                    <tr>
-                        <th>Method</th>
-                        <th>Parameters</th>
-                        <th>Description</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><span class="param-name">save_model()</span></td>
-                        <td><span class="param-name">path</span> <span class="param-type">str</span></td>
-                        <td>Save trained model to disk with cross-platform compatibility</td>
-                    </tr>
-                    <tr>
-                        <td><span class="param-name">load_model()</span></td>
-                        <td><span class="param-name">model_path</span> <span class="param-type">str</span></td>
-                        <td>Load pre-trained model from disk</td>
-                    </tr>
-                    <tr>
-                        <td><span class="param-name">torch()</span></td>
-                        <td><span class="param-name">path</span> <span class="param-type">str</span></td>
-                        <td>Save trained model to disk with PyTorch format</td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <h3>Dataset Loader</h3>
-            <p>Access through <span class="param-name">model.dataset</span> for data loading operations.</p>
-
-            <table class="api-table">
-                <thead>
-                    <tr>
-                        <th>Method</th>
-                        <th>Parameters</th>
-                        <th>Description</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><span class="param-name">local()</span></td>
-                        <td>
-                            <span class="param-name">path</span> <span class="param-type">str</span><br>
-                            <span class="param-name">max_image</span> <span class="param-type">int</span><br>
-                            <span class="param-name">image_size</span> <span class="param-type">int</span>
-                        </td>
-                        <td>Load dataset from local directory structure</td>
-                    </tr>
-                    <tr>
-                        <td><span class="param-name">hf()</span></td>
-                        <td>
-                            <span class="param-name">name</span> <span class="param-type">str</span><br>
-                            <span class="param-name">max_image</span> <span class="param-type">int</span><br>
-                            <span class="param-name">split</span> <span class="param-type">str</span><br>
-                            <span class="param-name">cached</span> <span class="param-type">bool</span>
-                        </td>
-                        <td>Load dataset from Hugging Face datasets hub</td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <h3>Built-in Filters</h3>
-            <p>PyCNN comes with 19 pre-defined convolutional filters for various image processing tasks:</p>
-
-            <div class="features-grid">
-                <div class="feature-card">
-                    <h4>Edge Detection</h4>
-                    <ul style="color: var(--text-secondary); font-size: 0.9rem;">
-                        <li>Sobel X & Y filters</li>
-                        <li>Prewitt operators</li>
-                        <li>Laplacian filters</li>
-                        <li>Custom edge enhancement</li>
-                    </ul>
-                </div>
-                <div class="feature-card">
-                    <h4>Feature Enhancement</h4>
-                    <ul style="color: var(--text-secondary); font-size: 0.9rem;">
-                        <li>Sharpening filters</li>
-                        <li>High-pass filters</li>
-                        <li>Contrast boosting</li>
-                        <li>Diagonal enhancement</li>
-                    </ul>
-                </div>
-                <div class="feature-card">
-                    <h4>Specialized Filters</h4>
-                    <ul style="color: var(--text-secondary); font-size: 0.9rem;">
-                        <li>Blur and smoothing</li>
-                        <li>Corner detection</li>
-                        <li>Emboss effects</li>
-                        <li>Line detection</li>
-                    </ul>
-                </div>
-            </div>
-        </section>
-
-        <!-- Examples Section -->
-        <section id="examples" class="section">
-            <h2>Examples & Use Cases</h2>
-            
-            <h3>1. Image Classification with Custom Dataset</h3>
-            <div class="code-block">
-                <div class="code-header">
-                    <span>custom_classification.py</span>
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                </div>
-                <div class="code-content">
-                    <pre><code><span class="keyword">import</span> os
-<span class="keyword">from</span> pycnn.pycnn <span class="keyword">import</span> PyCNN
-
-<span class="comment"># Create dataset directory structure</span>
-<span class="comment"># dataset/</span>
-<span class="comment">#   ├── cats/</span>
-<span class="comment">#   ├── dogs/</span>
-<span class="comment">#   └── birds/</span>
-
-<span class="function">def</span> <span class="function">train_animal_classifier</span>():
-    model = <span class="function">PyCNN</span>()
-    
-    <span class="comment"># Configure for multi-class classification</span>
-    model.<span class="function">init</span>(
-        batch_size=<span class="number">16</span>,
-        layers=[<span class="number">512</span>, <span class="number">256</span>, <span class="number">128</span>],
-        learning_rate=<span class="number">0.0001</span>,
-        epochs=<span class="number">75</span>
-    )
-    
-    <span class="comment"># Load local dataset</span>
-    model.dataset.<span class="function">local</span>(
-        path=<span class="string">"./animal_dataset"</span>,
-        max_image=<span class="number">500</span>,
-        image_size=<span class="number">128</span>
-    )
-    
-    <span class="comment"># Train with visualization</span>
-    model.<span class="function">train_model</span>(visualize=<span class="keyword">True</span>, early_stop=<span class="number">15</span>)
-    
-    <span class="comment"># Save the model</span>
-    model.<span class="function">save_model</span>(<span class="string">"animal_classifier.bin"</span>)
-    
-    <span class="keyword">return</span> model
-
-<span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:
-    model = <span class="function">train_animal_classifier</span>()</code></pre>
-                </div>
-            </div>
-
-            <h3>2. Transfer Learning with Pre-trained Features</h3>
-            <div class="code-block">
-                <div class="code-header">
-                    <span>transfer_learning.py</span>
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                </div>
-                <div class="code-content">
-                    <pre><code><span class="keyword">from</span> pycnn.pycnn <span class="keyword">import</span> PyCNN
-
-<span class="function">def</span> <span class="function">fine_tune_model</span>(base_model_path, new_dataset_path):
-    <span class="comment"># Load pre-trained model</span>
-    model = <span class="function">PyCNN</span>()
-    model.<span class="function">load_model</span>(base_model_path)
-    
-    <span class="comment"># Reduce learning rate for fine-tuning</span>
-    model.learning_rate = <span class="number">0.00001</span>
-    
-    <span class="comment"># Load new dataset</span>
-    model.dataset.<span class="function">local</span>(
-        path=new_dataset_path,
-        max_image=<span class="number">200</span>,
-        image_size=model.image_size
-    )
-    
-    <span class="comment"># Fine-tune with fewer epochs</span>
-    model.epochs = <span class="number">20</span>
-    model.<span class="function">train_model</span>(visualize=<span class="keyword">True</span>)
-    
-    <span class="keyword">return</span> model
-
-<span class="comment"># Usage</span>
-fine_tuned_model = <span class="function">fine_tune_model</span>(
-    <span class="string">"base_model.bin"</span>,
-    <span class="string">"./specialized_dataset"</span>
-)</code></pre>
-                </div>
-            </div>
-
-            <h3>3. Batch Processing and Evaluation</h3>
-            <div class="code-block">
-                <div class="code-header">
-                    <span>batch_evaluation.py</span>
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                </div>
-                <div class="code-content">
-                    <pre><code><span class="keyword">import</span> os
-<span class="keyword">from</span> collections <span class="keyword">import</span> defaultdict
-<span class="keyword">from</span> pycnn.pycnn <span class="keyword">import</span> PyCNN
-
-<span class="function">def</span> <span class="function">evaluate_model</span>(model_path, test_directory):
-    model = <span class="function">PyCNN</span>()
-    model.<span class="function">load_model</span>(model_path)
-    
-    results = <span class="function">defaultdict</span>(<span class="function">list</span>)
-    total_correct = <span class="number">0</span>
-    total_images = <span class="number">0</span>
-    
-    <span class="comment"># Process each class directory</span>
-    <span class="keyword">for</span> class_name <span class="keyword">in</span> os.<span class="function">listdir</span>(test_directory):
-        class_path = os.path.<span class="function">join</span>(test_directory, class_name)
-        <span class="keyword">if</span> <span class="operator">not</span> os.path.<span class="function">isdir</span>(class_path):
-            <span class="keyword">continue</span>
-        
-        class_correct = <span class="number">0</span>
-        class_total = <span class="number">0</span>
-        
-        <span class="keyword">for</span> image_file <span class="keyword">in</span> os.<span class="function">listdir</span>(class_path):
-            <span class="keyword">if</span> image_file.<span class="function">lower</span>().<span class="function">endswith</span>((<span class="string">'.jpg'</span>, <span class="string">'.png'</span>, <span class="string">'.jpeg'</span>)):
-                image_path = os.path.<span class="function">join</span>(class_path, image_file)
-                
-                predicted_class, confidence = model.<span class="function">predict</span>(image_path)
-                
-                results[class_name].<span class="function">append</span>({
-                    <span class="string">'predicted'</span>: predicted_class,
-                    <span class="string">'confidence'</span>: confidence,
-                    <span class="string">'correct'</span>: predicted_class == class_name
-                })
-                
-                <span class="keyword">if</span> predicted_class == class_name:
-                    class_correct += <span class="number">1</span>
-                    total_correct += <span class="number">1</span>
-                
-                class_total += <span class="number">1</span>
-                total_images += <span class="number">1</span>
-        
-        <span class="comment"># Print class-specific accuracy</span>
-        class_accuracy = class_correct / class_total <span class="keyword">if</span> class_total > <span class="number">0</span> <span class="keyword">else</span> <span class="number">0</span>
-        <span class="function">print</span>(<span class="string">f"</span>{class_name}<span class="string">: </span>{class_accuracy:<span class="number">.4f</span>}<span class="string"> (</span>{class_correct}<span class="string">/</span>{class_total}<span class="string">)"</span>)
-    
-    <span class="comment"># Overall accuracy</span>
-    overall_accuracy = total_correct / total_images
-    <span class="function">print</span>(<span class="string">f"Overall Accuracy: </span>{overall_accuracy:<span class="number">.4f</span>}<span class="string"> (</span>{total_correct}<span class="string">/</span>{total_images}<span class="string">)"</span>)
-    
-    <span class="keyword">return</span> results, overall_accuracy
-
-<span class="comment"># Usage</span>
-results, accuracy = <span class="function">evaluate_model</span>(<span class="string">"my_model.bin"</span>, <span class="string">"./test_dataset"</span>)</code></pre>
-                </div>
-            </div>
-
-            <h3>4. Working with Hugging Face Datasets</h3>
-            <div class="code-block">
-                <div class="code-header">
-                    <span>huggingface_example.py</span>
-                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                </div>
-                <div class="code-content">
-                    <pre><code><span class="keyword">from</span> pycnn.pycnn <span class="keyword">import</span> PyCNN
-
-<span class="function">def</span> <span class="function">train_on_cifar10</span>():
-    model = <span class="function">PyCNN</span>()
-    
-    <span class="comment"># Enable CUDA if available</span>
-    model.<span class="function">cuda</span>(<span class="keyword">True</span>)
-    
-    <span class="comment"># Configure Adam optimizer</span>
-    model.<span class="function">adam</span>(beta1=<span class="number">0.9</span>, beta2=<span class="number">0.999</span>)
-    
-    <span class="comment"># Initialize with appropriate architecture for CIFAR-10</span>
-    model.<span class="function">init</span>(
-        batch_size=<span class="number">64</span>,
-        layers=[<span class="number">1024</span>, <span class="number">512</span>, <span class="number">256</span>],
-        learning_rate=<span class="number">0.001</span>,
-        epochs=<span class="number">100</span>
-    )
-    
-    <span class="comment"># Load CIFAR-10 dataset</span>
-    model.dataset.<span class="function">hf</span>(
-        name=<span class="string">"cifar10"</span>,
-        max_image=<span class="number">2000</span>,  <span class="comment"># Limit for demo</span>
-        split=<span class="string">"train"</span>,
-        cached=<span class="keyword">True</span>
-    )
-    
-    <span class="comment"># Train with early stopping</span>
-    model.<span class="function">train_model</span>(visualize=<span class="keyword">True</span>, early_stop=<span class="number">10</span>)
-    
-    <span class="comment"># Save the model</span>
-    model.<span class="function">save_model</span>(<span class="string">"cifar10_model.bin"</span>)
-    
-    <span class="keyword">return</span> model
-
-<span class="function">def</span> <span class="function">train_on_custom_hf_dataset</span>():
-    model = <span class="function">PyCNN</span>()
-    
-    <span class="comment"># Try different popular datasets</span>
-    datasets_to_try = [
-        <span class="string">"food101"</span>,
-        <span class="string">"oxford-iiit-pet"</span>,
-        <span class="string">"imagenet-1k"</span>
-    ]
-    
-    <span class="keyword">for</span> dataset_name <span class="keyword">in</span> datasets_to_try:
-        <span class="keyword">try</span>:
-            <span class="function">print</span>(<span class="string">f"Trying to load </span>{dataset_name}<span class="string">..."</span>)
-            model.dataset.<span class="function">hf</span>(
-                name=dataset_name,
-                max_image=<span class="number">100</span>,  <span class="comment"># Small sample</span>
-                split=<span class="string">"train"</span>
-            )
-            <span class="function">print</span>(<span class="string">f"Successfully loaded </span>{dataset_name}<span class="string">"</span>)
-            <span class="keyword">break</span>
-        <span class="keyword">except</span> <span class="function">Exception</span> <span class="keyword">as</span> e:
-            <span class="function">print</span>(<span class="string">f"Failed to load </span>{dataset_name}<span class="string">: </span>{e}<span class="string">"</span>)
-    
-    <span class="keyword">return</span> model
-
-<span class="keyword">if</span> __name__ == <span class="string">"__main__"</span>:
-    <span class="comment"># Train on CIFAR-10</span>
-    cifar_model = <span class="function">train_on_cifar10</span>()</code></pre>
-                </div>
-            </div>
-        </section>
-
-        <!-- Performance Section -->
-        <section id="performance" class="section">
-            <h2>Performance & Benchmarks</h2>
-            <p>PyCNN is optimized for high-performance computing with specialized acceleration for both CPU and GPU environments.</p>
-
-            <h3>Performance Comparison</h3>
-            <div class="performance-chart">
-                <h4>Training Speed Comparison (Images/Second)</h4>
-                <div class="chart-bars">
-                    <div class="chart-bar" style="height: 30%;">
-                        <div class="bar-value">150</div>
-                        <div class="bar-label">Pure NumPy</div>
-                    </div>
-                    <div class="chart-bar" style="height: 70%;">
-                        <div class="bar-value">350</div>
-                        <div class="bar-label">PyCNN CPU</div>
-                    </div>
-                    <div class="chart-bar" style="height: 78%;">
-                        <div class="bar-value">400</div>
-                        <div class="bar-label">PyCNN CUDA</div>
-                    </div>
-                    <div class="chart-bar" style="height: 45%;">
-                        <div class="bar-value">225</div>
-                        <div class="bar-label">TensorFlow Lite</div>
-                    </div>
-                    <div class="chart-bar" style="height: 85%;">
-                        <div class="bar-value">425</div>
-                        <div class="bar-label">PyTorch</div>
-                    </div>
-                </div>
-                
-            </div>
-
-            <h3>Optimization Features</h3>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">🏎️</div>
-                    <h3>Cython Acceleration</h3>
-                    <p>Critical operations compiled to C for 2-3x performance improvement over pure NumPy on CPU.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">⚡</div>
-                    <h3>CUDA Integration</h3>
-                    <p>Seamless GPU acceleration with CuPy for parallel computation on NVIDIA GPUs.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🎯</div>
-                    <h3>Memory Optimization</h3>
-                    <p>Efficient memory management with batch processing and automatic garbage collection.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🔧</div>
-                    <h3>Adaptive Backend</h3>
-                    <p>Automatic selection between CPU and GPU backends based on available hardware.</p>
-                </div>
-            </div>
-
-            <h3>System Requirements</h3>
-            <div class="code-block">
-                <div class="code-header">
-                    <span>Minimum Requirements</span>
-                </div>
-                <div class="code-content">
-                    <pre><code><span class="comment"># CPU Requirements</span>
-Python: <span class="number">3.7</span>+
-RAM: <span class="number">4</span>GB minimum, <span class="number">8</span>GB recommended
-CPU: Multi-core processor (Intel/AMD)
-
-<span class="comment"># GPU Requirements (Optional)</span>
-NVIDIA GPU: GTX <span class="number">1060</span> or better
-CUDA: <span class="number">11.0</span>+ or <span class="number">12.0</span>+
-VRAM: <span class="number">4</span>GB minimum, <span class="number">8</span>GB+ recommended
-
-<span class="comment"># Storage</span>
-Disk Space: <span class="number">2</span>GB for library + dataset storage</code></pre>
-                </div>
-            </div>
-
-            <h3>Performance Tips</h3>
-            <div style="background: var(--bg-card); padding: 2rem; border-radius: 1rem; border: 1px solid var(--border); margin: 2rem 0;">
-                <h4 style="color: var(--primary); margin-bottom: 1rem;">💡 Optimization Recommendations</h4>
-                <ul style="color: var(--text-secondary); margin-left: 1.5rem;">
-                    <li><strong>Batch Size:</strong> Use larger batches (64-128) for GPU, smaller (16-32) for CPU</li>
-                    <li><strong>Image Size:</strong> Start with 64x64 or 128x128 for faster iteration</li>
-                    <li><strong>Early Stopping:</strong> Use early stopping to prevent overfitting and save time</li>
-                    <li><strong>Learning Rate:</strong> Start with 0.001 for Adam, 0.01 for SGD</li>
-                    <li><strong>Memory:</strong> Monitor RAM usage with large datasets, use max_image parameter</li>
-                </ul>
-            </div>
-        </section>
-
-        <!-- Footer -->
-        <footer style="text-align: center; padding: 3rem 0; border-top: 1px solid var(--border); margin-top: 4rem; color: var(--text-secondary);">
-            <p>&copy; PyCNN Library. Built for CNNs deep learning.</p>
-            <p style="margin-top: 1rem;">
-                <span style="color: var(--primary);">⚡ Powered by Cython, NumPy, and CuPy</span>
-            </p>
-        </footer>
-    </main>
-
-    <script>
-        // Navigation scroll effect
-        window.addEventListener('scroll', () => {
-            const navbar = document.querySelector('.navbar');
-            if (window.scrollY > 50) {
-                navbar.style.background = 'rgba(15, 15, 35, 0.95)';
-            } else {
-                navbar.style.background = 'rgba(15, 15, 35, 0.9)';
-            }
-        });
-
-        // Smooth scrolling for navigation links
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const targetId = link.getAttribute('href').substring(1);
-                const targetElement = document.getElementById(targetId);
-                
-                if (targetElement) {
-                    const offsetTop = targetElement.offsetTop - 100;
-                    window.scrollTo({
-                        top: offsetTop,
-                        behavior: 'smooth'
-                    });
-                }
-                
-                // Update active nav link
-                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-                link.classList.add('active');
-            });
-        });
-
-        // Update active nav link on scroll
-        window.addEventListener('scroll', () => {
-            const sections = document.querySelectorAll('.section');
-            const navLinks = document.querySelectorAll('.nav-link');
-            
-            let currentSection = '';
-            
-            sections.forEach(section => {
-                const sectionTop = section.offsetTop - 120;
-                const sectionHeight = section.offsetHeight;
-                
-                if (window.scrollY >= sectionTop && window.scrollY < sectionTop + sectionHeight) {
-                    currentSection = section.getAttribute('id');
-                }
-            });
-            
-            navLinks.forEach(link => {
-                link.classList.remove('active');
-                if (link.getAttribute('href').substring(1) === currentSection) {
-                    link.classList.add('active');
-                }
-            });
-        });
-
-        // Example tab functionality
-        function showExample(tabId) {
-            // Hide all panels
-            document.querySelectorAll('.example-panel').forEach(panel => {
-                panel.classList.remove('active');
-            });
-            
-            // Remove active class from all tabs
-            document.querySelectorAll('.example-tab').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            
-            // Show selected panel and activate tab
-            document.getElementById(tabId).classList.add('active');
-            event.target.classList.add('active');
-        }
-
-        // Copy code functionality
-        function copyCode(button) {
-            const codeContent = button.closest('.code-block').querySelector('pre code');
-            const text = codeContent.textContent;
-            
-            navigator.clipboard.writeText(text).then(() => {
-                const originalText = button.textContent;
-                button.textContent = 'Copied!';
-                button.style.background = 'var(--success)';
-                
-                setTimeout(() => {
-                    button.textContent = originalText;
-                    button.style.background = 'var(--primary)';
-                }, 2000);
-            }).catch(err => {
-                console.error('Failed to copy code: ', err);
-                button.textContent = 'Failed';
-                button.style.background = 'var(--error)';
-                
-                setTimeout(() => {
-                    button.textContent = 'Copy';
-                    button.style.background = 'var(--primary)';
-                }, 2000);
-            });
-        }
-
-        // Animate performance chart on scroll
-        const observerOptions = {
-            threshold: 0.5,
-            rootMargin: '0px 0px -100px 0px'
-        };
-
-        const chartObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const bars = entry.target.querySelectorAll('.chart-bar');
-                    bars.forEach((bar, index) => {
-                        setTimeout(() => {
-                            bar.style.transform = 'scaleY(1)';
-                            bar.style.transformOrigin = 'bottom';
-                        }, index * 200);
-                    });
-                }
-            });
-        }, observerOptions);
-
-        // Initialize chart animation
-        const chart = document.querySelector('.performance-chart');
-        if (chart) {
-            const bars = chart.querySelectorAll('.chart-bar');
-            bars.forEach(bar => {
-                bar.style.transform = 'scaleY(0)';
-                bar.style.transition = 'transform 0.6s ease-out';
-            });
-            chartObserver.observe(chart);
-        }
-
-        // Add hover effect to feature cards
-        document.querySelectorAll('.feature-card').forEach(card => {
-            card.addEventListener('mouseenter', () => {
-                card.style.transform = 'translateY(-10px)';
-            });
-            
-            card.addEventListener('mouseleave', () => {
-                card.style.transform = 'translateY(-5px)';
-            });
-        });
-
-        // Add typing effect to hero title
-        function typeWriter(element, text, speed = 100) {
-            let i = 0;
-            element.textContent = '';
-            
-            function type() {
-                if (i < text.length) {
-                    element.textContent += text.charAt(i);
-                    i++;
-                    setTimeout(type, speed);
-                }
-            }
-            type();
-        }
-
-        // Initialize typing effect on page load
-        window.addEventListener('load', () => {
-            const heroTitle = document.querySelector('.hero h1');
-            if (heroTitle) {
-                const originalText = heroTitle.textContent;
-                typeWriter(heroTitle, originalText, 150);
-            }
-        });
-
-        // Add parallax effect to hero section
-        window.addEventListener('scroll', () => {
-            const scrolled = window.pageYOffset;
-            const hero = document.querySelector('.hero');
-            if (hero) {
-                hero.style.transform = `translateY(${scrolled * 0.5}px)`;
-            }
-        });
-
-        // Add search functionality (basic implementation)
-        function addSearchFeature() {
-            const searchHTML = `
-                <div class="search-container" style="position: relative; margin-left: 2rem;">
-                    <input type="text" id="search-input" placeholder="Search documentation..." 
-                           style="background: var(--bg-card); border: 1px solid var(--border); 
-                                  border-radius: 0.5rem; padding: 0.5rem 1rem; color: var(--text-primary);
-                                  width: 250px;">
-                    <div id="search-results" style="position: absolute; top: 100%; left: 0; right: 0;
-                                                    background: var(--bg-card); border: 1px solid var(--border);
-                                                    border-radius: 0.5rem; max-height: 300px; overflow-y: auto;
-                                                    display: none; z-index: 1000;"></div>
-                </div>
-            `;
-            
-            const navLinks = document.querySelector('.nav-links');
-            if (navLinks && window.innerWidth > 768) {
-                navLinks.insertAdjacentHTML('beforebegin', searchHTML);
-                initializeSearch();
-            }
-        }
-
-        function initializeSearch() {
-            const searchInput = document.getElementById('search-input');
-            const searchResults = document.getElementById('search-results');
-            
-            if (!searchInput || !searchResults) return;
-            
-            // Create search index
-            const searchIndex = [];
-            const sections = document.querySelectorAll('.section');
-            
-            sections.forEach(section => {
-                const headings = section.querySelectorAll('h2, h3, h4');
-                const paragraphs = section.querySelectorAll('p');
-                
-                headings.forEach(heading => {
-                    searchIndex.push({
-                        title: heading.textContent,
-                        content: heading.textContent,
-                        element: heading,
-                        type: 'heading'
-                    });
-                });
-                
-                paragraphs.forEach(paragraph => {
-                    if (paragraph.textContent.length > 20) {
-                        searchIndex.push({
-                            title: paragraph.textContent.substring(0, 100) + '...',
-                            content: paragraph.textContent,
-                            element: paragraph,
-                            type: 'content'
-                        });
-                    }
-                });
-            });
-            
-            searchInput.addEventListener('input', (e) => {
-                const query = e.target.value.toLowerCase().trim();
-                
-                if (query.length < 2) {
-                    searchResults.style.display = 'none';
-                    return;
-                }
-                
-                const matches = searchIndex.filter(item => 
-                    item.content.toLowerCase().includes(query)
-                ).slice(0, 8);
-                
-                if (matches.length > 0) {
-                    searchResults.innerHTML = matches.map(match => `
-                        <div class="search-result-item" style="padding: 0.75rem; border-bottom: 1px solid var(--border);
-                                                              cursor: pointer; color: var(--text-secondary);
-                                                              hover: background-color: var(--bg-darker);"
-                             onclick="scrollToElement(this)" data-target="${match.element.id || ''}">
-                            <div style="font-weight: 600; color: var(--text-primary); margin-bottom: 0.25rem;">
-                                ${match.title}
-                            </div>
-                            <div style="font-size: 0.875rem;">
-                                ${match.type === 'heading' ? 'Section' : 'Content'}
-                            </div>
-                        </div>
-                    `).join('');
-                    
-                    searchResults.style.display = 'block';
-                } else {
-                    searchResults.innerHTML = '<div style="padding: 1rem; color: var(--text-secondary);">No results found</div>';
-                    searchResults.style.display = 'block';
-                }
-            });
-            
-            // Close search results when clicking outside
-            document.addEventListener('click', (e) => {
-                if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
-                    searchResults.style.display = 'none';
-                }
-            });
-        }
-        
-        function scrollToElement(resultElement) {
-            const targetId = resultElement.getAttribute('data-target');
-            const searchResults = document.getElementById('search-results');
-            
-            if (targetId) {
-                const target = document.getElementById(targetId);
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
-            }
-            
-            if (searchResults) {
-                searchResults.style.display = 'none';
-            }
-        }
-
-        // Add mobile menu
-        function addMobileMenu() {
-            const mobileMenuHTML = `
-                <button id="mobile-menu-btn" class="mobile-menu-btn" 
-                        style="display: none; background: none; border: none; color: var(--text-primary);
-                               font-size: 1.5rem; cursor: pointer; margin-left: auto;">
-                    ☰
-                </button>
-                <div id="mobile-menu" class="mobile-menu" 
-                     style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-                            background: rgba(15, 15, 35, 0.95); backdrop-filter: blur(20px);
-                            z-index: 2000; padding: 2rem;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
-                        <div class="logo">PyCNN</div>
-                        <button id="close-mobile-menu" style="background: none; border: none; 
-                                                               color: var(--text-primary); font-size: 1.5rem; cursor: pointer;">
-                            ✕
-                        </button>
-                    </div>
-                    <div class="mobile-nav-links" style="display: flex; flex-direction: column; gap: 1rem;background: #050512;opacity: 80%">
-                        <a href="#overview" class="nav-link">Overview</a>
-                        <a href="#features" class="nav-link">Features</a>
-                        <a href="#installation" class="nav-link">Installation</a>
-                        <a href="#quickstart" class="nav-link">Quick Start</a>
-                        <a href="#api" class="nav-link">API</a>
-                        <a href="#examples" class="nav-link">Examples</a>
-                        <a href="#performance" class="nav-link">Performance</a>
-                    </div>
-                </div>
-            `;
-            
-            const navContainer = document.querySelector('.nav-container');
-            if (navContainer) {
-                navContainer.insertAdjacentHTML('beforeend', mobileMenuHTML);
-                
-                const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-                const mobileMenu = document.getElementById('mobile-menu');
-                const closeMobileMenu = document.getElementById('close-mobile-menu');
-                const mobileNavLinks = document.querySelectorAll('.mobile-nav-links .nav-link');
-                
-                // Show mobile menu button on small screens
-                function checkScreenSize() {
-                    if (window.innerWidth <= 768) {
-                        mobileMenuBtn.style.display = 'block';
-                        document.querySelector('.nav-links').style.display = 'none';
-                    } else {
-                        mobileMenuBtn.style.display = 'none';
-                        document.querySelector('.nav-links').style.display = 'flex';
-                        mobileMenu.style.display = 'none';
-                    }
-                }
-                
-                checkScreenSize();
-                window.addEventListener('resize', checkScreenSize);
-                
-                mobileMenuBtn.addEventListener('click', () => {
-                    mobileMenu.style.display = 'block';
-                });
-                
-                closeMobileMenu.addEventListener('click', () => {
-                    mobileMenu.style.display = 'none';
-                });
-                
-                mobileNavLinks.forEach(link => {
-                    link.addEventListener('click', () => {
-                        mobileMenu.style.display = 'none';
-                    });
-                });
-            }
-        }
-
-        // Initialize all features
-        document.addEventListener('DOMContentLoaded', () => {
-            addSearchFeature();
-            addMobileMenu();
-            addTableOfContents();
-            
-            // Add smooth reveal animations
-            const observerOptions = {
-                threshold: 0.1,
-                rootMargin: '0px 0px -50px 0px'
-            };
-            
-            const revealObserver = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.style.opacity = '1';
-                        entry.target.style.transform = 'translateY(0)';
-                    }
-                });
-            }, observerOptions);
-            
-            // Apply animation to sections
-            const animatedElements = document.querySelectorAll('.section, .feature-card, .code-block');
-            animatedElements.forEach(el => {
-                el.style.opacity = '0';
-                el.style.transform = 'translateY(20px)';
-                el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-                revealObserver.observe(el);
-            });
-        });
-
-        // Add copy-to-clipboard for code examples
-        document.querySelectorAll('.param-name').forEach(param => {
-            param.addEventListener('click', () => {
-                navigator.clipboard.writeText(param.textContent).then(() => {
-                    const originalBg = param.style.backgroundColor;
-                    param.style.backgroundColor = 'var(--success)';
-                    param.style.color = 'white';
-                    
-                    setTimeout(() => {
-                        param.style.backgroundColor = originalBg;
-                        param.style.color = '';
-                    }, 1000);
-                });
-            });
-        });
-
-        // Add keyboard shortcuts
-        document.addEventListener('keydown', (e) => {
-            // Ctrl/Cmd + K to focus search
-            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-                e.preventDefault();
-                const searchInput = document.getElementById('search-input');
-                if (searchInput) {
-                    searchInput.focus();
-                }
-            }
-            
-            // Escape to close modals/menus
-            if (e.key === 'Escape') {
-                const mobileMenu = document.getElementById('mobile-menu');
-                const searchResults = document.getElementById('search-results');
-                
-                if (mobileMenu && mobileMenu.style.display === 'block') {
-                    mobileMenu.style.display = 'none';
-                }
-                if (searchResults && searchResults.style.display === 'block') {
-                    searchResults.style.display = 'none';
-                }
-                if (toc && toc.style.display === 'block') {
-                    toc.style.display = 'none';
-                }
-            }
-        });
-
-        console.log('🚀 PyCNN Documentation loaded successfully!');
     </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-stone-900 dark:text-stone-100 font-display antialiased selection:bg-primary/20">
+<div class="relative flex min-h-screen w-full flex-col group/design-root overflow-x-hidden">
+    <header class="sticky top-0 z-50 flex w-full items-center justify-between border-b border-stone-200 dark:border-stone-800 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-md px-6 py-3 lg:px-20">
+        <div class="flex items-center gap-3 text-stone-900 dark:text-white">
+            <div class="size-7 text-primary">
+                <span class="material-symbols-outlined text-3l">neurology</span>
+            </div>
+            <h2 class="text-2xl font-bold tracking-tight">PyCNN</h2>
+            <span class="hidden sm:inline-flex items-center gap-2 rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary ml-2">v2.4</span>
+        </div>
+        <div class="hidden md:flex flex-1 justify-end gap-8 items-center">
+            <nav class="flex items-center gap-8">
+                <a class="text-sm font-medium hover:text-primary transition-colors" href="#install">Install</a>
+                <a class="text-sm font-medium hover:text-primary transition-colors" href="#quickstart">Quick Start</a>
+                <a class="text-sm font-medium hover:text-primary transition-colors" href="#features">Features</a>
+                <a class="text-sm font-medium hover:text-primary transition-colors" href="https://github.com/77AXEL/PyCNN" target="_blank">GitHub</a>
+                <a class="text-sm font-medium hover:text-primary transition-colors" href="https://huggingface.co/spaces/777axel/pycnn_cifar10" target="_blank">Live Demo</a>
+            </nav>
+            
+        </div>
+        <div class="md:hidden flex items-center">
+            <span class="material-symbols-outlined text-stone-900 dark:text-white cursor-pointer">menu</span>
+        </div>
+    </header>
+
+    <div class="layout-container flex h-full grow flex-col">
+        <div class="px-4 py-16 md:px-20 md:py-28 flex justify-center bg-gradient-to-br from-stone-50 to-red-50/30 dark:from-stone-950 dark:to-red-950/10">
+            <div class="layout-content-container flex flex-col max-w-[900px] flex-1 items-center text-center gap-10">
+                <div class="flex flex-col gap-5 items-center animate-fade-in-up">
+                    <div class="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary mb-2">
+                        <span class="relative flex h-2 w-2">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+                        </span>
+                        CNN Implementation from Scratch • No TensorFlow • No PyTorch
+                    </div>
+                    <h1 class="text-5xl md:text-7xl font-display font-medium leading-[1.1] tracking-tight text-stone-900 dark:text-white">
+                        Build CNNs<br/>From the Ground Up
+                    </h1>
+                    <p class="text-xl text-stone-600 dark:text-stone-400 max-w-2xl font-sans font-light leading-relaxed">
+                        A pure Python implementation of Convolutional Neural Networks using only NumPy, PIL, and SciPy. Perfect for learning, teaching, and understanding deep learning fundamentals.
+                    </p>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-4 mt-4">
+                    <a href="#install" class="bg-primary hover:bg-primary/90 text-white font-sans font-medium py-3 px-8 rounded-lg transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2">
+                        Get Started
+                        <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                    </a>
+                    <a href="https://github.com/77AXEL/PyCNN" target="_blank" class="bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 hover:border-stone-300 dark:hover:border-stone-600 text-stone-700 dark:text-stone-200 font-sans font-medium py-3 px-8 rounded-lg transition-all flex items-center justify-center gap-2">
+                        <span class="material-symbols-outlined text-sm">code</span>
+                        View on GitHub
+                    </a>
+                </div>
+
+                <div class="mt-8 p-6 bg-white/60 dark:bg-stone-900/60 backdrop-blur-sm rounded-xl border border-stone-200 dark:border-stone-800 shadow-sm">
+                    <div class="flex items-center gap-3 mb-3">
+                        <span class="material-symbols-outlined text-primary">terminal</span>
+                        <span class="text-sm font-medium text-stone-600 dark:text-stone-400">Quick Install</span>
+                    </div>
+                    <code class="text-sm font-mono text-stone-800 dark:text-stone-200">pip install git+https://github.com/77AXEL/PyCNN.git</code>
+                </div>
+            </div>
+        </div>
+
+        <div class="px-4 md:px-20 py-12 bg-white dark:bg-stone-900/50 border-y border-stone-200 dark:border-stone-800">
+            <div class="max-w-[1200px] mx-auto">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                    <div class="flex flex-col items-center gap-2 text-center">
+                        <div class="size-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center text-primary mb-2">
+                            <span class="material-symbols-outlined">psychology</span>
+                        </div>
+                        <h4 class="font-bold text-stone-900 dark:text-white">From Scratch</h4>
+                        <p class="text-xs text-stone-600 dark:text-stone-400 font-sans">No deep learning frameworks</p>
+                    </div>
+                    <div class="flex flex-col items-center gap-2 text-center">
+                        <div class="size-12 rounded-full bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center text-amber-600 dark:text-amber-400 mb-2">
+                            <span class="material-symbols-outlined">bolt</span>
+                        </div>
+                        <h4 class="font-bold text-stone-900 dark:text-white">CUDA Ready</h4>
+                        <p class="text-xs text-stone-600 dark:text-stone-400 font-sans">GPU acceleration support</p>
+                    </div>
+                    <div class="flex flex-col items-center gap-2 text-center">
+                        <div class="size-12 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-600 dark:text-green-400 mb-2">
+                            <span class="material-symbols-outlined">school</span>
+                        </div>
+                        <h4 class="font-bold text-stone-900 dark:text-white">Educational</h4>
+                        <p class="text-xs text-stone-600 dark:text-stone-400 font-sans">Learn by implementation</p>
+                    </div>
+                    <div class="flex flex-col items-center gap-2 text-center">
+                        <div class="size-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400 mb-2">
+                            <span class="material-symbols-outlined">hub</span>
+                        </div>
+                        <h4 class="font-bold text-stone-900 dark:text-white">HuggingFace</h4>
+                        <p class="text-xs text-stone-600 dark:text-stone-400 font-sans">Dataset integration</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="install" class="px-4 md:px-20 py-16 flex justify-center">
+            <div class="max-w-[960px] w-full flex flex-col gap-12">
+                <div class="flex flex-col gap-3">
+                    <h2 class="text-3xl font-bold tracking-tight text-stone-900 dark:text-white">Installation</h2>
+                    <p class="text-lg text-stone-600 dark:text-stone-400 font-sans">Get PyCNN up and running in minutes</p>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="p-6 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="material-symbols-outlined text-primary">check_circle</span>
+                            <h3 class="text-xl font-bold text-stone-900 dark:text-white">Prerequisites</h3>
+                        </div>
+                        <ul class="space-y-3 font-sans text-sm text-stone-600 dark:text-stone-400">
+                            <li class="flex items-start gap-2">
+                                <span class="text-primary mt-0.5">▸</span>
+                                <span><strong>Python 3.7+</strong> required</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-primary mt-0.5">▸</span>
+                                <span><strong>GCC Compiler</strong> for Cython compilation</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-primary mt-0.5">▸</span>
+                                <span><strong>NumPy, PIL, SciPy</strong> auto-installed</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-primary mt-0.5">▸</span>
+                                <span><strong>CuPy</strong> optional for GPU support</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="p-6 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="material-symbols-outlined text-primary">download</span>
+                            <h3 class="text-xl font-bold text-stone-900 dark:text-white">Quick Install</h3>
+                        </div>
+                        <div class="space-y-4">
+                            <div class="bg-stone-100 dark:bg-stone-800 rounded-lg p-4">
+                                <p class="text-xs text-stone-500 dark:text-stone-400 mb-2 font-sans">Standard Installation</p>
+                                <code class="text-sm font-mono text-stone-800 dark:text-stone-200">pip install git+https://github.com/77AXEL/PyCNN.git</code>
+                            </div>
+                            <div class="bg-stone-100 dark:bg-stone-800 rounded-lg p-4">
+                                <p class="text-xs text-stone-500 dark:text-stone-400 mb-2 font-sans">With CUDA Support</p>
+                                <code class="text-sm font-mono text-stone-800 dark:text-stone-200">pip install cupy-cuda118</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="quickstart" class="px-4 md:px-20 py-16 bg-stone-50 dark:bg-stone-900/30 border-y border-stone-200 dark:border-stone-800">
+            <div class="max-w-[960px] mx-auto flex flex-col md:flex-row gap-12 items-start">
+                <div class="flex-1 flex flex-col gap-6">
+                    <h2 class="text-3xl font-bold tracking-tight text-stone-900 dark:text-white">Quick Start</h2>
+                    <p class="text-lg text-stone-600 dark:text-stone-400 font-sans leading-relaxed">
+                        Train your first CNN model in just a few lines of code. PyCNN handles all the complexity while maintaining transparency in how everything works under the hood.
+                    </p>
+                    <ul class="flex flex-col gap-4 mt-2">
+                        <li class="flex gap-3 items-start text-stone-700 dark:text-stone-300 font-sans">
+                            <span class="material-symbols-outlined text-primary mt-0.5">check_circle</span>
+                            <span>Load datasets from HuggingFace or local folders</span>
+                        </li>
+                        <li class="flex gap-3 items-start text-stone-700 dark:text-stone-300 font-sans">
+                            <span class="material-symbols-outlined text-primary mt-0.5">check_circle</span>
+                            <span>Configure custom layer architectures dynamically</span>
+                        </li>
+                        <li class="flex gap-3 items-start text-stone-700 dark:text-stone-300 font-sans">
+                            <span class="material-symbols-outlined text-primary mt-0.5">check_circle</span>
+                            <span>Toggle between CPU and GPU with one line</span>
+                        </li>
+                        <li class="flex gap-3 items-start text-stone-700 dark:text-stone-300 font-sans">
+                            <span class="material-symbols-outlined text-primary mt-0.5">check_circle</span>
+                            <span>Export trained models to PyTorch format</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="flex-1 w-full max-w-xl">
+                    <div class="rounded-xl overflow-hidden bg-[#1e1e1e] shadow-2xl border border-stone-700 ring-1 ring-white/10">
+                        <div class="flex items-center justify-between px-4 py-2.5 bg-[#0d0d0d] border-b border-stone-700">
+                            <span class="text-xs text-stone-400 font-mono">train_model.py</span>
+                            <div class="flex gap-1.5">
+                                <div class="w-2.5 h-2.5 rounded-full bg-red-500/30 border border-red-500/60"></div>
+                                <div class="w-2.5 h-2.5 rounded-full bg-yellow-500/30 border border-yellow-500/60"></div>
+                                <div class="w-2.5 h-2.5 rounded-full bg-green-500/30 border border-green-500/60"></div>
+                            </div>
+                        </div>
+                        <div class="p-5 overflow-x-auto">
+<pre class="font-mono text-sm leading-relaxed text-stone-300"><code><span class="text-pink-400">from</span> pycnn.pycnn <span class="text-pink-400">import</span> PyCNN
+
+<span class="text-stone-500"># Initialize model</span>
+pycnn = PyCNN()
+pycnn.cuda(<span class="text-amber-300">True</span>)  <span class="text-stone-500"># Enable GPU</span>
+
+<span class="text-stone-500"># Configure architecture</span>
+pycnn.init(
+    batch_size=<span class="text-amber-300">32</span>,
+    layers=[<span class="text-amber-300">256</span>, <span class="text-amber-300">128</span>, <span class="text-amber-300">64</span>],
+    learning_rate=<span class="text-amber-300">0.0001</span>,
+    epochs=<span class="text-amber-300">100</span>
+)
+
+<span class="text-stone-500"># Use Adam optimizer</span>
+pycnn.adam()
+
+<span class="text-stone-500"># Load CIFAR-10 dataset</span>
+pycnn.dataset.hf(
+    <span class="text-green-400">"cifar10"</span>,
+    max_image=<span class="text-amber-300">1000</span>,
+    cached=<span class="text-amber-300">True</span>
+)
+
+<span class="text-stone-500"># Train with visualization</span>
+pycnn.train_model(
+    visualize=<span class="text-amber-300">True</span>,
+    early_stop=<span class="text-amber-300">10</span>
+)
+
+<span class="text-stone-500"># Save the trained model</span>
+pycnn.save_model(<span class="text-green-400">"model.bin"</span>)</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="features" class="px-4 md:px-20 py-16 flex justify-center">
+            <div class="max-w-[1100px] w-full">
+                <div class="flex flex-col gap-3 mb-12 text-center">
+                    <h2 class="text-3xl font-bold tracking-tight text-stone-900 dark:text-white">Powerful Features</h2>
+                    <p class="text-lg text-stone-600 dark:text-stone-400 font-sans">Everything you need to build, train, and deploy CNNs</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="group p-6 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 hover:border-primary/50 transition-all hover:shadow-lg">
+                        <div class="size-12 rounded-lg bg-red-100 dark:bg-red-900/30 flex items-center justify-center text-primary mb-4 group-hover:scale-110 transition-transform">
+                            <span class="material-symbols-outlined">code_blocks</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-stone-900 dark:text-white mb-2">Pure Implementation</h3>
+                        <p class="text-sm text-stone-600 dark:text-stone-400 font-sans leading-relaxed">
+                            Built entirely from scratch using NumPy, PIL, and SciPy. No TensorFlow or PyTorch dependencies for core functionality.
+                        </p>
+                    </div>
+
+                    <div class="group p-6 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 hover:border-primary/50 transition-all hover:shadow-lg">
+                        <div class="size-12 rounded-lg bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center text-amber-600 dark:text-amber-400 mb-4 group-hover:scale-110 transition-transform">
+                            <span class="material-symbols-outlined">flash_on</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-stone-900 dark:text-white mb-2">CUDA Acceleration</h3>
+                        <p class="text-sm text-stone-600 dark:text-stone-400 font-sans leading-relaxed">
+                            Optional GPU support via CuPy for significantly faster training and inference on compatible hardware.
+                        </p>
+                    </div>
+
+                    <div class="group p-6 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 hover:border-primary/50 transition-all hover:shadow-lg">
+                        <div class="size-12 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400 mb-4 group-hover:scale-110 transition-transform">
+                            <span class="material-symbols-outlined">tune</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-stone-900 dark:text-white mb-2">Adam Optimizer</h3>
+                        <p class="text-sm text-stone-600 dark:text-stone-400 font-sans leading-relaxed">
+                            Advanced optimization with Adam algorithm for improved convergence and training stability.
+                        </p>
+                    </div>
+
+                    <div class="group p-6 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 hover:border-primary/50 transition-all hover:shadow-lg">
+                        <div class="size-12 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-600 dark:text-green-400 mb-4 group-hover:scale-110 transition-transform">
+                            <span class="material-symbols-outlined">layers</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-stone-900 dark:text-white mb-2">Custom Architectures</h3>
+                        <p class="text-sm text-stone-600 dark:text-stone-400 font-sans leading-relaxed">
+                            Define custom layer configurations dynamically. Experiment with different architectures easily.
+                        </p>
+                    </div>
+
+                    <div class="group p-6 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 hover:border-primary/50 transition-all hover:shadow-lg">
+                        <div class="size-12 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-purple-600 dark:text-purple-400 mb-4 group-hover:scale-110 transition-transform">
+                            <span class="material-symbols-outlined">database</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-stone-900 dark:text-white mb-2">Dataset Integration</h3>
+                        <p class="text-sm text-stone-600 dark:text-stone-400 font-sans leading-relaxed">
+                            Seamlessly load datasets from HuggingFace hub or local folders with automatic preprocessing.
+                        </p>
+                    </div>
+
+                    <div class="group p-6 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 hover:border-primary/50 transition-all hover:shadow-lg">
+                        <div class="size-12 rounded-lg bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center text-orange-600 dark:text-orange-400 mb-4 group-hover:scale-110 transition-transform">
+                            <span class="material-symbols-outlined">show_chart</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-stone-900 dark:text-white mb-2">Training Visualization</h3>
+                        <p class="text-sm text-stone-600 dark:text-stone-400 font-sans leading-relaxed">
+                            Real-time plotting of accuracy and loss curves with Matplotlib during training sessions.
+                        </p>
+                    </div>
+
+                    <div class="group p-6 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 hover:border-primary/50 transition-all hover:shadow-lg">
+                        <div class="size-12 rounded-lg bg-cyan-100 dark:bg-cyan-900/30 flex items-center justify-center text-cyan-600 dark:text-cyan-400 mb-4 group-hover:scale-110 transition-transform">
+                            <span class="material-symbols-outlined">save</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-stone-900 dark:text-white mb-2">Model Persistence</h3>
+                        <p class="text-sm text-stone-600 dark:text-stone-400 font-sans leading-relaxed">
+                            Save and load trained models easily. Continue training or deploy for inference anytime.
+                        </p>
+                    </div>
+
+                    <div class="group p-6 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 hover:border-primary/50 transition-all hover:shadow-lg">
+                        <div class="size-12 rounded-lg bg-pink-100 dark:bg-pink-900/30 flex items-center justify-center text-pink-600 dark:text-pink-400 mb-4 group-hover:scale-110 transition-transform">
+                            <span class="material-symbols-outlined">sync_alt</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-stone-900 dark:text-white mb-2">PyTorch Export</h3>
+                        <p class="text-sm text-stone-600 dark:text-stone-400 font-sans leading-relaxed">
+                            Export your PyCNN models to PyTorch format for production deployment and framework integration.
+                        </p>
+                    </div>
+
+                    <div class="group p-6 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 hover:border-primary/50 transition-all hover:shadow-lg">
+                        <div class="size-12 rounded-lg bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400 mb-4 group-hover:scale-110 transition-transform">
+                            <span class="material-symbols-outlined">photo_size_select_large</span>
+                        </div>
+                        <h3 class="text-lg font-bold text-stone-900 dark:text-white mb-2">Image Augmentation</h3>
+                        <p class="text-sm text-stone-600 dark:text-stone-400 font-sans leading-relaxed">
+                            Built-in support for dataset augmentation techniques to improve model generalization.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="px-4 md:px-20 py-16 bg-white dark:bg-stone-900/50 border-y border-stone-200 dark:border-stone-800">
+            <div class="max-w-[960px] mx-auto">
+                <h3 class="text-3xl font-bold mb-4 text-center text-stone-900 dark:text-white">How It Works</h3>
+                <p class="text-center text-stone-600 dark:text-stone-400 font-sans mb-12 max-w-2xl mx-auto">
+                    Understanding the complete pipeline from data to predictions
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="flex gap-4 p-6 rounded-xl bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-700">
+                        <div class="flex-shrink-0">
+                            <div class="size-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center text-primary font-bold">
+                                1
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-bold text-stone-900 dark:text-white mb-2">Data Preprocessing</h4>
+                            <p class="text-stone-600 dark:text-stone-400 text-sm font-sans">Images are loaded, resized, normalized, and processed through custom convolution filters with ReLU activation and max-pooling operations.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-4 p-6 rounded-xl bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-700">
+                        <div class="flex-shrink-0">
+                            <div class="size-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center text-primary font-bold">
+                                2
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-bold text-stone-900 dark:text-white mb-2">Feature Extraction</h4>
+                            <p class="text-stone-600 dark:text-stone-400 text-sm font-sans">Flattened feature maps from convolutional layers are passed through fully connected dense layers for high-level feature learning.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex gap-4 p-6 rounded-xl bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-700">
+                        <div class="flex-shrink-0">
+                            <div class="size-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center text-primary font-bold">
+                                3
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-bold text-stone-900 dark:text-white mb-2">Backpropagation</h4>
+                            <p class="text-stone-600 dark:text-stone-400 text-sm font-sans">Gradients computed via cross-entropy loss flow backward through the network, updating weights using Adam or SGD optimizer.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-4 p-6 rounded-xl bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-700">
+                        <div class="flex-shrink-0">
+                            <div class="size-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center text-primary font-bold">
+                                4
+                            </div>
+                        </div>
+                        <div>
+                            <h4 class="text-lg font-bold text-stone-900 dark:text-white mb-2">Classification</h4>
+                            <p class="text-stone-600 dark:text-stone-400 text-sm font-sans">Dense layer outputs are processed with softmax activation for multi-class probability distribution and final predictions.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="px-4 md:px-20 py-16">
+            <div class="max-w-[960px] mx-auto">
+                <h3 class="text-3xl font-bold mb-4 text-center text-stone-900 dark:text-white">Perfect For</h3>
+                <p class="text-center text-stone-600 dark:text-stone-400 font-sans mb-12">Who benefits from PyCNN?</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="p-6 rounded-xl border border-stone-200 dark:border-stone-700 bg-gradient-to-br from-white to-stone-50 dark:from-stone-900 dark:to-stone-900/50">
+                        <div class="size-14 rounded-full bg-gradient-to-br from-red-100 to-red-50 dark:from-red-900/30 dark:to-red-900/10 flex items-center justify-center text-primary mb-4">
+                            <span class="material-symbols-outlined text-3xl">school</span>
+                        </div>
+                        <h4 class="text-xl font-bold text-stone-900 dark:text-white mb-3">Students & Educators</h4>
+                        <p class="text-stone-600 dark:text-stone-400 text-sm font-sans leading-relaxed">
+                            Learn deep learning fundamentals by examining transparent, readable source code. Perfect for courses on neural networks and computer vision.
+                        </p>
+                    </div>
+
+                    <div class="p-6 rounded-xl border border-stone-200 dark:border-stone-700 bg-gradient-to-br from-white to-stone-50 dark:from-stone-900 dark:to-stone-900/50">
+                        <div class="size-14 rounded-full bg-gradient-to-br from-amber-100 to-amber-50 dark:from-amber-900/30 dark:to-amber-900/10 flex items-center justify-center text-amber-600 dark:text-amber-400 mb-4">
+                            <span class="material-symbols-outlined text-3xl">science</span>
+                        </div>
+                        <h4 class="text-xl font-bold text-stone-900 dark:text-white mb-3">Researchers</h4>
+                        <p class="text-stone-600 dark:text-stone-400 text-sm font-sans leading-relaxed">
+                            Rapidly prototype CNN architectures and experiment with novel approaches without framework overhead. Full control over every component.
+                        </p>
+                    </div>
+
+                    <div class="p-6 rounded-xl border border-stone-200 dark:border-stone-700 bg-gradient-to-br from-white to-stone-50 dark:from-stone-900 dark:to-stone-900/50">
+                        <div class="size-14 rounded-full bg-gradient-to-br from-blue-100 to-blue-50 dark:from-blue-900/30 dark:to-blue-900/10 flex items-center justify-center text-blue-600 dark:text-blue-400 mb-4">
+                            <span class="material-symbols-outlined text-3xl">code</span>
+                        </div>
+                        <h4 class="text-xl font-bold text-stone-900 dark:text-white mb-3">Developers</h4>
+                        <p class="text-stone-600 dark:text-stone-400 text-sm font-sans leading-relaxed">
+                            Build custom CNN solutions for specific problems. Export to PyTorch when ready for production deployment at scale.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="px-4 md:px-20 py-12 bg-gradient-to-br from-red-50 to-orange-50 dark:from-red-950/20 dark:to-orange-950/20 border-y border-red-100 dark:border-red-900/30">
+            <div class="max-w-[960px] mx-auto flex flex-col md:flex-row items-center gap-8">
+                <div class="flex-1">
+                    <h3 class="text-2xl font-bold text-stone-900 dark:text-white mb-3">Try PyCNN Live</h3>
+                    <p class="text-stone-600 dark:text-stone-400 font-sans mb-4">
+                        Experience PyCNN in action with our interactive CIFAR-10 classification demo running on HuggingFace Spaces.
+                    </p>
+                    <a href="https://huggingface.co/spaces/777axel/pycnn_cifar10" target="_blank" class="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-white font-sans font-medium py-2.5 px-6 rounded-lg transition-all shadow-md">
+                        Launch Demo
+                        <span class="material-symbols-outlined text-sm">open_in_new</span>
+                    </a>
+                </div>
+                <div class="flex-shrink-0">
+                    <div class="size-32 rounded-2xl bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center shadow-xl">
+                        <span class="material-symbols-outlined text-white text-6xl">rocket_launch</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="px-4 md:px-20 py-16 bg-white dark:bg-stone-900/50">
+            <div class="max-w-[960px] mx-auto">
+                <div class="flex flex-col gap-2 mb-10">
+                    <h2 class="text-3xl font-bold tracking-tight text-stone-900 dark:text-white">Documentation</h2>
+                    <p class="text-stone-600 dark:text-stone-400 font-sans">Comprehensive guides and references</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <a class="group relative flex flex-col gap-4 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 p-6 hover:border-primary/50 transition-all hover:shadow-lg" href="https://github.com/77AXEL/PyCNN#-installation" target="_blank">
+                        <div class="size-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+                            <span class="material-symbols-outlined">download</span>
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <h3 class="text-lg font-bold text-stone-900 dark:text-white group-hover:text-primary transition-colors">Installation Guide</h3>
+                            <p class="text-sm text-stone-600 dark:text-stone-400 font-sans leading-relaxed">
+                                Step-by-step setup instructions for all platforms with GCC compiler requirements.
+                            </p>
+                        </div>
+                    </a>
+
+                    <a class="group relative flex flex-col gap-4 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 p-6 hover:border-primary/50 transition-all hover:shadow-lg" href="https://github.com/77AXEL/PyCNN#-usage" target="_blank">
+                        <div class="size-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+                            <span class="material-symbols-outlined">menu_book</span>
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <h3 class="text-lg font-bold text-stone-900 dark:text-white group-hover:text-primary transition-colors">Usage Examples</h3>
+                            <p class="text-sm text-stone-600 dark:text-stone-400 font-sans leading-relaxed">
+                                Complete code examples for training, evaluation, and model deployment.
+                            </p>
+                        </div>
+                    </a>
+
+                    <a class="group relative flex flex-col gap-4 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 p-6 hover:border-primary/50 transition-all hover:shadow-lg" href="https://github.com/77AXEL/PyCNN" target="_blank">
+                        <div class="size-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+                            <span class="material-symbols-outlined">code</span>
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <h3 class="text-lg font-bold text-stone-900 dark:text-white group-hover:text-primary transition-colors">Source Code</h3>
+                            <p class="text-sm text-stone-600 dark:text-stone-400 font-sans leading-relaxed">
+                                Explore the complete implementation on GitHub. Fork and customize for your needs.
+                            </p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="px-4 md:px-20 py-16 border-t border-stone-200 dark:border-stone-800">
+            <div class="max-w-[960px] mx-auto text-center">
+                <h3 class="text-3xl font-bold text-stone-900 dark:text-white mb-4">Join the Community</h3>
+                <p class="text-lg text-stone-600 dark:text-stone-400 font-sans mb-8 max-w-2xl mx-auto">
+                    PyCNN is open source and welcomes contributions. Whether you're fixing bugs, adding features, or improving documentation, your help makes PyCNN better for everyone.
+                </p>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <a href="https://github.com/77AXEL/PyCNN/discussions" target="_blank" class="inline-flex items-center gap-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 hover:border-primary text-stone-700 dark:text-stone-200 font-sans font-medium py-2.5 px-6 rounded-lg transition-all">
+                        <span class="material-symbols-outlined text-sm">forum</span>
+                        Discussions
+                    </a>
+                    <a href="https://github.com/77AXEL/PyCNN/issues" target="_blank" class="inline-flex items-center gap-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 hover:border-primary text-stone-700 dark:text-stone-200 font-sans font-medium py-2.5 px-6 rounded-lg transition-all">
+                        <span class="material-symbols-outlined text-sm">bug_report</span>
+                        Report Issues
+                    </a>
+                    <a href="https://github.com/77AXEL/PyCNN/blob/main/CONTRIBUTING.md" target="_blank" class="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-white font-sans font-medium py-2.5 px-6 rounded-lg transition-all shadow-md">
+                        <span class="material-symbols-outlined text-sm">volunteer_activism</span>
+                        Contribute
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <footer class="border-t border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-900 py-12 px-6 md:px-20">
+            <div class="max-w-[1100px] mx-auto flex flex-col md:flex-row justify-between gap-12">
+                <div class="flex flex-col gap-4 max-w-sm">
+                    <div class="flex items-center gap-3 text-stone-900 dark:text-white">
+                        <span class="material-symbols-outlined text-primary text-3xl">neurology</span>
+                        <h2 class="text-2xl font-bold">PyCNN</h2>
+                    </div>
+                    <p class="text-sm text-stone-600 dark:text-stone-400 font-sans leading-relaxed">
+                        A pure Python implementation of Convolutional Neural Networks. Built from scratch for education, research, and rapid prototyping.
+                    </p>
+                    <p class="text-xs text-stone-500 dark:text-stone-500 font-sans">
+                        Open source under MIT License<br/>
+                        © PyCNN Contributors
+                    </p>
+                </div>
+
+                <div class="flex gap-16 font-sans text-sm">
+                    <div class="flex flex-col gap-3">
+                        <h4 class="font-bold text-stone-900 dark:text-white mb-1">Documentation</h4>
+                        <a class="text-stone-600 dark:text-stone-400 hover:text-primary transition-colors" href="#install">Installation</a>
+                        <a class="text-stone-600 dark:text-stone-400 hover:text-primary transition-colors" href="#quickstart">Quick Start</a>
+                        <a class="text-stone-600 dark:text-stone-400 hover:text-primary transition-colors" href="https://github.com/77AXEL/PyCNN#-usage" target="_blank">Usage Guide</a>
+                        <a class="text-stone-600 dark:text-stone-400 hover:text-primary transition-colors" href="https://github.com/77AXEL/PyCNN#-pytorch-integration" target="_blank">PyTorch Export</a>
+                    </div>
+
+                    <div class="flex flex-col gap-3">
+                        <h4 class="font-bold text-stone-900 dark:text-white mb-1">Community</h4>
+                        <a class="text-stone-600 dark:text-stone-400 hover:text-primary transition-colors" href="https://github.com/77AXEL/PyCNN" target="_blank">GitHub</a>
+                        <a class="text-stone-600 dark:text-stone-400 hover:text-primary transition-colors" href="https://github.com/77AXEL/PyCNN/discussions" target="_blank">Discussions</a>
+                        <a class="text-stone-600 dark:text-stone-400 hover:text-primary transition-colors" href="https://github.com/77AXEL/PyCNN/issues" target="_blank">Issues</a>
+                        <a class="text-stone-600 dark:text-stone-400 hover:text-primary transition-colors" href="https://github.com/77AXEL/PyCNN/blob/main/CONTRIBUTING.md" target="_blank">Contributing</a>
+                    </div>
+
+                    <div class="flex flex-col gap-3">
+                        <h4 class="font-bold text-stone-900 dark:text-white mb-1">Resources</h4>
+                        <a class="text-stone-600 dark:text-stone-400 hover:text-primary transition-colors" href="https://huggingface.co/spaces/777axel/pycnn_cifar10" target="_blank">Live Demo</a>
+                        <a class="text-stone-600 dark:text-stone-400 hover:text-primary transition-colors" href="https://github.com/77AXEL/PyCNN/releases" target="_blank">Changelog</a>
+                        <a class="text-stone-600 dark:text-stone-400 hover:text-primary transition-colors" href="https://github.com/77AXEL/PyCNN/blob/main/LICENSE" target="_blank">License</a>
+                        <a class="text-stone-600 dark:text-stone-400 hover:text-primary transition-colors" href="https://github.com/77AXEL/PyCNN/blob/main/SECURITY.md" target="_blank">Security</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="max-w-[1100px] mx-auto mt-12 pt-8 border-t border-stone-200 dark:border-stone-800">
+                <div class="flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-stone-500 dark:text-stone-500 font-sans">
+                    <p>Built with ❤️ by the PyCNN community</p>
+                    <div class="flex items-center gap-4">
+                        <a href="https://github.com/77AXEL/PyCNN" target="_blank" class="hover:text-primary transition-colors flex items-center gap-1">
+                            <span class="material-symbols-outlined text-sm">star</span>
+                            Star on GitHub
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+</div>
+
+<style>
+    @keyframes fade-in-up {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .animate-fade-in-up {
+        animation: fade-in-up 0.6s ease-out;
+    }
+    
+    html {
+        scroll-behavior: smooth;
+    }
+</style>
 </body>
 </html>
