@@ -261,13 +261,13 @@ from pycnn.pycnn import PyCNN, Evaluate
 
 pycnn = PyCNN()
 pycnn.cuda(False)
-pycnn.init(layers=[512, 256], epochs=100)
-pycnn.dataset.hf("cifar10", max_image=50, cached=True)
+pycnn.init(layers=[512, 256], epochs=500)
+pycnn.dataset.hf("cifar10", max_image=100, cached=True)
 pycnn.adam()
 pycnn.train_model(early_stop=15)
 
 eval = Evaluate(pycnn)
-eval.hf(dataset_name="cifar10", max_image=10)
+eval.hf(dataset_name="cifar10", max_image=100)
 ```
 
 <img src="./assets/output.png" alt="Training Output">
