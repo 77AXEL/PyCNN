@@ -1,6 +1,25 @@
-from setuptools import setup, find_packages, Extension
+import os
+import subprocess
 import platform
 import numpy
+from setuptools import setup, find_packages, Extension
+from setuptools.command.build_py import build_py
+
+class BuildLib(build_py):
+    def run(self):
+        lib_dir = os.path.join(os.getcwd(), 'pycnn', 'lib')
+        
+        make_cmd = "mingw32-make" if platform.system() == "Windows" else "make"
+        
+        print(f"--- Building optimized native library in {lib_dir} using {make_cmd} ---")
+        
+        try:
+            subprocess.check_call([make_cmd], cwd=lib_dir, shell=True)
+        except subprocess.CalledProcessError as e:
+            print(f"Error: Native build failed. Ensure {make_cmd} is in your PATH.")
+            raise e
+        
+        super().run()
 
 try:
     from Cython.Build import cythonize
@@ -33,6 +52,9 @@ setup(
     description="A Python library to easily build, train, and test your CNN AI models.",
     author="https://github.com/77axel",
     packages=find_packages(),
+    cmdclass={
+        'build_py': BuildLib,
+    },
     ext_modules=cythonize(extensions, compiler_directives={'language_level': "3"}),
     install_requires=[
         "numpy",
