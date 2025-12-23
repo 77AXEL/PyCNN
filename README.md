@@ -267,7 +267,7 @@ pycnn.adam()
 pycnn.train_model(early_stop=15)
 
 eval = Evaluate(pycnn)
-eval.hf(dataset_name="cifar10", max_image=100)
+eval.hf(dataset_name="cifar10", max_image=10)
 ```
 
 <img src="./assets/output.png" alt="Training Output">
