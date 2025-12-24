@@ -2,19 +2,17 @@
 
 ## 📌 Supported Versions
 
-We currently support the following version(s) of CNN-FS with security updates:
+We currently support the following version(s) of PyCNN with security updates:
 
 | Version | Supported          |
 |---------|--------------------|
-| 0.1.x   | ✅ Yes              |
+| 2.4   | ✅ Yes              |
 
 ---
 
 ## 🛡 Reporting a Vulnerability
 
-If you discover a security vulnerability in CNN-FS, please report it **privately and responsibly**.
-
-📧 **Email:** [a.x.e.l777444000@gmail.com](mailto:a.x.e.l777444000@gmail.com)
+If you discover a security vulnerability in PyCNN, please report it in [issues](https://github.com/77AXEL/PyCNN/issues)
 
 ### 🔄 What to Expect:
 - You will receive a confirmation within **48 hours** of your report.
@@ -22,4 +20,4 @@ If you discover a security vulnerability in CNN-FS, please report it **privately
 - If the issue is confirmed, we will work on a fix and credit you (unless you prefer to remain anonymous).
 - We kindly ask that you do **not** disclose the vulnerability publicly until we have addressed it.
 
-Thank you for helping keep CNN-FS and its users safe!
+Thank you for helping keep PyCNN and its users safe!
