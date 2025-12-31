@@ -21,7 +21,9 @@
             theme: {
                 extend: {
                     colors: {
-                        "primary": "#3471a3",
+                        "p1": "#3471a3",
+                        "p2": "#5a7664",
+                        "p3": "#fdd047",
                         "background-light": "#fafafa",
                     },
                     fontFamily: {
@@ -42,27 +44,23 @@
 </head>
 
 <body
-    class="bg-background-light dark:bg-background-dark text-stone-900 dark:text-stone-100 font-display antialiased selection:bg-primary/20">
+    class="bg-background-light dark:bg-background-dark text-stone-900 dark:text-stone-100 font-display antialiased selection:bg-p1/20">
     <div class="relative flex min-h-screen w-full flex-col group/design-root overflow-x-hidden">
         <header
             class="sticky top-0 z-50 flex w-full items-center justify-between border-b border-stone-200 dark:border-stone-800 bg-background-light/95 dark:bg-background-dark/95 backdrop-blur-md px-6 py-3 lg:px-20">
             <div class="flex items-center gap-3 text-stone-900 dark:text-white">
                 <img src="https://github.com/77AXEL/PyCNN/blob/main/assets/logo.png?raw=true" class="w-16">
                 <span
-                    class="flex items-center justify-center  rounded-full bg-primary/10 px-2.5 py-0.5 text-xs font-medium text-primary ml-2">v2.4</span>
+                    class="flex items-center justify-center  rounded-full bg-p2/10 px-1.5 pt-0.5 text-xs font-medium text-p2 ml-2">v2.4</span>
             </div>
             <div class="hidden md:flex flex-1 justify-end gap-8 items-center">
                 <nav class="flex items-center gap-8">
-                    <a class="text-sm font-medium hover:text-primary transition-colors" href="#install">Install</a>
-                    <a class="text-sm font-medium hover:text-primary transition-colors" href="#quickstart">Quick
-                        Start</a>
-                    <a class="text-sm font-medium hover:text-primary transition-colors" href="#features">Features</a>
-                    <a class="text-sm font-medium hover:text-primary transition-colors"
-                        href="https://github.com/77AXEL/PyCNN" target="_blank">GitHub</a>
-                    <a class="text-sm font-medium hover:text-primary transition-colors"
-                        href="https://huggingface.co/spaces/777axel/pycnn_cifar10" target="_blank">Live Demo</a>
+                    <a class="text-sm font-medium hover:text-p1 hover:underline hover:scale-110 decoration-2 decoration-p1 transition-all" href="#install">Install</a>
+                    <a class="text-sm font-medium hover:text-p1 hover:underline hover:scale-110 decoration-2 decoration-p1 transition-all" href="#quickstart">Quick Start</a>
+                    <a class="text-sm font-medium hover:text-p1 hover:underline hover:scale-110 decoration-2 decoration-p1 transition-all" href="#features">Features</a>
+                    <a class="text-sm font-medium hover:text-p1 hover:underline hover:scale-110 decoration-2 decoration-p1 transition-all" href="https://github.com/77AXEL/PyCNN" target="_blank">GitHub</a>
+                    <a class="text-sm font-medium hover:text-p1 hover:underline hover:scale-110 decoration-2 decoration-p1 transition-all" href="https://huggingface.co/spaces/777axel/pycnn_cifar10" target="_blank">Live Demo</a>
                 </nav>
-
             </div>
         </header>
 
@@ -73,11 +71,11 @@
                     class="layout-content-container flex flex-col max-w-[900px] flex-1 items-center text-center gap-10">
                     <div class="flex flex-col gap-5 items-center animate-fade-in-up">
                         <div
-                            class="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary mb-2">
+                            class="inline-flex items-center gap-2 rounded-full border border-p2/30 bg-p3/10 px-4 py-1.5 text-sm font-medium text-p3 mb-2">
                             <span class="relative flex h-2 w-2">
                                 <span
-                                    class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                                <span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+                                    class="animate-ping absolute inline-flex h-full w-full rounded-full bg-p3 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-2 w-2 bg-p3"></span>
                             </span>
                             A Python library to easily build, train, and test your CNN AI models.
                         </div>
@@ -96,7 +94,7 @@
 
                     <div class="flex flex-col sm:flex-row gap-4 mt-4">
                         <a href="#install"
-                            class="bg-primary hover:bg-primary/90 text-white font-sans font-medium py-3 px-8 rounded-lg transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2">
+                            class="bg-p1 hover:bg-p1/90 text-white font-sans font-medium py-3 px-8 rounded-lg transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2">
                             Get Started
                             <span class="material-symbols-outlined text-sm">arrow_forward</span>
                         </a>
@@ -110,7 +108,7 @@
                     <div
                         class="mt-8 p-6 bg-white/60 dark:bg-stone-900/60 backdrop-blur-sm rounded-xl border border-stone-200 dark:border-stone-800 shadow-sm">
                         <div class="flex items-center gap-3 mb-3">
-                            <span class="material-symbols-outlined text-primary">terminal</span>
+                            <span class="material-symbols-outlined text-p1">terminal</span>
                             <span class="text-sm font-medium text-stone-600 dark:text-stone-400">Quick Install</span>
                         </div>
                         <code
@@ -125,7 +123,7 @@
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
                         <div class="flex flex-col items-center gap-2 text-center">
                             <div
-                                class="size-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center text-primary mb-2">
+                                class="size-12 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center text-p1 mb-2">
                                 <span class="material-symbols-outlined">psychology</span>
                             </div>
                             <h4 class="font-bold text-stone-900 dark:text-white">From Scratch</h4>
@@ -172,24 +170,24 @@
                         <div
                             class="p-6 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900">
                             <div class="flex items-center gap-3 mb-4">
-                                <span class="material-symbols-outlined text-primary">check_circle</span>
+                                <span class="material-symbols-outlined text-p1">check_circle</span>
                                 <h3 class="text-xl font-bold text-stone-900 dark:text-white">Prerequisites</h3>
                             </div>
                             <ul class="space-y-3 font-sans text-sm text-stone-600 dark:text-stone-400">
                                 <li class="flex items-start gap-2">
-                                    <span class="text-primary mt-0.5">▸</span>
+                                    <span class="text-p1 mt-0.5">▸</span>
                                     <span><strong>Python 3.7+</strong> required</span>
                                 </li>
                                 <li class="flex items-start gap-2">
-                                    <span class="text-primary mt-0.5">▸</span>
+                                    <span class="text-p1 mt-0.5">▸</span>
                                     <span><strong>GCC Compiler</strong> for Cython compilation</span>
                                 </li>
                                 <li class="flex items-start gap-2">
-                                    <span class="text-primary mt-0.5">▸</span>
+                                    <span class="text-p1 mt-0.5">▸</span>
                                     <span><strong>NumPy, PIL, SciPy</strong> auto-installed</span>
                                 </li>
                                 <li class="flex items-start gap-2">
-                                    <span class="text-primary mt-0.5">▸</span>
+                                    <span class="text-p1 mt-0.5">▸</span>
                                     <span><strong>CuPy</strong> optional for GPU support</span>
                                 </li>
                             </ul>
@@ -198,7 +196,7 @@
                         <div
                             class="p-6 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900">
                             <div class="flex items-center gap-3 mb-4">
-                                <span class="material-symbols-outlined text-primary">download</span>
+                                <span class="material-symbols-outlined text-p1">download</span>
                                 <h3 class="text-xl font-bold text-stone-900 dark:text-white">Quick Install</h3>
                             </div>
                             <div class="space-y-4">
@@ -231,19 +229,19 @@
                         </p>
                         <ul class="flex flex-col gap-4 mt-2">
                             <li class="flex gap-3 items-start text-stone-700 dark:text-stone-300 font-sans">
-                                <span class="material-symbols-outlined text-primary mt-0.5">check_circle</span>
+                                <span class="material-symbols-outlined text-p1 mt-0.5">check_circle</span>
                                 <span>Load datasets from HuggingFace or local folders</span>
                             </li>
                             <li class="flex gap-3 items-start text-stone-700 dark:text-stone-300 font-sans">
-                                <span class="material-symbols-outlined text-primary mt-0.5">check_circle</span>
+                                <span class="material-symbols-outlined text-p1 mt-0.5">check_circle</span>
                                 <span>Configure custom layer architectures dynamically</span>
                             </li>
                             <li class="flex gap-3 items-start text-stone-700 dark:text-stone-300 font-sans">
-                                <span class="material-symbols-outlined text-primary mt-0.5">check_circle</span>
+                                <span class="material-symbols-outlined text-p1 mt-0.5">check_circle</span>
                                 <span>Toggle between CPU and GPU with one line</span>
                             </li>
                             <li class="flex gap-3 items-start text-stone-700 dark:text-stone-300 font-sans">
-                                <span class="material-symbols-outlined text-primary mt-0.5">check_circle</span>
+                                <span class="material-symbols-outlined text-p1 mt-0.5">check_circle</span>
                                 <span>Export trained models to PyTorch format</span>
                             </li>
                         </ul>
@@ -313,9 +311,9 @@ pycnn.save_model(<span class="text-green-400">"model.bin"</span>)</code></pre>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         <div
-                            class="group p-6 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 hover:border-primary/50 transition-all hover:shadow-lg">
+                            class="group p-6 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 hover:border-p1/50 transition-all hover:shadow-lg">
                             <div
-                                class="size-12 rounded-lg bg-red-100 dark:bg-red-900/30 flex items-center justify-center text-primary mb-4 group-hover:scale-110 transition-transform">
+                                class="size-12 rounded-lg bg-red-100 dark:bg-red-900/30 flex items-center justify-center text-p1 mb-4 group-hover:scale-110 transition-transform">
                                 <span class="material-symbols-outlined">code_blocks</span>
                             </div>
                             <h3 class="text-lg font-bold text-stone-900 dark:text-white mb-2">Pure Implementation</h3>
@@ -326,7 +324,7 @@ pycnn.save_model(<span class="text-green-400">"model.bin"</span>)</code></pre>
                         </div>
 
                         <div
-                            class="group p-6 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 hover:border-primary/50 transition-all hover:shadow-lg">
+                            class="group p-6 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 hover:border-p1/50 transition-all hover:shadow-lg">
                             <div
                                 class="size-12 rounded-lg bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center text-amber-600 dark:text-amber-400 mb-4 group-hover:scale-110 transition-transform">
                                 <span class="material-symbols-outlined">flash_on</span>
@@ -339,7 +337,7 @@ pycnn.save_model(<span class="text-green-400">"model.bin"</span>)</code></pre>
                         </div>
 
                         <div
-                            class="group p-6 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 hover:border-primary/50 transition-all hover:shadow-lg">
+                            class="group p-6 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 hover:border-p1/50 transition-all hover:shadow-lg">
                             <div
                                 class="size-12 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400 mb-4 group-hover:scale-110 transition-transform">
                                 <span class="material-symbols-outlined">tune</span>
@@ -352,7 +350,7 @@ pycnn.save_model(<span class="text-green-400">"model.bin"</span>)</code></pre>
                         </div>
 
                         <div
-                            class="group p-6 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 hover:border-primary/50 transition-all hover:shadow-lg">
+                            class="group p-6 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 hover:border-p1/50 transition-all hover:shadow-lg">
                             <div
                                 class="size-12 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center text-green-600 dark:text-green-400 mb-4 group-hover:scale-110 transition-transform">
                                 <span class="material-symbols-outlined">layers</span>
@@ -365,7 +363,7 @@ pycnn.save_model(<span class="text-green-400">"model.bin"</span>)</code></pre>
                         </div>
 
                         <div
-                            class="group p-6 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 hover:border-primary/50 transition-all hover:shadow-lg">
+                            class="group p-6 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 hover:border-p1/50 transition-all hover:shadow-lg">
                             <div
                                 class="size-12 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-purple-600 dark:text-purple-400 mb-4 group-hover:scale-110 transition-transform">
                                 <span class="material-symbols-outlined">database</span>
@@ -378,7 +376,7 @@ pycnn.save_model(<span class="text-green-400">"model.bin"</span>)</code></pre>
                         </div>
 
                         <div
-                            class="group p-6 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 hover:border-primary/50 transition-all hover:shadow-lg">
+                            class="group p-6 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 hover:border-p1/50 transition-all hover:shadow-lg">
                             <div
                                 class="size-12 rounded-lg bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center text-orange-600 dark:text-orange-400 mb-4 group-hover:scale-110 transition-transform">
                                 <span class="material-symbols-outlined">show_chart</span>
@@ -391,7 +389,7 @@ pycnn.save_model(<span class="text-green-400">"model.bin"</span>)</code></pre>
                         </div>
 
                         <div
-                            class="group p-6 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 hover:border-primary/50 transition-all hover:shadow-lg">
+                            class="group p-6 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 hover:border-p1/50 transition-all hover:shadow-lg">
                             <div
                                 class="size-12 rounded-lg bg-cyan-100 dark:bg-cyan-900/30 flex items-center justify-center text-cyan-600 dark:text-cyan-400 mb-4 group-hover:scale-110 transition-transform">
                                 <span class="material-symbols-outlined">save</span>
@@ -403,7 +401,7 @@ pycnn.save_model(<span class="text-green-400">"model.bin"</span>)</code></pre>
                         </div>
 
                         <div
-                            class="group p-6 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 hover:border-primary/50 transition-all hover:shadow-lg">
+                            class="group p-6 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 hover:border-p1/50 transition-all hover:shadow-lg">
                             <div
                                 class="size-12 rounded-lg bg-pink-100 dark:bg-pink-900/30 flex items-center justify-center text-pink-600 dark:text-pink-400 mb-4 group-hover:scale-110 transition-transform">
                                 <span class="material-symbols-outlined">sync_alt</span>
@@ -416,7 +414,7 @@ pycnn.save_model(<span class="text-green-400">"model.bin"</span>)</code></pre>
                         </div>
 
                         <div
-                            class="group p-6 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 hover:border-primary/50 transition-all hover:shadow-lg">
+                            class="group p-6 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 hover:border-p1/50 transition-all hover:shadow-lg">
                             <div
                                 class="size-12 rounded-lg bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400 mb-4 group-hover:scale-110 transition-transform">
                                 <span class="material-symbols-outlined">photo_size_select_large</span>
@@ -443,7 +441,7 @@ pycnn.save_model(<span class="text-green-400">"model.bin"</span>)</code></pre>
                             class="flex gap-4 p-6 rounded-xl bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-700">
                             <div class="flex-shrink-0">
                                 <div
-                                    class="size-12 rounded-full bg-[#3471a3] flex items-center justify-center text-white font-bold">
+                                    class="size-12 rounded-full bg-p1 flex items-center justify-center text-white font-bold">
                                     1
                                 </div>
                             </div>
@@ -460,7 +458,7 @@ pycnn.save_model(<span class="text-green-400">"model.bin"</span>)</code></pre>
                             class="flex gap-4 p-6 rounded-xl bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-700">
                             <div class="flex-shrink-0">
                                 <div
-                                    class="size-12 rounded-full bg-[#3471a3] flex items-center justify-center text-white font-bold">
+                                    class="size-12 rounded-full bg-p1 flex items-center justify-center text-white font-bold">
                                     2
                                 </div>
                             </div>
@@ -477,7 +475,7 @@ pycnn.save_model(<span class="text-green-400">"model.bin"</span>)</code></pre>
                             class="flex gap-4 p-6 rounded-xl bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-700">
                             <div class="flex-shrink-0">
                                 <div
-                                    class="size-12 rounded-full bg-[#3471a3] flex items-center justify-center text-white font-bold">
+                                    class="size-12 rounded-full bg-p1 flex items-center justify-center text-white font-bold">
                                     3
                                 </div>
                             </div>
@@ -493,7 +491,7 @@ pycnn.save_model(<span class="text-green-400">"model.bin"</span>)</code></pre>
                             class="flex gap-4 p-6 rounded-xl bg-stone-50 dark:bg-stone-900 border border-stone-200 dark:border-stone-700">
                             <div class="flex-shrink-0">
                                 <div
-                                    class="size-12 rounded-full bg-[#3471a3] flex items-center justify-center text-white font-bold">
+                                    class="size-12 rounded-full bg-p1 flex items-center justify-center text-white font-bold">
                                     4
                                 </div>
                             </div>
@@ -518,7 +516,7 @@ pycnn.save_model(<span class="text-green-400">"model.bin"</span>)</code></pre>
                         <div
                             class="p-6 rounded-xl border border-stone-200 dark:border-stone-700 bg-gradient-to-br from-white to-stone-50 dark:from-stone-900 dark:to-stone-900/50">
                             <div
-                                class="size-14 rounded-full bg-gradient-to-br from-red-100 to-red-50 dark:from-red-900/30 dark:to-red-900/10 flex items-center justify-center text-primary mb-4">
+                                class="size-14 rounded-full bg-gradient-to-br from-red-100 to-red-50 dark:from-red-900/30 dark:to-red-900/10 flex items-center justify-center text-p1 mb-4">
                                 <span class="material-symbols-outlined text-3xl">school</span>
                             </div>
                             <h4 class="text-xl font-bold text-stone-900 dark:text-white mb-3">Students & Educators</h4>
@@ -589,15 +587,15 @@ pycnn.save_model(<span class="text-green-400">"model.bin"</span>)</code></pre>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <a class="group relative flex flex-col gap-4 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 p-6 hover:border-primary/50 transition-all hover:shadow-lg"
+                        <a class="group relative flex flex-col gap-4 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 p-6 hover:border-p1/50 transition-all hover:shadow-lg"
                             href="https://github.com/77AXEL/PyCNN#-installation" target="_blank">
                             <div
-                                class="size-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+                                class="size-10 rounded-lg bg-p1/10 flex items-center justify-center text-p1 group-hover:scale-110 transition-transform">
                                 <span class="material-symbols-outlined">download</span>
                             </div>
                             <div class="flex flex-col gap-2">
                                 <h3
-                                    class="text-lg font-bold text-stone-900 dark:text-white group-hover:text-primary transition-colors">
+                                    class="text-lg font-bold text-stone-900 dark:text-white group-hover:text-p1 transition-colors">
                                     Installation Guide</h3>
                                 <p class="text-sm text-stone-600 dark:text-stone-400 font-sans leading-relaxed">
                                     Step-by-step setup instructions for all platforms with GCC compiler requirements.
@@ -605,15 +603,15 @@ pycnn.save_model(<span class="text-green-400">"model.bin"</span>)</code></pre>
                             </div>
                         </a>
 
-                        <a class="group relative flex flex-col gap-4 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 p-6 hover:border-primary/50 transition-all hover:shadow-lg"
+                        <a class="group relative flex flex-col gap-4 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 p-6 hover:border-p1/50 transition-all hover:shadow-lg"
                             href="https://github.com/77AXEL/PyCNN#-usage" target="_blank">
                             <div
-                                class="size-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+                                class="size-10 rounded-lg bg-p1/10 flex items-center justify-center text-p1 group-hover:scale-110 transition-transform">
                                 <span class="material-symbols-outlined">menu_book</span>
                             </div>
                             <div class="flex flex-col gap-2">
                                 <h3
-                                    class="text-lg font-bold text-stone-900 dark:text-white group-hover:text-primary transition-colors">
+                                    class="text-lg font-bold text-stone-900 dark:text-white group-hover:text-p1 transition-colors">
                                     Usage Examples</h3>
                                 <p class="text-sm text-stone-600 dark:text-stone-400 font-sans leading-relaxed">
                                     Complete code examples for training, evaluation, and model deployment.
@@ -621,15 +619,15 @@ pycnn.save_model(<span class="text-green-400">"model.bin"</span>)</code></pre>
                             </div>
                         </a>
 
-                        <a class="group relative flex flex-col gap-4 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 p-6 hover:border-primary/50 transition-all hover:shadow-lg"
+                        <a class="group relative flex flex-col gap-4 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-900 p-6 hover:border-p1/50 transition-all hover:shadow-lg"
                             href="https://github.com/77AXEL/PyCNN" target="_blank">
                             <div
-                                class="size-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+                                class="size-10 rounded-lg bg-p1/10 flex items-center justify-center text-p1 group-hover:scale-110 transition-transform">
                                 <span class="material-symbols-outlined">code</span>
                             </div>
                             <div class="flex flex-col gap-2">
                                 <h3
-                                    class="text-lg font-bold text-stone-900 dark:text-white group-hover:text-primary transition-colors">
+                                    class="text-lg font-bold text-stone-900 dark:text-white group-hover:text-p1 transition-colors">
                                     Source Code</h3>
                                 <p class="text-sm text-stone-600 dark:text-stone-400 font-sans leading-relaxed">
                                     Explore the complete implementation on GitHub. Fork and customize for your needs.
@@ -649,17 +647,17 @@ pycnn.save_model(<span class="text-green-400">"model.bin"</span>)</code></pre>
                     </p>
                     <div class="flex flex-wrap justify-center gap-4">
                         <a href="https://github.com/77AXEL/PyCNN/discussions" target="_blank"
-                            class="inline-flex items-center gap-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 hover:border-primary text-stone-700 dark:text-stone-200 font-sans font-medium py-2.5 px-6 rounded-lg transition-all">
+                            class="inline-flex items-center gap-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 hover:border-p1 text-stone-700 dark:text-stone-200 font-sans font-medium py-2.5 px-6 rounded-lg transition-all">
                             <span class="material-symbols-outlined text-sm">forum</span>
                             Discussions
                         </a>
                         <a href="https://github.com/77AXEL/PyCNN/issues" target="_blank"
-                            class="inline-flex items-center gap-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 hover:border-primary text-stone-700 dark:text-stone-200 font-sans font-medium py-2.5 px-6 rounded-lg transition-all">
+                            class="inline-flex items-center gap-2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 hover:border-p1 text-stone-700 dark:text-stone-200 font-sans font-medium py-2.5 px-6 rounded-lg transition-all">
                             <span class="material-symbols-outlined text-sm">bug_report</span>
                             Report Issues
                         </a>
                         <a href="https://github.com/77AXEL/PyCNN/blob/main/CONTRIBUTING.md" target="_blank"
-                            class="inline-flex items-center gap-2 bg-primary hover:bg-primary/90 text-white font-sans font-medium py-2.5 px-6 rounded-lg transition-all shadow-md">
+                            class="inline-flex items-center gap-2 bg-p1 hover:bg-p1/90 text-white font-sans font-medium py-2.5 px-6 rounded-lg transition-all shadow-md">
                             <span class="material-symbols-outlined text-sm">volunteer_activism</span>
                             Contribute
                         </a>
@@ -687,39 +685,39 @@ pycnn.save_model(<span class="text-green-400">"model.bin"</span>)</code></pre>
                     <div class="grid grid-cols-1 gap-8 font-sans text-sm min-[400px]:flex min-[400px]:gap-16">
                         <div class="flex flex-col gap-3">
                             <h4 class="font-bold text-stone-900 dark:text-white mb-1">Documentation</h4>
-                            <a class="text-stone-600 dark:text-stone-400 hover:text-primary transition-colors"
+                            <a class="text-stone-600 dark:text-stone-400 hover:text-p1 transition-colors"
                                 href="#install">Installation</a>
-                            <a class="text-stone-600 dark:text-stone-400 hover:text-primary transition-colors"
+                            <a class="text-stone-600 dark:text-stone-400 hover:text-p1 transition-colors"
                                 href="#quickstart">Quick Start</a>
-                            <a class="text-stone-600 dark:text-stone-400 hover:text-primary transition-colors"
+                            <a class="text-stone-600 dark:text-stone-400 hover:text-p1 transition-colors"
                                 href="https://github.com/77AXEL/PyCNN#-usage" target="_blank">Usage Guide</a>
-                            <a class="text-stone-600 dark:text-stone-400 hover:text-primary transition-colors"
+                            <a class="text-stone-600 dark:text-stone-400 hover:text-p1 transition-colors"
                                 href="https://github.com/77AXEL/PyCNN#-pytorch-integration" target="_blank">PyTorch
                                 Export</a>
                         </div>
 
                         <div class="flex flex-col gap-3">
                             <h4 class="font-bold text-stone-900 dark:text-white mb-1">Community</h4>
-                            <a class="text-stone-600 dark:text-stone-400 hover:text-primary transition-colors"
+                            <a class="text-stone-600 dark:text-stone-400 hover:text-p1 transition-colors"
                                 href="https://github.com/77AXEL/PyCNN" target="_blank">GitHub</a>
-                            <a class="text-stone-600 dark:text-stone-400 hover:text-primary transition-colors"
+                            <a class="text-stone-600 dark:text-stone-400 hover:text-p1 transition-colors"
                                 href="https://github.com/77AXEL/PyCNN/discussions" target="_blank">Discussions</a>
-                            <a class="text-stone-600 dark:text-stone-400 hover:text-primary transition-colors"
+                            <a class="text-stone-600 dark:text-stone-400 hover:text-p1 transition-colors"
                                 href="https://github.com/77AXEL/PyCNN/issues" target="_blank">Issues</a>
-                            <a class="text-stone-600 dark:text-stone-400 hover:text-primary transition-colors"
+                            <a class="text-stone-600 dark:text-stone-400 hover:text-p1 transition-colors"
                                 href="https://github.com/77AXEL/PyCNN/blob/main/CONTRIBUTING.md"
                                 target="_blank">Contributing</a>
                         </div>
 
                         <div class="flex flex-col gap-3">
                             <h4 class="font-bold text-stone-900 dark:text-white mb-1">Resources</h4>
-                            <a class="text-stone-600 dark:text-stone-400 hover:text-primary transition-colors"
+                            <a class="text-stone-600 dark:text-stone-400 hover:text-p1 transition-colors"
                                 href="https://huggingface.co/spaces/777axel/pycnn_cifar10" target="_blank">Live Demo</a>
-                            <a class="text-stone-600 dark:text-stone-400 hover:text-primary transition-colors"
+                            <a class="text-stone-600 dark:text-stone-400 hover:text-p1 transition-colors"
                                 href="https://github.com/77AXEL/PyCNN/releases" target="_blank">Changelog</a>
-                            <a class="text-stone-600 dark:text-stone-400 hover:text-primary transition-colors"
+                            <a class="text-stone-600 dark:text-stone-400 hover:text-p1 transition-colors"
                                 href="https://github.com/77AXEL/PyCNN/blob/main/LICENSE" target="_blank">License</a>
-                            <a class="text-stone-600 dark:text-stone-400 hover:text-primary transition-colors"
+                            <a class="text-stone-600 dark:text-stone-400 hover:text-p1 transition-colors"
                                 href="https://github.com/77AXEL/PyCNN/blob/main/SECURITY.md"
                                 target="_blank">Security</a>
                         </div>
@@ -732,7 +730,7 @@ pycnn.save_model(<span class="text-green-400">"model.bin"</span>)</code></pre>
                         <p>Built with ❤️ by the PyCNN community</p>
                         <div class="flex items-center gap-4">
                             <a href="https://github.com/77AXEL/PyCNN" target="_blank"
-                                class="hover:text-primary transition-colors flex items-center gap-1">
+                                class="hover:text-p1 transition-colors flex items-center gap-1">
                                 <span class="material-symbols-outlined text-sm">star</span>
                                 Star on GitHub
                             </a>
