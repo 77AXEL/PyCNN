@@ -22,20 +22,17 @@ This is a Convolutional Neural Network (CNN) library project implemented entirel
 
 ## 🚀 Key Features
 
-* ✅ Fully functional CNN implementation from scratch
-* 🧠 Manual convolution, max pooling, and ReLU activations
-* 🔁 Forward and backward propagation with mini-batch gradient descent
-* 🏷 Multi-class classification via softmax and cross-entropy loss
-* 💾 Model save/load functionality
-* 🖼 RGB image preprocessing with customizable filters
-* 📊 Real-time training visualization (accuracy & loss per epoch)
-* ⚡ **CUDA acceleration** for faster training and inference
-* 🆕 **Adam optimizer** for improved convergence
-* 🛠 **Dynamic user-defined layers** for customizable architectures
-* 🔄 **Automatic backend conversion** between CPU and GPU
-* 🛢️ **Hugging Face datasets** support
-* 🎚️ **Dataset augmentation** support
-* 🔁 **PyTorch export** to convert PyCNN models to PyTorch format
+* Multi-class classification
+* Model save/load functionality
+* RGB image preprocessing with customizable filters
+* Real-time training visualization (accuracy & loss per epoch)
+* **CUDA acceleration** for faster training and inference
+* **Adam optimizer** for improved convergence
+* **Dynamic user-defined layers** for customizable architectures
+* **Automatic backend conversion** between CPU and GPU
+* **Hugging Face datasets** support
+* **Dataset augmentation** support
+* **PyTorch export** to convert PyCNN models to PyTorch format
 
 ---
 
