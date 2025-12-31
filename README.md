@@ -246,6 +246,10 @@ predict("example.png")
 
 ## 🧪 How It Works
 
+<p align="center">
+  <img src="./assets/pipeline_visualization.png" alt="PyCNN Pipeline" width="800"/>
+</p>
+
 1. **Image Preprocessing**: Images are resized, normalized, and processed through custom convolution filters with ReLU activation and max-pooling
 2. **Feature Extraction**: Flattened feature maps are fed into fully connected layers
 3. **Classification**: Dense layers compute activations followed by softmax for multi-class classification
