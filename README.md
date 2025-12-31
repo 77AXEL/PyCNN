@@ -15,7 +15,7 @@ This is a Convolutional Neural Network (CNN) library project implemented entirel
 **Live Demo:** [PyCNN CIFAR-10 Model](https://huggingface.co/spaces/777axel/pycnn_cifar10)
 
 <p align="center">
-  <img src="./assets/visualized.png" alt="Training Visualization" width="600"/>
+  <img src="./assets/pipeline_visualization.png" alt="PyCNN Pipeline" width="800"/>
 </p>
 
 ---
@@ -245,10 +245,6 @@ predict("example.png")
 ---
 
 ## 🧪 How It Works
-
-<p align="center">
-  <img src="./assets/pipeline_visualization.png" alt="PyCNN Pipeline" width="800"/>
-</p>
 
 1. **Image Preprocessing**: Images are resized, normalized, and processed through custom convolution filters with ReLU activation and max-pooling
 2. **Feature Extraction**: Flattened feature maps are fed into fully connected layers
