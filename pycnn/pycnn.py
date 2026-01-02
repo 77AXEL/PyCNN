@@ -94,7 +94,6 @@ class PyCNN:
         self._setup_backend(False)
         self.dataset = self.DatasetLoader(self)
         
-        # Initialize optimizer attributes to avoid AttributeError
         self.m = {}
         self.v = {}
         self.t = 0
@@ -329,6 +328,7 @@ class PyCNN:
                     raise ValueError(f"No class directories found in {path}")
                     
                 self._init_layers(classes, ((image_size-2)//2)**2*len(self.parent.filters))
+                self.parent.image_size = image_size
                 
                 for idx, cls in enumerate(classes):
                     folder = f"{path}/{cls}"
