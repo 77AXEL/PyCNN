@@ -29,16 +29,15 @@ This project is a framework-free, educational implementation of a CNN using NumP
 You're welcome to:
 - Refactor or simplify code
 - Optimize math operations
-- Improve modularity (e.g., better utils/model separation)
-- Add logging, visualizations, or CLI support (optional)
+- Improve modularity
+- Adding new features
+- ...
 
 ---
 
 ## 🧪 Code Style & Guidelines
 
 - Use **clear and consistent naming** (e.g., `camelCase` or `snake_case`, don't mix).
-- Keep it **educational and readable**—comment where useful.
-- Functions and files should have **single responsibilities**.
 
 ---
 

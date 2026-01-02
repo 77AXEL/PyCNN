@@ -5,9 +5,11 @@
 
 <p align="center">
   <a href="https://github.com/77axel/PyCNN/actions/workflows/ci.yml"><img src="https://github.com/77axel/PyCNN/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-  <img src="https://img.shields.io/badge/Open_Source-Yes-red" alt="Open Source">
+  <img src="https://img.shields.io/github/v/tag/77AXEL/PyCNN?label=version&color=orange" alt="Version">
+  <img src="https://img.shields.io/badge/Open_Source-Yes-lighgreen" alt="Open Source">
+  <img src="https://img.shields.io/github/contributors/77axel/PyCNN.svg" alt="Contributors">
   <img src="https://img.shields.io/badge/Platform-Windows%20|%20macOS%20|%20Linux-blue" alt="Platform Support">
-  <img src="https://img.shields.io/badge/License-MIT-green" alt="License">
+  <img src="https://img.shields.io/badge/License-MIT-red" alt="License">
 </p>
 
 This is a Convolutional Neural Network (CNN) library project implemented entirely from scratch using only low-level libraries like NumPy, PIL, SciPy and Cython no deep learning frameworks (e.g., TensorFlow or PyTorch) are used. It can train a CNN model on your local dataset folder or an external Hugging Face dataset, save or load models, support CUDA and the Adam optimizer for better performance, and switch the training backend between CPU and GPU
@@ -15,7 +17,7 @@ This is a Convolutional Neural Network (CNN) library project implemented entirel
 **Live Demo:** [PyCNN CIFAR-10 Model](https://huggingface.co/spaces/777axel/pycnn_cifar10)
 
 <p align="center">
-  <img src="./assets/pipeline_visualization.png" alt="PyCNN Pipeline" width="800"/>
+  <img src="./assets/pipeline_visualization.png" alt="PyCNN Pipeline" width="600"/>
 </p>
 
 ---
@@ -267,7 +269,7 @@ eval = Evaluate(pycnn)
 eval.hf(dataset_name="cifar10", max_image=10)
 ```
 
-<img src="./assets/output.png" alt="Training Output">
+<img src="./assets/output.png" alt="Training Output" height=400>
 
 ---
 
