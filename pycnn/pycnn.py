@@ -93,6 +93,14 @@ class PyCNN:
         self.use_cuda = False
         self._setup_backend(False)
         self.dataset = self.DatasetLoader(self)
+        
+        # Initialize optimizer attributes to avoid AttributeError
+        self.m = {}
+        self.v = {}
+        self.t = 0
+        self.beta1 = 0.9
+        self.beta2 = 0.999
+        self.eps = 1e-8
 
     def _setup_backend(self, use_cuda):
         """Setup the computational backend (CPU or GPU)"""
