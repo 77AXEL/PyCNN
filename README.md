@@ -1,4 +1,3 @@
-# PyCNN
 <p align="center">
   <img src="./assets/logo.png" alt="PyCNN Logo">
 </p>
@@ -296,3 +295,4 @@ Released under the [MIT License](./LICENSE)
 See the [PyCNN Documentation](https://77axel.github.io/PyCNN) for detailed guides and API reference.
 
 ---
+
