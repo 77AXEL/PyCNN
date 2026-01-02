@@ -1,6 +1,11 @@
 #include <math.h>
+#ifdef _WIN32
+  #define EXPORT __declspec(dllexport)
+#else
+  #define EXPORT
+#endif
 
-extern "C" __declspec(dllexport)
+extern "C" EXPORT
 void softmax(const double* __restrict__ x, double* __restrict__ out, int rows, int cols) {
     for (int i = 0; i < rows; i++) {
         const double* x_row = &x[i * cols];
@@ -25,7 +30,7 @@ void softmax(const double* __restrict__ x, double* __restrict__ out, int rows, i
     }
 }
 
-extern "C" __declspec(dllexport)
+extern "C" EXPORT
 void cross_entropy(const double* __restrict__ preds, const double* __restrict__ labels, double* __restrict__ out, int rows, int cols) {
     const double epsilon = 1e-9;
 
