@@ -27,7 +27,10 @@ except ImportError:
     def cythonize(extensions, **_ignore):
         return extensions
 
-extra_args = ["-O3", "-march=native", "-ffast-math", "-funroll-loops"]
+if os.environ.get('GITHUB_ACTIONS'):
+    extra_args = ["-O3", "-funroll-loops"]
+else:
+    extra_args = ["-O3", "-march=native", "-ffast-math", "-funroll-loops"]
 
 module_names = [
     "backward_pass", 

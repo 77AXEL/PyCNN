@@ -11,8 +11,6 @@ class TestPyCNN(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         try:
-            import sys
-            sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
             from pycnn.pycnn import PyCNN
             cls.PyCNN = PyCNN
         except ImportError as e:
