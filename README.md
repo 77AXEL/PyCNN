@@ -1,13 +1,13 @@
 <p align="center">
-  <img src="./assets/logo.png" alt="PyCNN Logo">
+  <img src="./assets/logo.png" alt="PyCNN Logo" width="180">
 </p>
 
 <p align="center">
   <a href="https://github.com/77axel/PyCNN/actions/workflows/ci.yml"><img src="https://github.com/77axel/PyCNN/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-  <img src="https://img.shields.io/github/v/tag/77AXEL/PyCNN?label=version&color=orange" alt="Version">
+  <img src="https://img.shields.io/github/v/tag/77AXEL/PyCNN?label=Release&color=orange" alt="Version">
   <img src="https://img.shields.io/badge/Open_Source-Yes-lighgreen" alt="Open Source">
   <img src="https://img.shields.io/github/contributors/77axel/PyCNN.svg" alt="Contributors">
-  <img src="https://img.shields.io/badge/Platform-Windows%20|%20macOS%20|%20Linux-blue" alt="Platform Support">
+  <img src="https://img.shields.io/badge/Cross_Platform-Yes-blue" alt="Platform Support">
   <img src="https://img.shields.io/badge/License-MIT-red" alt="License">
 </p>
 
@@ -295,4 +295,5 @@ Released under the [MIT License](./LICENSE)
 See the [PyCNN Documentation](https://77axel.github.io/PyCNN) for detailed guides and API reference.
 
 ---
+
 
