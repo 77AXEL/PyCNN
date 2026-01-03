@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./assets/logo.png" alt="PyCNN Logo" width="180">
+  <img src="./assets/logo.svg" alt="PyCNN Logo" width="180">
 </p>
 
 <p align="center">
@@ -295,5 +295,6 @@ Released under the [MIT License](./LICENSE)
 See the [PyCNN Documentation](https://77axel.github.io/PyCNN) for detailed guides and API reference.
 
 ---
+
 
 
