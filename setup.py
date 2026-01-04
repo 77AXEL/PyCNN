@@ -44,18 +44,39 @@ def get_library_extensions(system):
     }
     return ext_map.get(system, [])
 
+def log(msg):
+    """Log to stderr to ensure visibility in pip install -v"""
+    print(msg, file=sys.stderr)
+
 def download_prebuilt_binaries():
     """Download pre-built binaries from GitHub releases"""
     global PREBUILT_DOWNLOADED
     if PREBUILT_DOWNLOADED:
         return True
         
+    # Check if we are in environment that shouldn't download (e.g. GitHub Actions)
+    if os.environ.get('GITHUB_ACTIONS'):
+        return False
+
     os_name, py_version, system = get_platform_info()
     py_tag = f"cp{py_version.replace('.', '')}"
     
     current_version = "2.5"
     
-    print(f"\n[PyCNN] Checking for pre-built binaries for {system} / Python {py_version}...")
+    # Check if binaries already exist locally
+    lib_dir = Path('pycnn/lib')
+    modules_dir = Path('pycnn/modules')
+    module_names = ["backward_pass", "forward_pass", "gradient_decent", "max_pooling"]
+    
+    lib_exts = get_library_extensions(system)
+    lib_exists = any(Path(lib_dir).glob(f"optimized*{ext}") for ext in lib_exts)
+    modules_exist = all(any(modules_dir.glob(f"{name}.*")) for name in module_names)
+    
+    if lib_exists and modules_exist:
+        PREBUILT_DOWNLOADED = True
+        return True
+
+    log(f"\n[PyCNN] Checking for pre-built binaries for {system} / Python {py_version} ({py_tag})...")
     
     try:
         req = urllib.request.Request(GITHUB_API_URL, headers={'User-Agent': 'Mozilla/5.0'})
@@ -65,13 +86,11 @@ def download_prebuilt_binaries():
         assets = release_data.get('assets', [])
         tag_name = release_data.get('tag_name', 'unknown')
         
-        print(f"[PyCNN] Latest release found: {tag_name}")
+        log(f"[PyCNN] Latest release found: {tag_name}")
         
         if current_version not in tag_name:
-            print(f"[PyCNN] Warning: Latest release {tag_name} does not match current version {current_version}")
+            log(f"[PyCNN] Warning: Latest release {tag_name} does not match current version {current_version}")
         
-        lib_dir = Path('pycnn/lib')
-        modules_dir = Path('pycnn/modules')
         lib_dir.mkdir(parents=True, exist_ok=True)
         modules_dir.mkdir(parents=True, exist_ok=True)
         
@@ -90,29 +109,29 @@ def download_prebuilt_binaries():
                 break
         
         if not matching_wheel:
-            print(f"[PyCNN] No matching pre-built wheel found in {tag_name}.")
+            log(f"[PyCNN] No matching pre-built wheel found in {tag_name}.")
             return False
         
-        print(f"[PyCNN] Downloading optimized binaries from: {matching_wheel['name']}")
+        log(f"[PyCNN] Downloading optimized binaries from: {matching_wheel['name']}")
         whl_path = Path('temp_wheel.whl')
         urllib.request.urlretrieve(matching_wheel['browser_download_url'], whl_path)
         
         with zipfile.ZipFile(whl_path, 'r') as whl_zip:
             for file in whl_zip.namelist():
                 if file.startswith('pycnn/modules/') and (file.endswith('.pyd') or file.endswith('.so')):
-                    print(f"  -> Extracting: {file}")
+                    log(f"  -> Extracting: {file}")
                     whl_zip.extract(file, '.')
                 if file.startswith('pycnn/lib/') and any(file.endswith(ext) for ext in get_library_extensions(system)):
-                    print(f"  -> Extracting: {file}")
+                    log(f"  -> Extracting: {file}")
                     whl_zip.extract(file, '.')
         
         os.remove(whl_path)
-        print("[PyCNN] Successfully installed pre-built binaries!\n")
+        log("[PyCNN] Successfully installed pre-built binaries!\n")
         PREBUILT_DOWNLOADED = True
         return True
         
     except Exception as e:
-        print(f"[PyCNN] Binary download skipped: {e}")
+        log(f"[PyCNN] Binary download skipped: {e}")
         return False
 
 class BuildLib(build_py):
@@ -128,10 +147,10 @@ class InstallWithBinaries(install):
 class BuildExtMaybe(build_ext):
     def run(self):
         if PREBUILT_DOWNLOADED:
-            print("[PyCNN] Skipping compilation: Pre-built binaries are in place.")
+            log("[PyCNN] Skipping compilation: Pre-built binaries are in place.")
             return
             
-        print("[PyCNN] Standard build: Compiling modules from source...")
+        log("[PyCNN] Standard build: Compiling modules from source...")
         
         lib_dir = Path('pycnn/lib')
         system = platform.system()
@@ -147,6 +166,10 @@ class BuildExtMaybe(build_ext):
                 print(f"Warning: Native build failed: {e}")
         
         super().run()
+
+# Early trigger for downloading binaries
+# We do this at the top level so it runs during metadata generation/pip-egg-info
+download_prebuilt_binaries()
 
 try:
     from Cython.Build import cythonize
@@ -169,7 +192,8 @@ module_names = [
 ]
 
 extensions = []
-if CYTHON_AVAILABLE:
+if CYTHON_AVAILABLE and not PREBUILT_DOWNLOADED:
+    log("[PyCNN] Cython available and no pre-built binaries found. Preparing source extensions...")
     extensions = [
         Extension(
             f"pycnn.modules.{name}",
@@ -179,6 +203,8 @@ if CYTHON_AVAILABLE:
             extra_link_args=extra_args if platform.system() != "Windows" else []
         ) for name in module_names
     ]
+elif PREBUILT_DOWNLOADED:
+    log("[PyCNN] Using pre-built binaries. Python-level extensions will be skipped.")
 
 setup(
     name="pycnn",
