@@ -12,9 +12,9 @@
   <img src="https://img.shields.io/badge/License-MIT-red" alt="License">
 </p>
 
-This is a Convolutional Neural Network (CNN) library project implemented entirely from scratch using only low-level libraries like NumPy, PIL, SciPy and Cython no deep learning frameworks (e.g., TensorFlow or PyTorch) are used. It can train a CNN model on your local dataset folder or an external Hugging Face dataset, save or load models, support CUDA and the Adam optimizer for better performance, and switch the training backend between CPU and GPU
-
 **Live Demo:** [PyCNN CIFAR-10 Model](https://huggingface.co/spaces/777axel/pycnn_cifar10)
+
+This is a Convolutional Neural Network (CNN) library project implemented entirely from scratch using only low-level libraries like NumPy, PIL, SciPy and Cython no deep learning frameworks (e.g., TensorFlow or PyTorch) are used. It can train a CNN model on your local dataset folder or an external Hugging Face dataset, save or load models, support CUDA and the Adam optimizer for better performance, and switch the training backend between CPU and GPU
 
 <p align="center">
   <img src="./assets/pipeline_visualization.png" alt="PyCNN Pipeline" width="600"/>
@@ -303,6 +303,7 @@ Released under the [MIT License](./LICENSE)
 See the [PyCNN Documentation](https://77axel.github.io/PyCNN) for detailed guides and API reference.
 
 ---
+
 
 
 
