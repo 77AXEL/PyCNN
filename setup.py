@@ -185,7 +185,7 @@ if CYTHON_AVAILABLE:
 
 setup(
     name="pycnn",
-    version="2.4",
+    version="2.5",
     description="A Python library to easily build, train, and test your CNN AI models.",
     author="https://github.com/77axel",
     packages=find_packages(),
