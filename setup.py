@@ -49,33 +49,45 @@ def log(msg):
     print(msg, file=sys.stderr)
     sys.stderr.flush()
 
-def download_prebuilt_binaries():
-    """Download pre-built binaries from GitHub releases"""
+def ensure_binaries_ready():
+    """Ensure binaries are present either by downloading or building from source"""
     global PREBUILT_DOWNLOADED
     if PREBUILT_DOWNLOADED:
         return True
         
-    if os.environ.get('GITHUB_ACTIONS'):
-        return False
-
     os_name, py_version, system = get_platform_info()
-    py_tag = f"cp{py_version.replace('.', '')}"
-    
-    current_version = "2.5"
-    
     lib_dir = Path('pycnn/lib').absolute()
     modules_dir = Path('pycnn/modules').absolute()
-    module_names = ["backward_pass", "forward_pass", "gradient_decent", "max_pooling"]
-    
     lib_exts = get_library_extensions(system)
+    
+    module_names = ["backward_pass", "forward_pass", "gradient_decent", "max_pooling"]
     lib_exists = any(list(lib_dir.glob(f"optimized*{ext}")) for ext in lib_exts)
     modules_exist = all(any(modules_dir.glob(f"{name}.pyd")) or any(modules_dir.glob(f"{name}.so")) for name in module_names)
     
     if lib_exists and modules_exist:
-        log(f"[PyCNN] Compiled binaries already found in {lib_dir}. Skipping download.")
+        log(f"[PyCNN] Compiled binaries already found. Skipping preparation.")
         PREBUILT_DOWNLOADED = True
         return True
 
+    if os.environ.get('GITHUB_ACTIONS'):
+        log("[PyCNN] CI Environment detected. Building native library from source...")
+        if not lib_exists:
+            make_cmd = "make"
+            try:
+                lib_dir.mkdir(parents=True, exist_ok=True)
+                subprocess.check_call([make_cmd], cwd=lib_dir, shell=True)
+                if not any(list(lib_dir.glob(f"optimized*{ext}")) for ext in lib_exts):
+                    raise RuntimeError("Native build finished but binary not found.")
+                log("[PyCNN] Native library built successfully.")
+                return True
+            except Exception as e:
+                log(f"[PyCNN] Critical Error: Native build failed in CI: {e}")
+                raise e
+        return False
+
+    py_tag = f"cp{py_version.replace('.', '')}"
+    current_version = "2.5"
+    
     log(f"\n[PyCNN] Checking GitHub for pre-built binaries (Python {py_version}, {system})...")
     
     try:
@@ -94,11 +106,7 @@ def download_prebuilt_binaries():
         lib_dir.mkdir(parents=True, exist_ok=True)
         modules_dir.mkdir(parents=True, exist_ok=True)
         
-        platform_keywords = {
-            'Linux': 'linux',
-            'Darwin': 'macos',
-            'Windows': 'win'
-        }
+        platform_keywords = {'Linux': 'linux', 'Darwin': 'macos', 'Windows': 'win'}
         kw = platform_keywords.get(system)
         
         matching_wheel = None
@@ -113,7 +121,7 @@ def download_prebuilt_binaries():
             return False
         
         whl_path = Path('temp_wheel.whl').absolute()
-        log(f"[PyCNN] Downloading to {whl_path}...")
+        log(f"[PyCNN] Downloading from {matching_wheel['browser_download_url']}...")
         urllib.request.urlretrieve(matching_wheel['browser_download_url'], whl_path)
         
         with zipfile.ZipFile(whl_path, 'r') as whl_zip:
@@ -143,12 +151,12 @@ def download_prebuilt_binaries():
 
 class BuildLib(build_py):
     def run(self):
-        download_prebuilt_binaries()
+        ensure_binaries_ready()
         super().run()
 
 class InstallWithBinaries(install):
     def run(self):
-        download_prebuilt_binaries()
+        ensure_binaries_ready()
         super().run()
 
 class BuildExtMaybe(build_ext):
@@ -166,15 +174,20 @@ class BuildExtMaybe(build_ext):
         
         if not lib_exists:
             make_cmd = "mingw32-make" if system == "Windows" else "make"
-            print(f"--- Building optimized native library using {make_cmd} ---")
+            log(f"--- Building optimized native library using {make_cmd} ---")
             try:
                 subprocess.check_call([make_cmd], cwd=lib_dir, shell=True)
+                lib_exists_now = any(list(lib_dir.glob(f"optimized*{ext}")) for ext in lib_exts)
+                if not lib_exists_now:
+                    raise RuntimeError(f"Native build finished but optimized binary was not found in {lib_dir}")
             except Exception as e:
-                print(f"Warning: Native build failed: {e}")
+                log(f"Error: Native build failed: {e}")
+                if os.environ.get('GITHUB_ACTIONS'):
+                    raise e
         
         super().run()
 
-download_prebuilt_binaries()
+ensure_binaries_ready()
 
 try:
     from Cython.Build import cythonize
@@ -230,6 +243,10 @@ setup(
         "matplotlib",
     ],
     python_requires=">=3.8",
+    package_data={
+        'pycnn.lib': ['*.dll', '*.so', '*.dylib'],
+        'pycnn.modules': ['*.pyd', '*.so'],
+    },
     include_package_data=True,
     zip_safe=False,
 )
