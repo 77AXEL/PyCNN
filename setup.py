@@ -47,6 +47,7 @@ def get_library_extensions(system):
 def log(msg):
     """Log to stderr to ensure visibility in pip install -v"""
     print(msg, file=sys.stderr)
+    sys.stderr.flush()
 
 def download_prebuilt_binaries():
     """Download pre-built binaries from GitHub releases"""
@@ -54,7 +55,6 @@ def download_prebuilt_binaries():
     if PREBUILT_DOWNLOADED:
         return True
         
-    # Check if we are in environment that shouldn't download (e.g. GitHub Actions)
     if os.environ.get('GITHUB_ACTIONS'):
         return False
 
@@ -63,20 +63,20 @@ def download_prebuilt_binaries():
     
     current_version = "2.5"
     
-    # Check if binaries already exist locally
-    lib_dir = Path('pycnn/lib')
-    modules_dir = Path('pycnn/modules')
+    lib_dir = Path('pycnn/lib').absolute()
+    modules_dir = Path('pycnn/modules').absolute()
     module_names = ["backward_pass", "forward_pass", "gradient_decent", "max_pooling"]
     
     lib_exts = get_library_extensions(system)
-    lib_exists = any(Path(lib_dir).glob(f"optimized*{ext}") for ext in lib_exts)
-    modules_exist = all(any(modules_dir.glob(f"{name}.*")) for name in module_names)
+    lib_exists = any(list(lib_dir.glob(f"optimized*{ext}")) for ext in lib_exts)
+    modules_exist = all(any(modules_dir.glob(f"{name}.pyd")) or any(modules_dir.glob(f"{name}.so")) for name in module_names)
     
     if lib_exists and modules_exist:
+        log(f"[PyCNN] Compiled binaries already found in {lib_dir}. Skipping download.")
         PREBUILT_DOWNLOADED = True
         return True
 
-    log(f"\n[PyCNN] Checking for pre-built binaries for {system} / Python {py_version} ({py_tag})...")
+    log(f"\n[PyCNN] Checking GitHub for pre-built binaries (Python {py_version}, {system})...")
     
     try:
         req = urllib.request.Request(GITHUB_API_URL, headers={'User-Agent': 'Mozilla/5.0'})
@@ -112,23 +112,30 @@ def download_prebuilt_binaries():
             log(f"[PyCNN] No matching pre-built wheel found in {tag_name}.")
             return False
         
-        log(f"[PyCNN] Downloading optimized binaries from: {matching_wheel['name']}")
-        whl_path = Path('temp_wheel.whl')
+        whl_path = Path('temp_wheel.whl').absolute()
+        log(f"[PyCNN] Downloading to {whl_path}...")
         urllib.request.urlretrieve(matching_wheel['browser_download_url'], whl_path)
         
         with zipfile.ZipFile(whl_path, 'r') as whl_zip:
+            extract_count = 0
             for file in whl_zip.namelist():
-                if file.startswith('pycnn/modules/') and (file.endswith('.pyd') or file.endswith('.so')):
-                    log(f"  -> Extracting: {file}")
+                if (file.endswith('.pyd') or file.endswith('.so')) and 'modules/' in file:
+                    log(f"  -> Extracting module: {file}")
                     whl_zip.extract(file, '.')
-                if file.startswith('pycnn/lib/') and any(file.endswith(ext) for ext in get_library_extensions(system)):
-                    log(f"  -> Extracting: {file}")
+                    extract_count += 1
+                if any(file.endswith(ext) for ext in lib_exts) and 'lib/' in file:
+                    log(f"  -> Extracting library: {file}")
                     whl_zip.extract(file, '.')
+                    extract_count += 1
         
         os.remove(whl_path)
-        log("[PyCNN] Successfully installed pre-built binaries!\n")
-        PREBUILT_DOWNLOADED = True
-        return True
+        if extract_count > 0:
+            log(f"[PyCNN] Successfully installed {extract_count} pre-built components!\n")
+            PREBUILT_DOWNLOADED = True
+            return True
+        else:
+            log("[PyCNN] Warning: Matching wheel found but no binaries were extracted and they might be in a different path inside the wheel.")
+            return False
         
     except Exception as e:
         log(f"[PyCNN] Binary download skipped: {e}")
@@ -167,8 +174,6 @@ class BuildExtMaybe(build_ext):
         
         super().run()
 
-# Early trigger for downloading binaries
-# We do this at the top level so it runs during metadata generation/pip-egg-info
 download_prebuilt_binaries()
 
 try:
