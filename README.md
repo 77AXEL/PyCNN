@@ -39,11 +39,28 @@ This is a Convolutional Neural Network (CNN) library project implemented entirel
 
 ## 📋 Requirements
 
-### System Requirements
+### Python Dependencies
 
-**GCC Compiler Required**: This library uses Cython to compile performance-critical modules into shared libraries optimized for your CPU architecture. You must have a GCC compiler installed before installation.
+- Python 3.8+
+- NumPy
+- Pillow (PIL)
+- SciPy
+- Matplotlib (for visualization)
 
-#### Installing GCC:
+**Optional:**
+- CuPy (for CUDA support)
+- datasets (for Hugging Face integration)
+- PyTorch (for model export)
+
+> [!NOTE]
+> **No Compiler Required!** PyCNN now automatically downloads pre-compiled binaries for Windows, Linux, and macOS. You no longer need to install GCC or build tools for regular usage.
+
+### For Contributors (Development Setup)
+
+If you want to build from source or contribute to the project, you'll need a C++ compiler:
+
+<details>
+<summary>Click to expand compiler installation instructions</summary>
 
 **Linux (Ubuntu/Debian):**
 ```bash
@@ -64,19 +81,7 @@ xcode-select --install
 **Windows:**
 - Install [MinGW-w64](https://www.mingw-w64.org/) or [Microsoft Visual C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/)
 
-### Python Dependencies
-
-- Python 3.7+
-- NumPy
-- Pillow (PIL)
-- SciPy
-- Cython
-- Matplotlib (for visualization)
-
-**Optional:**
-- CuPy (for CUDA support)
-- datasets (for Hugging Face integration)
-- PyTorch (for model export)
+</details>
 
 ---
 
@@ -85,6 +90,8 @@ xcode-select --install
 ```bash
 pip install git+https://github.com/77AXEL/PyCNN.git
 ```
+
+Standard installation will automatically fetch pre-built binaries for your platform. If no matching binaries are found, it will attempt to build from source (requires a compiler).
 
 **Optional - CUDA Support:**
 ```bash

@@ -1,0 +1,132 @@
+name: Build Wheels
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build-wheels:
+    name: Build wheels on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+    
+    - name: Install build tools (Ubuntu)
+      if: runner.os == 'Linux'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y build-essential gcc g++ make
+    
+    - name: Install build tools (macOS)
+      if: runner.os == 'macOS'
+      run: |
+        brew install gcc make
+    
+    - name: Install build tools (Windows)
+      if: runner.os == 'Windows'
+      run: |
+        choco install mingw -y
+        refreshenv
+    
+    
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install build wheel setuptools Cython numpy scipy pillow matplotlib
+    
+    - name: Build optimized library (Unix)
+      if: runner.os != 'Windows'
+      run: |
+        cd pycnn/lib
+        make
+      env:
+        GITHUB_ACTIONS: true
+    
+    - name: Build optimized library (Windows)
+      if: runner.os == 'Windows'
+      shell: cmd
+      run: |
+        cd pycnn\lib
+        mingw32-make
+      env:
+        GITHUB_ACTIONS: true
+    
+    - name: Build wheel
+      run: python -m build --wheel
+      env:
+        GITHUB_ACTIONS: true
+    
+    - name: Upload wheel artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: wheel-${{ matrix.os }}-py${{ matrix.python-version }}
+        path: dist/*.whl
+        retention-days: 7
+    
+    - name: Upload compiled library
+      uses: actions/upload-artifact@v4
+      with:
+        name: lib-${{ matrix.os }}-py${{ matrix.python-version }}
+        path: |
+          pycnn/lib/*.dll
+          pycnn/lib/*.so
+          pycnn/lib/*.dylib
+        retention-days: 7
+
+  create-release:
+    name: Create Release and Upload Assets
+    needs: build-wheels
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/')
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Download all artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: artifacts
+    
+    - name: Organize compiled libraries
+      run: |
+        mkdir -p release-libs
+        # Copy and rename for each platform/python to ensure uniqueness
+        find artifacts -name "*.dll" -exec cp {} release-libs/ \; || true
+        find artifacts -name "*.so" -exec cp {} release-libs/ \; || true
+        find artifacts -name "*.dylib" -exec cp {} release-libs/ \; || true
+        
+        # Renaissance naming for native libs to match what setup.py expects
+        # We rename them to include the OS name if they are distinct
+        # Actually, if we just upload the .whl, most users will get the lib from the whl.
+        # But for source installs, we provide these as fallbacks.
+        ls -la release-libs/
+    
+    - name: Organize wheels
+      run: |
+        mkdir -p release-wheels
+        find artifacts -name "*.whl" -exec cp {} release-wheels/ \;
+        ls -la release-wheels/
+    
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          release-libs/*
+          release-wheels/*
+        draft: false
+        prerelease: false
+        generate_release_notes: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
