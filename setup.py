@@ -11,9 +11,11 @@ import numpy
 from setuptools import setup, find_packages, Extension
 from setuptools.command.build_py import build_py
 from setuptools.command.install import install
+from setuptools.command.build_ext import build_ext
 
-# GitHub repository information
-GITHUB_REPO = "77axel/pycnn"  # Update with your actual repo
+PREBUILT_DOWNLOADED = False
+
+GITHUB_REPO = "77AXEL/PyCNN"
 GITHUB_API_URL = f"https://api.github.com/repos/{GITHUB_REPO}/releases/latest"
 
 def get_platform_info():
@@ -21,7 +23,6 @@ def get_platform_info():
     system = platform.system()
     python_version = f"{sys.version_info.major}.{sys.version_info.minor}"
     
-    # Map platform names to GitHub Actions runner names
     platform_map = {
         'Linux': 'ubuntu-latest',
         'Darwin': 'macos-latest',
@@ -45,17 +46,18 @@ def get_library_extensions(system):
 
 def download_prebuilt_binaries():
     """Download pre-built binaries from GitHub releases"""
+    global PREBUILT_DOWNLOADED
+    if PREBUILT_DOWNLOADED:
+        return True
+        
     os_name, py_version, system = get_platform_info()
-    
-    # Python tag format: 3.9 -> cp39
     py_tag = f"cp{py_version.replace('.', '')}"
     
-    print(f"Detected platform: {os_name}, Python: {py_version} ({py_tag})")
-    print(f"Attempting to download pre-built binaries from GitHub releases...")
+    current_version = "2.5"
+    
+    print(f"\n[PyCNN] Checking for pre-built binaries for {system} / Python {py_version}...")
     
     try:
-        # Get latest release information
-        # Use a User-Agent to avoid some basic blocks
         req = urllib.request.Request(GITHUB_API_URL, headers={'User-Agent': 'Mozilla/5.0'})
         with urllib.request.urlopen(req) as response:
             release_data = json.loads(response.read().decode())
@@ -63,17 +65,15 @@ def download_prebuilt_binaries():
         assets = release_data.get('assets', [])
         tag_name = release_data.get('tag_name', 'unknown')
         
-        print(f"Found release: {tag_name}")
+        print(f"[PyCNN] Latest release found: {tag_name}")
         
-        # Prepare directories
+        if current_version not in tag_name:
+            print(f"[PyCNN] Warning: Latest release {tag_name} does not match current version {current_version}")
+        
         lib_dir = Path('pycnn/lib')
         modules_dir = Path('pycnn/modules')
         lib_dir.mkdir(parents=True, exist_ok=True)
         modules_dir.mkdir(parents=True, exist_ok=True)
-        
-        # We look for the wheel that matches:
-        # 1. Python version tag (e.g. cp39)
-        # 2. Platform tag (e.g. win_amd64, manylinux, macosx)
         
         platform_keywords = {
             'Linux': 'linux',
@@ -90,72 +90,70 @@ def download_prebuilt_binaries():
                 break
         
         if not matching_wheel:
-            print(f"Warning: No matching wheel found for {system} and Python {py_version}")
+            print(f"[PyCNN] No matching pre-built wheel found in {tag_name}.")
             return False
         
-        print(f"Downloading wheel: {matching_wheel['name']}")
+        print(f"[PyCNN] Downloading optimized binaries from: {matching_wheel['name']}")
         whl_path = Path('temp_wheel.whl')
         urllib.request.urlretrieve(matching_wheel['browser_download_url'], whl_path)
         
-        print("Extracting compiled modules from wheel...")
         with zipfile.ZipFile(whl_path, 'r') as whl_zip:
             for file in whl_zip.namelist():
-                # Extract modules (*.pyd, *.so)
                 if file.startswith('pycnn/modules/') and (file.endswith('.pyd') or file.endswith('.so')):
-                    print(f"  Extracting: {file}")
+                    print(f"  -> Extracting: {file}")
                     whl_zip.extract(file, '.')
-                
-                # Extract native libs (*.dll, *.so, *.dylib)
                 if file.startswith('pycnn/lib/') and any(file.endswith(ext) for ext in get_library_extensions(system)):
-                    print(f"  Extracting: {file}")
+                    print(f"  -> Extracting: {file}")
                     whl_zip.extract(file, '.')
         
         os.remove(whl_path)
-        print("Successfully downloaded and extracted pre-built binaries!")
+        print("[PyCNN] Successfully installed pre-built binaries!\n")
+        PREBUILT_DOWNLOADED = True
         return True
         
     except Exception as e:
-        print(f"Failed to download pre-built binaries: {e}")
+        print(f"[PyCNN] Binary download skipped: {e}")
         return False
 
 class BuildLib(build_py):
     def run(self):
-        # Try to download pre-built binaries first
-        if download_prebuilt_binaries():
-            print("Using pre-built binaries - skipping compilation")
-            super().run()
-            return
-        
-        # Fallback to building from source
-        print("Building from source...")
-        lib_dir = os.path.join(os.getcwd(), 'pycnn', 'lib')
-        
-        make_cmd = "mingw32-make" if platform.system() == "Windows" else "make"
-        
-        print(f"--- Building optimized native library in {lib_dir} using {make_cmd} ---")
-        
-        try:
-            subprocess.check_call([make_cmd], cwd=lib_dir, shell=True)
-        except subprocess.CalledProcessError as e:
-            print(f"Error: Native build failed. Ensure {make_cmd} is in your PATH.")
-            raise e
-        
+        download_prebuilt_binaries()
         super().run()
 
 class InstallWithBinaries(install):
     def run(self):
-        # Download binaries before installation
         download_prebuilt_binaries()
         super().run()
 
-# Try to import Cython, but don't require it if binaries are available
+class BuildExtMaybe(build_ext):
+    def run(self):
+        if PREBUILT_DOWNLOADED:
+            print("[PyCNN] Skipping compilation: Pre-built binaries are in place.")
+            return
+            
+        print("[PyCNN] Standard build: Compiling modules from source...")
+        
+        lib_dir = Path('pycnn/lib')
+        system = platform.system()
+        lib_exts = get_library_extensions(system)
+        lib_exists = any(Path(lib_dir).glob(f"optimized*{ext}") for ext in lib_exts)
+        
+        if not lib_exists:
+            make_cmd = "mingw32-make" if system == "Windows" else "make"
+            print(f"--- Building optimized native library using {make_cmd} ---")
+            try:
+                subprocess.check_call([make_cmd], cwd=lib_dir, shell=True)
+            except Exception as e:
+                print(f"Warning: Native build failed: {e}")
+        
+        super().run()
+
 try:
     from Cython.Build import cythonize
     CYTHON_AVAILABLE = True
 except ImportError:
     CYTHON_AVAILABLE = False
     def cythonize(extensions, **_ignore):
-        # Return empty list if Cython not available and we're using pre-built binaries
         return []
 
 if os.environ.get('GITHUB_ACTIONS'):
@@ -170,7 +168,6 @@ module_names = [
     "max_pooling"
 ]
 
-# Only define extensions if Cython is available (for source builds)
 extensions = []
 if CYTHON_AVAILABLE:
     extensions = [
@@ -192,6 +189,7 @@ setup(
     cmdclass={
         'build_py': BuildLib,
         'install': InstallWithBinaries,
+        'build_ext': BuildExtMaybe,
     },
     ext_modules=cythonize(extensions, compiler_directives={'language_level': "3"}) if CYTHON_AVAILABLE else [],
     install_requires=[
@@ -200,7 +198,7 @@ setup(
         "scipy",
         "matplotlib",
     ],
-    python_requires=">=3.6",
+    python_requires=">=3.8",
     include_package_data=True,
     zip_safe=False,
 )
