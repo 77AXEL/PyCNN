@@ -70,7 +70,27 @@ jobs:
       run: python -m build
       env:
         GITHUB_ACTIONS: true
+
+    - name: Repair Linux wheels
+      if: runner.os == 'Linux'
+      run: |
+        pip install auditwheel
+        for whl in dist/*.whl; do
+          auditwheel repair "$whl" -w dist/repaired/
+        done
+        # Replace original wheels with repaired ones
+        rm dist/*.whl
+        mv dist/repaired/*.whl dist/
+        rmdir dist/repaired
     
+    - name: Repair macOS wheels
+      if: runner.os == 'macOS'
+      run: |
+        pip install delocate
+        for whl in dist/*.whl; do
+          delocate-wheel -v "$whl"
+        done
+
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
