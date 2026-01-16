@@ -20,18 +20,17 @@ jobs:
       contents: read
 
     steps:
-      - name: Download artifacts from Build workflow
+      - name: Download all artifacts
         uses: actions/download-artifact@v4
         with:
           run-id: ${{ github.event.workflow_run.id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          path: artifacts
+          path: dist
+          pattern: cibw-*
+          merge-multiple: true
 
       - name: Organize dist files
         run: |
-          mkdir -p dist
-          find artifacts -name "*.whl" -exec cp {} dist/ \;
-          find artifacts -name "*.tar.gz" -exec cp {} dist/ \;
           ls -la dist/
 
       - name: Publish package distributions to PyPI

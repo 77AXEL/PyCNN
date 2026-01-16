@@ -10,141 +10,60 @@ permissions:
   contents: write
 
 jobs:
-  build-wheels:
+  build_wheels:
     name: Build wheels on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
-        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
-    
+
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v5
-      with:
-        python-version: ${{ matrix.python-version }}
-    
-    - name: Install build tools (Ubuntu)
-      if: runner.os == 'Linux'
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y build-essential gcc g++ make
-    
-    - name: Install build tools (macOS)
-      if: runner.os == 'macOS'
-      run: |
-        brew install gcc make
-    
-    - name: Install build tools (Windows)
-      if: runner.os == 'Windows'
-      run: |
-        choco install mingw -y
-        refreshenv
-    
-    
-    - name: Install Python dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install build wheel setuptools Cython numpy scipy pillow matplotlib
-    
-    - name: Build optimized library (Unix)
-      if: runner.os != 'Windows'
-      run: |
-        cd pycnn/lib
-        make
-      env:
-        GITHUB_ACTIONS: true
-    
-    - name: Build optimized library (Windows)
-      if: runner.os == 'Windows'
-      shell: cmd
-      run: |
-        cd pycnn\lib
-        mingw32-make
-      env:
-        GITHUB_ACTIONS: true
-    
-    - name: Build wheel and sdist
-      run: python -m build
-      env:
-        GITHUB_ACTIONS: true
+      - uses: actions/checkout@v4
 
-    - name: Repair Linux wheels
-      if: runner.os == 'Linux'
-      run: |
-        pip install auditwheel
-        for whl in dist/*.whl; do
-          auditwheel repair "$whl" -w dist/repaired/
-        done
-        # Replace original wheels with repaired ones
-        rm dist/*.whl
-        mv dist/repaired/*.whl dist/
-        rmdir dist/repaired
-    
-    - name: Repair macOS wheels
-      if: runner.os == 'macOS'
-      run: |
-        pip install delocate
-        for whl in dist/*.whl; do
-          delocate-wheel -v "$whl"
-        done
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v2.21.3
+        env:
+          CIBW_BEFORE_BUILD_LINUX: yum install -y make gcc gcc-c++ && cd pycnn/lib && make
+          CIBW_BEFORE_BUILD_MACOS: cd pycnn/lib && make
+          CIBW_BEFORE_BUILD_WINDOWS: cd pycnn\lib && mingw32-make
+          CIBW_ENVIRONMENT: GITHUB_ACTIONS=true
+          CIBW_SKIP: "pp* cp36* cp37*" # Skip pypy and old python versions
 
-    - name: Upload artifacts
-      uses: actions/upload-artifact@v4
-      with:
-        name: dist-${{ matrix.os }}-py${{ matrix.python-version }}
-        path: dist/*
-        retention-days: 7
-    
-    - name: Upload compiled library
-      uses: actions/upload-artifact@v4
-      with:
-        name: lib-${{ matrix.os }}-py${{ matrix.python-version }}
-        path: |
-          pycnn/lib/*.dll
-          pycnn/lib/*.so
-          pycnn/lib/*.dylib
-        retention-days: 7
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cibw-wheels-${{ matrix.os }}-${{ strategy.job-index }}
+          path: ./wheelhouse/*.whl
+
+  build_sdist:
+    name: Build source distribution
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build sdist
+        run: pipx run build --sdist
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cibw-sdist
+          path: dist/*.tar.gz
 
   create-release:
-    name: Create Release and Upload Assets
-    needs: build-wheels
+    name: Create Release
+    needs: [build_wheels, build_sdist]
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/')
-    
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Download all artifacts
-      uses: actions/download-artifact@v4
-      with:
-        path: artifacts
-    
-    - name: Organize compiled libraries
-      run: |
-        mkdir -p release-libs
-        find artifacts -name "*.dll" -exec cp {} release-libs/ \; || true
-        find artifacts -name "*.so" -exec cp {} release-libs/ \; || true
-        find artifacts -name "*.dylib" -exec cp {} release-libs/ \; || true
-        ls -la release-libs/
-    
-    - name: Organize dist files
-      run: |
-        mkdir -p release-dist
-        find artifacts -name "*.whl" -exec cp {} release-dist/ \;
-        find artifacts -name "*.tar.gz" -exec cp {} release-dist/ \;
-        ls -la release-dist/
-    
-    - name: Create Release
-      uses: softprops/action-gh-release@v1
-      with:
-        files: |
-          release-libs/*
-          release-dist/*
-        draft: false
-        prerelease: false
-        generate_release_notes: true
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          pattern: cibw-*
+          merge-multiple: true
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: dist/*
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
