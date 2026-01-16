@@ -1,4 +1,4 @@
-name: Build Wheels
+name: Build
 
 on:
   push:
@@ -66,16 +66,16 @@ jobs:
       env:
         GITHUB_ACTIONS: true
     
-    - name: Build wheel
-      run: python -m build --wheel
+    - name: Build wheel and sdist
+      run: python -m build
       env:
         GITHUB_ACTIONS: true
     
-    - name: Upload wheel artifact
+    - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: wheel-${{ matrix.os }}-py${{ matrix.python-version }}
-        path: dist/*.whl
+        name: dist-${{ matrix.os }}-py${{ matrix.python-version }}
+        path: dist/*
         retention-days: 7
     
     - name: Upload compiled library
@@ -105,29 +105,24 @@ jobs:
     - name: Organize compiled libraries
       run: |
         mkdir -p release-libs
-        # Copy and rename for each platform/python to ensure uniqueness
         find artifacts -name "*.dll" -exec cp {} release-libs/ \; || true
         find artifacts -name "*.so" -exec cp {} release-libs/ \; || true
         find artifacts -name "*.dylib" -exec cp {} release-libs/ \; || true
-        
-        # Renaissance naming for native libs to match what setup.py expects
-        # We rename them to include the OS name if they are distinct
-        # Actually, if we just upload the .whl, most users will get the lib from the whl.
-        # But for source installs, we provide these as fallbacks.
         ls -la release-libs/
     
-    - name: Organize wheels
+    - name: Organize dist files
       run: |
-        mkdir -p release-wheels
-        find artifacts -name "*.whl" -exec cp {} release-wheels/ \;
-        ls -la release-wheels/
+        mkdir -p release-dist
+        find artifacts -name "*.whl" -exec cp {} release-dist/ \;
+        find artifacts -name "*.tar.gz" -exec cp {} release-dist/ \;
+        ls -la release-dist/
     
     - name: Create Release
       uses: softprops/action-gh-release@v1
       with:
         files: |
           release-libs/*
-          release-wheels/*
+          release-dist/*
         draft: false
         prerelease: false
         generate_release_notes: true

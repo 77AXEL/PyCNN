@@ -5,7 +5,8 @@
 
 <p align="center">
   <a href="https://github.com/77axel/PyCNN/actions/workflows/ci.yml"><img src="https://github.com/77axel/PyCNN/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
-  <a href="https://github.com/77axel/PyCNN/actions/workflows/build-wheels.yml"><img src="https://github.com/77axel/PyCNN/actions/workflows/build-wheels.yml/badge.svg" alt="Build Wheels"></a>
+  <a href="https://github.com/77axel/PyCNN/actions/workflows/pypi.yml"><img src="https://github.com/77axel/PyCNN/actions/workflows/pypi.yml/badge.svg" alt="PyPi"></a>
+  <a href="https://github.com/77axel/PyCNN/actions/workflows/build-wheels.yml"><img src="https://github.com/77axel/PyCNN/actions/workflows/build-wheels.yml/badge.svg" alt="Build"></a>
   <img src="https://img.shields.io/github/v/tag/77AXEL/PyCNN?label=Release&color=orange" alt="Version">
   <img src="https://img.shields.io/badge/Open_Source-Yes-lighgreen" alt="Open Source">
   <img src="https://img.shields.io/github/contributors/77axel/PyCNN.svg" alt="Contributors">
@@ -89,6 +90,10 @@ xcode-select --install
 
 ## 📌 Installation
 
+```bash
+pip install pycnn
+```
+Or using:
 ```bash
 pip install git+https://github.com/77AXEL/PyCNN.git
 ```
